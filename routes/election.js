@@ -34,22 +34,23 @@ router.post('/', async (req, res) => {
 
 router.get('/states', async (req, res) => {
   try {
-    const states = await Election.distinct('state');
+    const states = await Election.find({});
     const statesWithSlugs = states.map(state => ({
-      name: state,
-      slug: state.toLowerCase().replace(/ /g, '_')
+      name: state.state,
+      slug: state.stateSlug,
+      id: state._id
     }));
-    return res.status(200).json({ message: 'States and their slugs retrieved successfully', data: statesWithSlugs });
+    return res.status(200).json({ message: 'States, their slugs, and ids retrieved successfully', data: statesWithSlugs });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 });
 
 // Get API to retrieve election data by state
-router.get('/:stateSlug', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const { stateSlug } = req.params;
-    const election = await Election.findOne({stateSlug});
+    const { id } = req.params;
+    const election = await Election.findById(id);
 
     if (!election) {
       return res.status(404).json({ message: 'Election data not found' });

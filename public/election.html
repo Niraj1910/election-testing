@@ -1596,8 +1596,8 @@
         let tabsDesktop = document.getElementById("tabs");
         let assemblyStates = document.getElementById("assembly-states");
         let allContentContainer = document.getElementById("all_content");
-
-        function init(stateName) {
+    
+        function init(stateId) {
             // Grab the tab links and content divs from the page
             var tabListItems = document.getElementById("tabs").childNodes;
             for (var i = 0; i < tabListItems.length; i++) {
@@ -1608,195 +1608,191 @@
                     contentDivs[id] = document.getElementById(id);
                 }
             }
-            // Assign onclick events to the tab links, and
-            // highlight the first tab
+            // Assign onclick events to the tab links, and highlight the first tab
             var i = 0;
             for (var id in tabLinks) {
                 tabLinks[id].onclick = showTab;
                 tabLinks[id].onfocus = function () {
                     this.blur();
                 };
-                if (stateName) {
-                    if (id.includes(stateName)) {
+                if (stateId) {
+                    if (id.includes(stateId)) {
                         tabLinks[id].className = "selected";
                     }
                 } else {
                     if (i == 0) tabLinks[id].className = "selected";
                 }
-
+    
                 i++;
             }
             // Hide all content divs except the first
             var i = 0;
             for (var id in contentDivs) {
-                if (stateName) {
-                    if (!id.includes(stateName)) {
+                if (stateId) {
+                    if (!id.includes(stateId)) {
                         contentDivs[id].className = "tabContent hide";
                     }
                 } else {
                     if (i != 0) contentDivs[id].className = "tabContent hide";
                 }
-
+    
                 i++;
             }
         }
-
+    
         function getFirstChildWithTagName(element, tagName) {
             for (var i = 0; i < element.childNodes.length; i++) {
                 if (element.childNodes[i].nodeName == tagName) return element.childNodes[i];
             }
         }
-
+    
         function getHash(url) {
             var hashPos = url.lastIndexOf("#");
             return url.substring(hashPos + 1);
         }
-
-        function callAjax(state) {
-    fetch(`/api/elections/${state}`)
-        .then(response => response.json())
-        .then(data => {
-            const stateData = data;
-            const stateName = stateData.state;
-            const stateSlug = stateData.stateSlug;
-            const totalSeats = stateData.totalSeats;
-            
-            let htmlContent = '';
-
-            console.log(stateData, stateName, totalSeats);
-
-            // Begin the main election result container
-            htmlContent += '<div id="elect_wdgt_slide">';
-            htmlContent += '<div class="asm-result-chart">';
-            htmlContent += `<div id="container${stateSlug}" style="width:100%;"></div>`;
-            htmlContent += '<ul class="parties">';
-
-            // Loop through parties and build the UI
-            stateData.parties.forEach(party => {
-                const partyName = party.name;
-                htmlContent += `<li class="${partyName}" style="--partycolor:#000;">`;
-                htmlContent += `<a href="#">`;
-                htmlContent += `<span style="background-color: ${party.color || '#000'};"></span>`; // Color box added, fallback color
-                htmlContent += `${partyName}</a>`;
-                htmlContent += '</li>';
-            });
-
-            htmlContent += '</ul>';
-            htmlContent += '</div>'; // Close asm-result-chart
-            htmlContent += '<div class="chartDt">';
-            htmlContent += '<div class="dt-inner">';
-            htmlContent += '<ul>';
-            htmlContent += '<li class="dt-head"><span><span>Party</span></span><span>Leads</span><span>Won</span><span>Total</span></li>';
-
-            stateData.parties.forEach(party => {
-                htmlContent += `<li><span>${party.name}</span><span>${party.leading}</span><span>${party.won}</span><span>${party.won + party.leading}</span></li>`;
-            });
-
-            htmlContent += '</ul>';
-            htmlContent += '</div>'; // Close dt-inner
-            htmlContent += '</div>'; // Close chartDt
-            htmlContent += '</div>'; // Close elect_wdgt_slide
-
-            $("#" + stateSlug + "-data").html(htmlContent);
-
-            const chartData = [];
-            const partyColors = [];
-            let totalWon = 0;
-
-            stateData.parties.forEach(party => {
-                const totalSeatsForParty = party.won + party.leading;
-                if (totalSeatsForParty > 0) {
-                    chartData.push([party.name, totalSeatsForParty]); // Corrected to show total seats instead of party name
-                    partyColors.push('#' + Math.floor(Math.random() * 16777215).toString(16)); // Generate random colors for parties
-                }
-                totalWon += totalSeatsForParty;
-            });
-
-            const remainingSeats = totalSeats - totalWon;
-            if (remainingSeats > 0) {
-                chartData.push(['Others', remainingSeats]);
-                partyColors.push("#e7e7e7"); // Set color for 'Others'
-            }
-
-            // Build the Highcharts chart
-            Highcharts.chart("container" + stateSlug, {
-                credits: {
-                    enabled: false,
-                },
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: 0,
-                    plotShadow: false,
-                },
-                title: {
-                    align: "center",
-                    useHTML: true,
-                    text: `<div class="lead-wins">
-                <div class="l-center">
-                    <div class="v-line"></div>
-                    <div class="halfway">
-                    </div>
-                    <span class="ld count">${totalWon}</span>
-                </div>
-              </div>`,
-                    verticalAlign: "middle",
-                    y: -44,
-                },
-                tooltip: {
-                    pointFormat: "{series.name}: <b>{point.y}</b>",
-                },
-                legend: {
-                    align: "center",
-                    verticalAlign: "bottom",
-                    layout: "horizontal",
-                    enabled: true,
-                },
-                plotOptions: {
-                    pie: {
-                        colors: partyColors,
-                        startAngle: -140,
-                        endAngle: 140,
-                        center: ["50%", "65%"],
-                        size: "80%",
-                        showInLegend: false,
-                    },
-                },
-                series: [{
-                    dataLabels: {
-                        connectorShape: "crookedLine",
-                        enabled: true,
-                        distance: 10,
-                        padding: 0,
-                    },
-                    type: "pie",
-                    name: "Seats",
-                    innerSize: "75%",
-                    colorByPoint: true,
-                    enableMouseTracking: false,
-                    data: chartData,
-                }],
-            });
-
-            // Number animation
-            $(".count, .countUp").each(function () {
-                const txt = $(this).text();
-                if (txt !== "Other") {
-                    $(this).prop("Counter", 0).animate({
-                        Counter: txt,
-                    }, {
-                        duration: 1800,
-                        easing: "swing",
-                        step: function (now) {
-                            $(this).text(Math.ceil(now));
-                        },
+    
+        function callAjax(stateId) {
+            fetch(`/api/elections/${stateId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const stateData = data;
+                    const totalSeats = stateData.totalSeats;
+                    
+                    let htmlContent = '';
+    
+                    console.log(stateData, totalSeats);
+    
+                    // Begin the main election result container
+                    htmlContent += '<div id="elect_wdgt_slide">';
+                    htmlContent += '<div class="asm-result-chart">';
+                    htmlContent += `<div id="container${stateId}" style="width:100%;"></div>`;
+                    htmlContent += '<ul class="parties">';
+    
+                    // Loop through parties and build the UI
+                    stateData.parties.forEach(party => {
+                        const partyName = party.name;
+                        htmlContent += `<li class="${partyName}" style="--partycolor:#000;">`;
+                        htmlContent += `<a href="#">`;
+                        htmlContent += `<span style="background-color: ${party.color || '#000'};"></span>`; // Color box added, fallback color
+                        htmlContent += `${partyName}</a>`;
+                        htmlContent += '</li>';
                     });
-                }
-            });
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-
+    
+                    htmlContent += '</ul>';
+                    htmlContent += '</div>'; // Close asm-result-chart
+                    htmlContent += '<div class="chartDt">';
+                    htmlContent += '<div class="dt-inner">';
+                    htmlContent += '<ul>';
+                    htmlContent += '<li class="dt-head"><span><span>Party</span></span><span>Leads</span><span>Won</span><span>Total</span></li>';
+    
+                    stateData.parties.forEach(party => {
+                        htmlContent += `<li><span>${party.name}</span><span>${party.leading}</span><span>${party.won}</span><span>${party.won + party.leading}</span></li>`;
+                    });
+    
+                    htmlContent += '</ul>';
+                    htmlContent += '</div>'; // Close dt-inner
+                    htmlContent += '</div>'; // Close chartDt
+                    htmlContent += '</div>'; // Close elect_wdgt_slide
+    
+                    $("#" + stateId + "-data").html(htmlContent);
+    
+                    const chartData = [];
+                    const partyColors = [];
+                    let totalWon = 0;
+    
+                    stateData.parties.forEach(party => {
+                        const totalSeatsForParty = party.won + party.leading;
+                        if (totalSeatsForParty > 0) {
+                            chartData.push([party.name, totalSeatsForParty]); // Corrected to show total seats instead of party name
+                            partyColors.push('#' + Math.floor(Math.random() * 16777215).toString(16)); // Generate random colors for parties
+                        }
+                        totalWon += totalSeatsForParty;
+                    });
+    
+                    const remainingSeats = totalSeats - totalWon;
+                    if (remainingSeats > 0) {
+                        chartData.push(['Others', remainingSeats]);
+                        partyColors.push("#e7e7e7"); // Set color for 'Others'
+                    }
+    
+                    // Build the Highcharts chart
+                    Highcharts.chart("container" + stateId, {
+                        credits: {
+                            enabled: false,
+                        },
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: 0,
+                            plotShadow: false,
+                        },
+                        title: {
+                            align: "center",
+                            useHTML: true,
+                            text: `<div class="lead-wins">
+                        <div class="l-center">
+                            <div class="v-line"></div>
+                            <div class="halfway">
+                            </div>
+                            <span class="ld count">${totalWon}</span>
+                        </div>
+                      </div>`,
+                            verticalAlign: "middle",
+                            y: -44,
+                        },
+                        tooltip: {
+                            pointFormat: "{series.name}: <b>{point.y}</b>",
+                        },
+                        legend: {
+                            align: "center",
+                            verticalAlign: "bottom",
+                            layout: "horizontal",
+                            enabled: true,
+                        },
+                        plotOptions: {
+                            pie: {
+                                colors: partyColors,
+                                startAngle: -140,
+                                endAngle: 140,
+                                center: ["50%", "65%"],
+                                size: "80%",
+                                showInLegend: false,
+                            },
+                        },
+                        series: [{
+                            dataLabels: {
+                                connectorShape: "crookedLine",
+                                enabled: true,
+                                distance: 10,
+                                padding: 0,
+                            },
+                            type: "pie",
+                            name: "Seats",
+                            innerSize: "75%",
+                            colorByPoint: true,
+                            enableMouseTracking: false,
+                            data: chartData,
+                        }],
+                    });
+    
+                    // Number animation
+                    $(".count, .countUp").each(function () {
+                        const txt = $(this).text();
+                        if (txt !== "Other") {
+                            $(this).prop("Counter", 0).animate({
+                                Counter: txt,
+                            }, {
+                                duration: 1800,
+                                easing: "swing",
+                                step: function (now) {
+                                    $(this).text(Math.ceil(now));
+                                },
+                            });
+                        }
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    
         function showTab(isRequestFromTab = true) {
             var selectedId;
             if (isRequestFromTab) selectedId = getHash(this.getAttribute("href"));
@@ -1815,43 +1811,44 @@
             // Stop the browser following the link
             return false;
         }
-
+    
         const fetchStatesData = () => {
             clearTimeout(dataTimer);
             tabsDesktop.innerHTML = ``;
             assemblyStates.innerHTML = ``;
             allContentContainer.innerHTML = ``;
-
+    
             fetch(`/api/elections/states?v=${Date.now()}`)
                 .then((response) => response.json())
                 .then((data) => {
                     // Check if the response is successful and has data
-                    if (data.message === "States and their slugs retrieved successfully" && Array.isArray(data.data)) {
+                    if (Array.isArray(data.data)) {
                         let stateArrData = data.data;
                         console.log(stateArrData)
                         // Define the initial selected state
                         let myState;
-
+    
                         for (let state of stateArrData) {
-                            // Prepare state name for usage in IDs
-                            let stateName = state.name;
-                            let stateSlug = state.slug; // Get the state slug provided by the API
+                            // Prepare state id for usage in IDs
+                            let stateId = state.id;
+                            let stateSlug = state.slug;
+    
                             // Create tab content and update the interface
-                            allContentContainer.innerHTML += `<div class="tabContent" id="state_${stateSlug}">
-                        <div class="mapLeft" id="${stateSlug}-data"></div>
+                            allContentContainer.innerHTML += `<div class="tabContent" id="state_${stateId}">
+                        <div class="mapLeft" id="${stateId}-data"></div>
                     </div>`;
-                            tabsDesktop.innerHTML += `<li id="${stateSlug}">
-                        <a href="#state_${stateSlug}" data-id="${stateSlug}">${state.name}</a>
+                            tabsDesktop.innerHTML += `<li id="${stateId}">
+                        <a href="#state_${stateId}" data-id="${stateId}">${state.name}</a>
                     </li>`;
-                            assemblyStates.innerHTML += `<option value="${stateSlug}" data-tab-sel="state_${stateSlug}" id="optn_state1" data-id="${stateSlug}">${state.name}</option>`;
-
+                            assemblyStates.innerHTML += `<option value="${stateId}" data-tab-sel="state_${stateId}" id="optn_state1" data-id="${stateId}">${state.name}</option>`;
+    
                             // Set the first state as the selected state
                             if (!myState) {
-                                myState = stateSlug;
-                                selectedTab = stateSlug; // Set selectedTab to the first state
+                                myState = stateId;
+                                selectedTab = stateId; // Set selectedTab to the first state
                             }
                         }
-
+    
                         // Initialize with the first state if no tab is selected
                         if (selectedTab) {
                             init(selectedTab);
@@ -1860,14 +1857,14 @@
                             callAjax(myState);
                             init(myState);
                         }
-
+    
                         // Event binding for tabs
                         $("#tabs li").click(function () {
-                            var state = $(this).attr("id");
-                            selectedTab = state;
-                            callAjax(state);
+                            var stateId = $(this).attr("id");
+                            selectedTab = stateId;
+                            callAjax(stateId);
                         });
-
+    
                         // Refresh data every 300 seconds
                         timer = setTimeout(() => {
                             fetchStatesData();
@@ -1880,9 +1877,10 @@
                     console.log(err);
                 });
         };
-
+    
         fetchStatesData();
     </script>
+    
 </body>
 
 </html>
