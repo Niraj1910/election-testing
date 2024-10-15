@@ -1657,6 +1657,7 @@
                 .then(data => {
                     const stateData = data;
                     const totalSeats = stateData.totalSeats;
+                    const Halfway = data.halfWayMark;
                     
                     let htmlContent = '';
     
@@ -1733,7 +1734,7 @@
                             <div class="v-line"></div>
                             <div class="halfway">
                             </div>
-                            <span class="ld count">${totalWon}</span>
+                            <span class="ld count">${Halfway}</span>
                         </div>
                       </div>`,
                             verticalAlign: "middle",
