@@ -15,7 +15,6 @@ const partySchema = new mongoose.Schema({
   },
   leading: {
     type: Number,
-    required: [true, 'Number of seats leading is required'],
     min: [0, 'Seats leading cannot be negative'],
     default: 0
   }
