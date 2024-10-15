@@ -1675,10 +1675,9 @@
                     // Loop through parties and build the UI
                     stateData.parties.forEach(party => {
                         const partyName = party.name;
-                        console.log(party);
-                        htmlContent += `<li class="${partyName}" style="--partycolor: ${party.partyColor || '#000'};">`;
+                        htmlContent += `<li class="${partyName}" style="--partycolorchart: ${party.partyColor}">`;
                         htmlContent += ``;
-                        htmlContent += `<span style="background-color: ${party.partyColor || '#000'};"></span>`; // Color box added, fallback color
+                        htmlContent += `<span></span>`; // Color box added, fallback color
                         htmlContent += `${partyName}`;
                         htmlContent += '</li>';
                     });
@@ -1698,7 +1697,15 @@
 
                     // Display party data
                     stateData.parties.forEach(party => {
-                        htmlContent += `<li><span style="color: ${party.partyColor || '#000'};">${party.name}</span>`;
+                        htmlContent += `<li>
+    <span>
+        <a class="remove_cursor" 
+           href="#" 
+           style="color: ${party.partyColor || '#000'};">
+            <span class="p_clr" style="background-color: ${party.partyColor || '#000'};"></span>
+            ${party.name}
+        </a>
+    </span>`;
                         if (showLeadingColumn) {
                             htmlContent += `<span>${party.leading}</span>`;
                         }
