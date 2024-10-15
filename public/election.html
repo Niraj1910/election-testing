@@ -1675,10 +1675,11 @@
                     // Loop through parties and build the UI
                     stateData.parties.forEach(party => {
                         const partyName = party.name;
-                        htmlContent += `<li class="${partyName}" style="--partycolor:#000;">`;
-                        htmlContent += `<a href="#">`;
-                        htmlContent += `<span style="background-color: ${party.color || '#000'};"></span>`; // Color box added, fallback color
-                        htmlContent += `${partyName}</a>`;
+                        console.log(party);
+                        htmlContent += `<li class="${partyName}" style="--partycolor: ${party.partyColor || '#000'};">`;
+                        htmlContent += ``;
+                        htmlContent += `<span style="background-color: ${party.partyColor || '#000'};"></span>`; // Color box added, fallback color
+                        htmlContent += `${partyName}`;
                         htmlContent += '</li>';
                     });
 
@@ -1697,7 +1698,7 @@
 
                     // Display party data
                     stateData.parties.forEach(party => {
-                        htmlContent += `<li><span>${party.name}</span>`;
+                        htmlContent += `<li><span style="color: ${party.partyColor || '#000'};">${party.name}</span>`;
                         if (showLeadingColumn) {
                             htmlContent += `<span>${party.leading}</span>`;
                         }
@@ -1718,17 +1719,11 @@
                     stateData.parties.forEach(party => {
                         const totalSeatsForParty = party.won + party.leading;
                         if (totalSeatsForParty > 0) {
-                            chartData.push([party.name, totalSeatsForParty]); // Corrected to show total seats instead of party name
-                            partyColors.push('#' + Math.floor(Math.random() * 16777215).toString(16)); // Generate random colors for parties
+                            chartData.push([`${totalSeatsForParty}`, totalSeatsForParty]); // Corrected to show total seats instead of party name
+                            partyColors.push(party.partyColor || '#' + Math.floor(Math.random() * 16777215).toString(16)); // Generate random colors for parties
                         }
                         totalWon += totalSeatsForParty;
                     });
-
-                    const remainingSeats = totalSeats - totalWon;
-                    if (remainingSeats > 0) {
-                        chartData.push(['Others', remainingSeats]);
-                        partyColors.push("#e7e7e7"); // Set color for 'Others'
-                    }
 
                     // Build the Highcharts chart
                     Highcharts.chart("container" + stateId, {
@@ -1785,9 +1780,72 @@
                             innerSize: "75%",
                             colorByPoint: true,
                             enableMouseTracking: false,
-                            data: chartData,
+                            data: generateHighchartsData(chartData),
                         }],
                     });
+
+        //             Highcharts.chart("container" + stateId, {
+        //                 credits: {
+        //                     enabled: false,
+        //                 },
+        //                 chart: {
+        //                     plotBackgroundColor: null,
+        //                     plotBorderWidth: 0,
+        //                     plotShadow: false,
+        //                 },
+        //                 title: {
+        //                     align: "center",
+        //                     useHTML: true,
+        //                     text: `<div class="lead-wins">
+        //     <div class="l-center">
+        //         <div class="v-line"></div>
+        //         <div class="halfway"></div>
+        //         <span class="ld count">${Halfway}</span>
+        //     </div>
+        // </div>`,
+        //                     verticalAlign: "middle",
+        //                     y: -44,
+        //                 },
+        //                 tooltip: {
+        //                     pointFormat: "{series.name}: <b>{point.y}</b>",
+        //                 },
+        //                 legend: {
+        //                     align: "center",
+        //                     verticalAlign: "bottom",  // Align the legend to the bottom of the chart
+        //                     layout: "horizontal",    // Display legend items in a row
+        //                     enabled: true,           // Show the legend
+        //                     useHTML: true,           // Use HTML for custom styling
+        //                     labelFormatter: function () {
+        //                         // Custom legend label: show color box and party name
+        //                         // return `<span style="background-color: ${this.color}; width: 12px; height: 12px; display: flex; margin-right: 5px;"></span>${this.name}`;
+        //                     },
+        //                 },
+        //                 plotOptions: {
+        //                     pie: {
+        //                         colors: partyColors,
+        //                         startAngle: -140,
+        //                         endAngle: 140,
+        //                         center: ["50%", "65%"],
+        //                         size: "80%",
+        //                         showInLegend: true,  // Enable the legend for this series
+        //                     },
+        //                 },
+        //                 series: [{
+        //                     dataLabels: {
+        //                         connectorShape: "crookedLine",
+        //                         enabled: true,
+        //                         distance: 10,
+        //                         padding: 0,
+        //                     },
+        //                     type: "pie",
+        //                     name: "Seats",
+        //                     innerSize: "75%",
+        //                     colorByPoint: true,
+        //                     enableMouseTracking: false,
+        //                     // data: chartData,  // Data for the pie chart
+        //                     data: generateHighchartsData(chartData),  // Data for the pie chart
+        //                 }],
+        //             });
 
                     // Number animation
                     $(".count, .countUp").each(function () {

@@ -155,6 +155,7 @@
                         <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Party</th>
                         <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Seats Won</th>
                         <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Leading</th>
+                        <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Party Color</th>
                       </tr>
                     </thead>
                     <tbody class="bg-white">
@@ -162,7 +163,8 @@
                         <tr class="border-t border-gray-300">
                           <td class="px-6 py-4 text-sm text-gray-900">${party.name}</td>
                           <td class="px-6 py-4 text-sm text-gray-900">${party.won}</td>
-                          <td class="px-6 py-4 text-sm text-gray-900">${party.leading}</td>
+                          <td class="px-6 py-4 text-sm text-gray-900">${party.leading || '-'}</td>
+                          <td class="px-6 py-4 text-sm text-gray-900">${party.partyColor || '-'}</td>
                         </tr>
                       `).join('')}
                     </tbody>

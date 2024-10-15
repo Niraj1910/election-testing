@@ -17,6 +17,9 @@ const partySchema = new mongoose.Schema({
     type: Number,
     min: [0, 'Seats leading cannot be negative'],
     default: 0
+  },
+  partyColor: {
+    type: String,
   }
 }, { _id: false });  // No need for an extra _id for each party
 
