@@ -1596,7 +1596,7 @@
         let tabsDesktop = document.getElementById("tabs");
         let assemblyStates = document.getElementById("assembly-states");
         let allContentContainer = document.getElementById("all_content");
-    
+
         function init(stateId) {
             // Grab the tab links and content divs from the page
             var tabListItems = document.getElementById("tabs").childNodes;
@@ -1622,7 +1622,7 @@
                 } else {
                     if (i == 0) tabLinks[id].className = "selected";
                 }
-    
+
                 i++;
             }
             // Hide all content divs except the first
@@ -1635,22 +1635,22 @@
                 } else {
                     if (i != 0) contentDivs[id].className = "tabContent hide";
                 }
-    
+
                 i++;
             }
         }
-    
+
         function getFirstChildWithTagName(element, tagName) {
             for (var i = 0; i < element.childNodes.length; i++) {
                 if (element.childNodes[i].nodeName == tagName) return element.childNodes[i];
             }
         }
-    
+
         function getHash(url) {
             var hashPos = url.lastIndexOf("#");
             return url.substring(hashPos + 1);
         }
-    
+
         function callAjax(stateId) {
             fetch(`/api/elections/${stateId}`)
                 .then(response => response.json())
@@ -1658,17 +1658,20 @@
                     const stateData = data;
                     const totalSeats = stateData.totalSeats;
                     const Halfway = data.halfWayMark;
-                    
+
                     let htmlContent = '';
-    
+
+                    // Check if any party has a 'leading' value greater than 0
+                    const showLeadingColumn = stateData.parties.some(party => party.leading > 0);
+
                     console.log(stateData, totalSeats);
-    
+
                     // Begin the main election result container
                     htmlContent += '<div id="elect_wdgt_slide">';
                     htmlContent += '<div class="asm-result-chart">';
                     htmlContent += `<div id="container${stateId}" style="width:100%;"></div>`;
                     htmlContent += '<ul class="parties">';
-    
+
                     // Loop through parties and build the UI
                     stateData.parties.forEach(party => {
                         const partyName = party.name;
@@ -1678,29 +1681,40 @@
                         htmlContent += `${partyName}</a>`;
                         htmlContent += '</li>';
                     });
-    
+
                     htmlContent += '</ul>';
                     htmlContent += '</div>'; // Close asm-result-chart
                     htmlContent += '<div class="chartDt">';
                     htmlContent += '<div class="dt-inner">';
                     htmlContent += '<ul>';
-                    htmlContent += '<li class="dt-head"><span><span>Party</span></span><span>Leads</span><span>Won</span><span>Total</span></li>';
-    
+
+                    // Conditionally render the "Leads" column
+                    htmlContent += '<li class="dt-head"><span><span>Party</span></span>';
+                    if (showLeadingColumn) {
+                        htmlContent += '<span>Leads</span>';
+                    }
+                    htmlContent += '<span>Won</span><span>Total</span></li>';
+
+                    // Display party data
                     stateData.parties.forEach(party => {
-                        htmlContent += `<li><span>${party.name}</span><span>${party.leading}</span><span>${party.won}</span><span>${party.won + party.leading}</span></li>`;
+                        htmlContent += `<li><span>${party.name}</span>`;
+                        if (showLeadingColumn) {
+                            htmlContent += `<span>${party.leading}</span>`;
+                        }
+                        htmlContent += `<span>${party.won}</span><span>${party.won + party.leading}</span></li>`;
                     });
-    
+
                     htmlContent += '</ul>';
                     htmlContent += '</div>'; // Close dt-inner
                     htmlContent += '</div>'; // Close chartDt
                     htmlContent += '</div>'; // Close elect_wdgt_slide
-    
+
                     $("#" + stateId + "-data").html(htmlContent);
-    
+
                     const chartData = [];
                     const partyColors = [];
                     let totalWon = 0;
-    
+
                     stateData.parties.forEach(party => {
                         const totalSeatsForParty = party.won + party.leading;
                         if (totalSeatsForParty > 0) {
@@ -1709,13 +1723,13 @@
                         }
                         totalWon += totalSeatsForParty;
                     });
-    
+
                     const remainingSeats = totalSeats - totalWon;
                     if (remainingSeats > 0) {
                         chartData.push(['Others', remainingSeats]);
                         partyColors.push("#e7e7e7"); // Set color for 'Others'
                     }
-    
+
                     // Build the Highcharts chart
                     Highcharts.chart("container" + stateId, {
                         credits: {
@@ -1774,7 +1788,7 @@
                             data: chartData,
                         }],
                     });
-    
+
                     // Number animation
                     $(".count, .countUp").each(function () {
                         const txt = $(this).text();
@@ -1793,7 +1807,8 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-    
+
+
         function showTab(isRequestFromTab = true) {
             var selectedId;
             if (isRequestFromTab) selectedId = getHash(this.getAttribute("href"));
@@ -1812,13 +1827,13 @@
             // Stop the browser following the link
             return false;
         }
-    
+
         const fetchStatesData = () => {
             clearTimeout(dataTimer);
             tabsDesktop.innerHTML = ``;
             assemblyStates.innerHTML = ``;
             allContentContainer.innerHTML = ``;
-    
+
             fetch(`/api/elections/states?v=${Date.now()}`)
                 .then((response) => response.json())
                 .then((data) => {
@@ -1828,12 +1843,12 @@
                         console.log(stateArrData)
                         // Define the initial selected state
                         let myState;
-    
+
                         for (let state of stateArrData) {
                             // Prepare state id for usage in IDs
                             let stateId = state.id;
                             let stateSlug = state.slug;
-    
+
                             // Create tab content and update the interface
                             allContentContainer.innerHTML += `<div class="tabContent" id="state_${stateId}">
                         <div class="mapLeft" id="${stateId}-data"></div>
@@ -1842,14 +1857,14 @@
                         <a href="#state_${stateId}" data-id="${stateId}">${state.name}</a>
                     </li>`;
                             assemblyStates.innerHTML += `<option value="${stateId}" data-tab-sel="state_${stateId}" id="optn_state1" data-id="${stateId}">${state.name}</option>`;
-    
+
                             // Set the first state as the selected state
                             if (!myState) {
                                 myState = stateId;
                                 selectedTab = stateId; // Set selectedTab to the first state
                             }
                         }
-    
+
                         // Initialize with the first state if no tab is selected
                         if (selectedTab) {
                             init(selectedTab);
@@ -1858,14 +1873,14 @@
                             callAjax(myState);
                             init(myState);
                         }
-    
+
                         // Event binding for tabs
                         $("#tabs li").click(function () {
                             var stateId = $(this).attr("id");
                             selectedTab = stateId;
                             callAjax(stateId);
                         });
-    
+
                         // Refresh data every 300 seconds
                         timer = setTimeout(() => {
                             fetchStatesData();
@@ -1878,10 +1893,10 @@
                     console.log(err);
                 });
         };
-    
+
         fetchStatesData();
     </script>
-    
+
 </body>
 
 </html>
