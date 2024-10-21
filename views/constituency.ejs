@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constituencies</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/tailwind.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome CDN -->
+</head>
+<body class="bg-gray-100">
+    <%- include('navbar.ejs') %>
+    <div class="container mx-auto my-6">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold mb-4">List of Constituencies</h1>
+            <a href="/create-constituency" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full flex items-center">
+                <i class="fas fa-plus mr-2"></i>
+                Add Constituency
+            </a>
+        </div>
+
+        <table class="min-w-full bg-white border border-gray-300 text-center">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b">Name</th>
+                    <th class="py-2 px-4 border-b">State</th>
+                    <th class="py-2 px-4 border-b">Total Votes</th>
+                    <th class="py-2 px-4 border-b">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% constituencies.forEach(constituency => { %>
+                    <tr>
+                        <td class="py-2 px-4 border-b">
+                            <div class="flex items-center justify-center">
+                                <span><%= constituency.name %></span>
+                                <button onclick="toggleCandidates('<%= constituency._id %>')" class="ml-2">
+                                    <i class="fas fa-chevron-down" id="toggle-icon-<%= constituency._id %>"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="py-2 px-4 border-b"><%= constituency.state %></td>
+                        <td class="py-2 px-4 border-b"><%= constituency.totalVotes %></td>
+                        <td class="py-2 px-4 border-b">
+                            <div class="flex justify-center space-x-4">
+                                <a href="/edit-constituency/<%= constituency._id %>" class="text-blue-500 hover:text-blue-700">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="text-red-500 hover:text-red-700" onclick="deleteConstituency('<%= constituency._id %>'); return false;">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="candidates-row-<%= constituency._id %>" class="hidden">
+                        <td colspan="4">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-gray-100 border border-gray-300 text-center">
+                                    <thead>
+                                        <tr>
+                                            <th class="py-2 px-4 border-b">Candidate Name</th>
+                                            <th class="py-2 px-4 border-b">Age</th>
+                                            <th class="py-2 px-4 border-b">Gender</th>
+                                            <th class="py-2 px-4 border-b">Party</th>
+                                            <th class="py-2 px-4 border-b">Party Color</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% constituency.candidates.forEach(candidate => { %>
+                                            <tr>
+                                                <td class="py-2 px-4 border-b"><%= candidate.name %></td>
+                                                <td class="py-2 px-4 border-b"><%= candidate.age %></td>
+                                                <td class="py-2 px-4 border-b"><%= candidate.gender %></td>
+                                                <td class="py-2 px-4 border-b"><%= candidate.party.party %></td>
+                                                <td class="py-2 px-4 border-b">
+                                                    <div class="w-4 h-4 inline-block rounded-full" style="background-color: <%= candidate.party.color_code %>;"></div>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    function toggleCandidates(id) {
+        const row = document.getElementById(`candidates-row-${id}`);
+        const icon = document.getElementById(`toggle-icon-${id}`);
+        
+        if (row.classList.contains('hidden')) {
+            row.classList.remove('hidden');
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        } else {
+            row.classList.add('hidden');
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        }
+    }
+
+    function deleteConstituency(id) {
+        if (confirm('Are you sure you want to delete this constituency?')) {
+            fetch(`/api/constituency/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload(); // Reload the page to see the changes
+                } else {
+                    alert('Error deleting constituency.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting constituency.');
+            });
+        }
+    }
+    </script>
+</body>
+</html>
