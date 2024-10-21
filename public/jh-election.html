@@ -305,7 +305,6 @@
                         // add overlay in path so that it will hilighted add styles
                         path.style.opacity = '0.6'
                     });
-                    path.addEventListener('mousemove', (e) => movePopover(e, popover, svgContainer));
                     path.addEventListener('mouseleave', () => {
                         hidePopover(popover);
                         path.style.opacity = '1'
@@ -355,67 +354,32 @@
             popover.style.transform = 'scale(1)';
 
             // Calculate positions for the popover
-            let left = event.pageX + 15; // Offset from cursor
-            let top = event.pageY + 15;
+            // let left = event.pageX + 15; // Offset from cursor
+            // let top = event.pageY + 15;
 
-            const popoverRect = popover.getBoundingClientRect(); // Get popover size
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-
-            // Adjust positioning if the popover would overflow the right side
-            if (left + popoverRect.width > viewportWidth) {
-                left = event.pageX - popoverRect.width - 15; // Shift the popover to the left
-            }
-
-            // Adjust positioning if the popover would overflow the left side (if shifted left)
-            if (left < 0) {
-                left = 15; // Prevent the popover from going off the left edge of the screen
-            }
-
-            // Adjust positioning if the popover would overflow the bottom side
-            if (top + popoverRect.height > viewportHeight) {
-                top = viewportHeight - popoverRect.height - 15; // Adjust top position
-            }
-
-            // Apply the calculated position
-            popover.style.left = `${left}px`;
-            popover.style.top = `${top}px`;
-        }
-
-
-
-
-
-        // Function to move the popover, constrained within the svg_container
-        function movePopover(event, popover, container) {
-            // const containerRect = container.getBoundingClientRect(); // Get container bounds
             // const popoverRect = popover.getBoundingClientRect(); // Get popover size
-            // const offsetX = 15; // Offset to prevent popover from being directly under the cursor
-            // const offsetY = 15;
-
-            // // Calculate potential new position
-            // let left = event.clientX - containerRect.left + offsetX;
-            // let top = event.clientY - containerRect.top + offsetY;
-
-            // // Get viewport/window dimensions
             // const viewportWidth = window.innerWidth;
             // const viewportHeight = window.innerHeight;
 
-            // // Adjust positioning to prevent overflow from right boundary of the window
-            // if (event.clientX + popoverRect.width + offsetX > viewportWidth) {
-            //     left = event.clientX - containerRect.left - popoverRect.width - offsetX; // Move to the left side of cursor
+            // Adjust positioning if the popover would overflow the right side
+            // if (left + popoverRect.width > viewportWidth) {
+            //     left = event.pageX - popoverRect.width - 15; // Shift the popover to the left
             // }
 
-            // // Adjust positioning to prevent overflow from bottom boundary of the window
-            // if (event.clientY + popoverRect.height + offsetY > viewportHeight) {
-            //     top = event.clientY - containerRect.top - popoverRect.height - offsetY; // Move above the cursor
+            // // Adjust positioning if the popover would overflow the left side (if shifted left)
+            // if (left < 0) {
+            //     left = 15; // Prevent the popover from going off the left edge of the screen
             // }
 
-            // // Apply the calculated position
+            // // Adjust positioning if the popover would overflow the bottom side
+            // if (top + popoverRect.height > viewportHeight) {
+            //     top = viewportHeight - popoverRect.height - 15; // Adjust top position
+            // }
+
+            // Apply the calculated position
             // popover.style.left = `${left}px`;
             // popover.style.top = `${top}px`;
         }
-
 
         // Function to hide the popover when mouse leaves the path
         function hidePopover(popover) {
