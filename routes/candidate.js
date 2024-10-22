@@ -21,12 +21,42 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 router.get('/', async (req, res, next) => {
   try {
-    const candidates = await Candidate.find({}).populate('party');
+    let candidates;
+
+    // Check if the search query string is provided
+    if (req.query.search) {
+      candidates = await Candidate.find({ $text: { $search: req.query.search } })
+        .populate('party') // Populating party details
+        .populate('constituency'); // Populating constituency details
+      return res.json(candidates);
+    }
+
+    // Check if the constituency query string is provided (searching by constituency name)
+    if (req.query.constituency) {
+      const constituency = await Constituency.findOne({ name: req.query.constituency });
+      if (!constituency) {
+        return res.status(404).json({ message: 'Constituency not found' });
+      }
+
+      candidates = await Candidate.find({ constituency: String(constituency._id) })
+        .populate('party') // Populating party details
+        .populate('constituency'); // Populating constituency details
+
+        console.log(candidates);
+      return res.json(candidates);
+    }
+
+    // If no search or constituency query is provided, return all candidates
+    candidates = await Candidate.find({})
+      .populate('party') // Populating party details
+      .populate('constituency'); // Populating constituency details
     res.json(candidates);
+
   } catch (error) {
     next(error);
   }
 });
+
 
 // Get single candidate by ID with error handling enabled
 router.get('/:id', async (req, res, next) => {
