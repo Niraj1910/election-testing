@@ -80,71 +80,94 @@ router.delete('/:id', async (req, res) => {
 
 // route with /state/:id 
 router.get('/state/:name', async (req, res) => {
-    try {
-      const elections = await AssemblyElection.findOne({ state: req.params.name })
-        .populate({
-          path: 'constituencies',
+  try {
+    console.log(req.params.name);
+    
+    const elections = await AssemblyElection.findOne({ state: req.params.name })
+      .populate({
+        path: 'constituencies',
+        populate: {
+          path: 'candidates',
+          model: 'Candidate',
           populate: {
-            path: 'candidates',
-            model: 'Candidate',
-            populate: {
-              path: 'party',
-              model: 'Party',
-            },
+            path: 'party',
+            model: 'Party',
           },
-        });
-  
-      if (!elections) return res.status(404).send('No elections found in this state');
-  
-      const constituencies = [];
-  
-      // Extract leading candidates and their party colors in each constituency
-      elections.constituencies.forEach((constituency) => {
-        // Find the leading candidate by totalVotes
-        const leadingCandidate = constituency.candidates.reduce((prev, current) =>
-          prev.totalVotes > current.totalVotes ? prev : current
-        );
-  
-        // If no leading candidate, default to null values
-        const leadingPartyColor = leadingCandidate ? leadingCandidate.party.color_code : null;
-  
-        // Create a simplified version of the constituency object
-        constituencies.push({
-          _id: constituency._id, // Keeping only necessary fields
-          name: constituency.name,
-          state: constituency.state,
-          totalVotes: constituency.totalVotes,
-          color: leadingPartyColor,
-          leadingCandidate: leadingCandidate
-            ? {
-                _id: leadingCandidate._id,
-                name: leadingCandidate.name,
-                totalVotes: leadingCandidate.totalVotes,
-                party: {
-                  _id: leadingCandidate.party._id,
-                  party: leadingCandidate.party.party,
-                  color_code: leadingPartyColor,
-                  party_logo: leadingCandidate.party.party_logo,
-                },
-              }
-            : null,
-        });
+        },
       });
-  
-      res.json({
-        state: elections.state,
-        year: elections.year,
-        total_seat: elections.total_seat,
-        total_votes: elections.total_votes,
-        total_candidate: elections.total_candidate,
-        constituency: constituencies,
+
+    if (!elections) return res.status(404).send('No elections found in this state');
+
+    const constituencies = [];
+
+    // Extract leading and trailing candidates and their party colors in each constituency
+    elections.constituencies.forEach((constituency) => {
+      // Check if candidates array is not empty before using reduce
+      const highestVoteCandidate = constituency.candidates.length > 0 
+        ? constituency.candidates.reduce((prev, current) =>
+            prev.totalVotes > current.totalVotes ? prev : current
+          )
+        : null; // Set to null if no candidates
+
+      const lowestVoteCandidate = constituency.candidates.length > 0 
+        ? constituency.candidates.reduce((prev, current) =>
+            prev.totalVotes < current.totalVotes ? prev : current
+          )
+        : null; // Set to null if no candidates
+
+      // If no leading candidate, default to null values
+      const leadingPartyColor = highestVoteCandidate ? highestVoteCandidate.party.color_code : null;
+      const trailingPartyColor = lowestVoteCandidate ? lowestVoteCandidate.party.color_code : null;
+
+      // Create a simplified version of the constituency object
+      constituencies.push({
+        _id: constituency._id, // Keeping only necessary fields
+        name: constituency.name,
+        state: constituency.state,
+        totalVotes: constituency.totalVotes,
+        color: leadingPartyColor,
+        leadingCandidate: highestVoteCandidate
+          ? {
+              _id: highestVoteCandidate._id,
+              name: highestVoteCandidate.name,
+              totalVotes: highestVoteCandidate.totalVotes,
+              party: {
+                _id: highestVoteCandidate.party._id,
+                party: highestVoteCandidate.party.party,
+                color_code: leadingPartyColor,
+                party_logo: highestVoteCandidate.party.party_logo,
+              },
+            }
+          : null,
+        trailingCandidate: lowestVoteCandidate
+          ? {
+              _id: lowestVoteCandidate._id,
+              name: lowestVoteCandidate.name,
+              totalVotes: lowestVoteCandidate.totalVotes,
+              party: {
+                _id: lowestVoteCandidate.party._id,
+                party: lowestVoteCandidate.party.party,
+                color_code: trailingPartyColor,
+                party_logo: lowestVoteCandidate.party.party_logo,
+              },
+            }
+          : null,
       });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Server Error');
-    }
-  });
-  
-  
+    });
+
+    res.json({
+      state: elections.state,
+      year: elections.year,
+      total_seat: elections.total_seat,
+      total_votes: elections.total_votes,
+      total_candidate: elections.total_candidate,
+      constituency: constituencies,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 module.exports = router;

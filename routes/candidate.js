@@ -19,39 +19,51 @@ const storage = multer.diskStorage({
   });
   
 const upload = multer({ storage });
-router.get('/', async (req, res, next) => {
+router.put('/:id', upload.single('image'), async (req, res, next) => {
   try {
-    let candidates;
+    const existingCandidate = await Candidate.findById(req.params.id);
+    if (!existingCandidate) return res.status(404).send('Candidate not found');
+    
+    // Prepare candidate updates
+    const candidateUpdates = {
+      name: req.body.name,
+      party: req.body.party,
+      age: req.body.age,
+      gender: req.body.gender,
+      totalVotes: req.body.totalVotes,
+      constituency: req.body.constituency || existingCandidate.constituency, // Assuming this comes as an array of constituency IDs
+      image: req.file ? getFullImagePath(req, 'candidates') : req.body.image || existingCandidate.image,
+    };
 
-    // Check if the search query string is provided
-    if (req.query.search) {
-      candidates = await Candidate.find({ $text: { $search: req.query.search } })
-        .populate('party') // Populating party details
-        .populate('constituency'); // Populating constituency details
-      return res.json(candidates);
-    }
+    // Update the candidate
+    const candidate = await Candidate.findByIdAndUpdate(req.params.id, candidateUpdates, { new: true });
 
-    // Check if the constituency query string is provided (searching by constituency name)
-    if (req.query.constituency) {
-      const constituency = await Constituency.findOne({ name: req.query.constituency });
-      if (!constituency) {
-        return res.status(404).json({ message: 'Constituency not found' });
+    // Update constituencies
+    const currentConstituencyIds = existingCandidate.constituency.map(c => c.toString());
+    const newConstituencyIds = Array.isArray(req.body.constituency) ? req.body.constituency : [req.body.constituency];
+
+    // Remove candidate from constituencies no longer assigned
+    const constituenciesToRemove = currentConstituencyIds.filter(id => !newConstituencyIds.includes(id));
+    for (const id of constituenciesToRemove) {
+      const constituency = await Constituency.findById(id);
+      if (constituency) {
+        constituency.candidates = constituency.candidates.filter(candidateId => !candidateId.equals(candidate._id));
+        await constituency.save();
       }
-
-      candidates = await Candidate.find({ constituency: String(constituency._id) })
-        .populate('party') // Populating party details
-        .populate('constituency'); // Populating constituency details
-
-        console.log(candidates);
-      return res.json(candidates);
     }
 
-    // If no search or constituency query is provided, return all candidates
-    candidates = await Candidate.find({})
-      .populate('party') // Populating party details
-      .populate('constituency'); // Populating constituency details
-    res.json(candidates);
+    // Add candidate to new constituencies
+    for (const id of newConstituencyIds) {
+      const constituency = await Constituency.findById(id);
+      if (constituency) {
+        if (!constituency.candidates.includes(candidate._id)) {
+          constituency.candidates.push(candidate._id);
+          await constituency.save();
+        }
+      }
+    }
 
+    res.json(candidate);
   } catch (error) {
     next(error);
   }
@@ -71,84 +83,115 @@ router.get('/:id', async (req, res, next) => {
 
 // Add a new candidate with error handling enabled
 router.post('/', upload.single('image'), async (req, res, next) => {
-    try {
-      const candidateData = {
-        name: req.body.name,
-        party: req.body.party,
-        totalVotes: req.body.totalVotes,
-        age: req.body.age,
-        gender: req.body.gender,
-        image: req.file ? getFullImagePath(req, 'candidates') : null,
-        constituency: req.body.constituency,
-      };
+  try {
+    let constituencyIds = Array.isArray(req.body.constituency) 
+      ? req.body.constituency 
+      : req.body.constituency ? [req.body.constituency] : [];
 
-      let existingConstituency;
+    const candidateData = {
+      name: req.body.name,
+      party: req.body.party,
+      totalVotes: req.body.totalVotes,
+      age: req.body.age,
+      gender: req.body.gender,
+      image: req.file ? getFullImagePath(req, 'candidates') : null,
+      constituency: constituencyIds, // Now it's already an array
+    };
 
-      if(candidateData.constituency){
-        existingConstituency = await Constituency.findById(candidateData.constituency);
-        if (!existingConstituency) {
-          return res.status(404).send('Constituency is Invalid');
-        }
+    const validConstituencies = [];
+
+    // Validate each constituency ID
+    for (const id of candidateData.constituency) {
+      const existingConstituency = await Constituency.findById(id);
+      if (!existingConstituency) {
+        return res.status(404).send(`Constituency with ID ${id} is invalid`);
       }
-      const candidate = new Candidate({
-        name: candidateData.name,
-        party: candidateData.party,
-        totalVotes: candidateData.totalVotes,
-        age: candidateData.age,
-        gender: candidateData.gender,
-        image: candidateData.image,
-        constituency: candidateData.constituency || null,
-      });
-      const newCandidate = await candidate.save();
-      if(existingConstituency){
-        existingConstituency.candidates.push(newCandidate._id);
-        await existingConstituency.save();
-      }
-      res.redirect(`/candidates`);
-    } catch (error) {
-      next(error);
+      validConstituencies.push(existingConstituency._id); // Store valid constituency IDs
     }
-  });
+
+    const candidate = new Candidate({
+      name: candidateData.name,
+      party: candidateData.party,
+      totalVotes: candidateData.totalVotes,
+      age: candidateData.age,
+      gender: candidateData.gender,
+      image: candidateData.image,
+      constituency: validConstituencies, // Store valid constituencies
+    });
+
+    const newCandidate = await candidate.save();
+
+    // Update each constituency with the new candidate's ID
+    for (const id of validConstituencies) {
+      const constituency = await Constituency.findById(id);
+      constituency.candidates.push(newCandidate._id); // Add new candidate ID to the constituency's candidates array
+      await constituency.save();
+    }
+
+    res.redirect(`/candidates`);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 // Update a candidate by ID with error handling enabled
 router.put('/:id', upload.single('image'), async (req, res, next) => {
-    try {
-      // Find the existing candidate
-      const existingCandidate = await Candidate.findById(req.params.id);
-      if (!existingCandidate) return res.status(404).send('Candidate not found');
-  
-      // Prepare the candidate updates
-      const candidateUpdates = {
-        name: req.body.name,
-        party: req.body.party,
-        age: req.body.age,
-        gender: req.body.gender,
-        totalVotes: req.body.totalVotes,
-        constituency: req.body.constituency || existingCandidate.constituency, // Update constituency if provided in the request body, else keep it as it is.
-        image: req.file ? getFullImagePath(req, 'candidates') : req.body.image || existingCandidate.image,
-      };
-  
-      // Update the candidate
-      const candidate = await Candidate.findByIdAndUpdate(req.params.id, candidateUpdates, { new: true });
+  try {
+    // Find the existing candidate
+    const existingCandidate = await Candidate.findById(req.params.id);
+    if (!existingCandidate) return res.status(404).send('Candidate not found');
 
-      if(req.body.constituency){
-        const existingConstituency = await Constituency.findById(candidateUpdates.constituency);
-        if (!existingConstituency) {
-          return res.status(404).send('Constituency is Invalid');
+    // Prepare the candidate updates
+    const candidateUpdates = {
+      name: req.body.name,
+      party: req.body.party,
+      age: req.body.age,
+      gender: req.body.gender,
+      totalVotes: req.body.totalVotes,
+      constituency: req.body.constituency,
+      image: req.file ? getFullImagePath(req, 'candidates') : req.body.image || existingCandidate.image,
+    };
+
+    // Update the candidate
+    const candidate = await Candidate.findByIdAndUpdate(req.params.id, candidateUpdates, { new: true });
+
+    // Update constituencies if provided
+    if (Array.isArray(req.body.constituency)) {
+      // Fetch the current constituencies from the existing candidate
+      const currentConstituencyIds = existingCandidate.constituency.map(c => c.toString());
+
+      // Update each constituency
+      for (const constituencyId of req.body.constituency) {
+        const constituency = await Constituency.findById(constituencyId);
+        if (!constituency) {
+          return res.status(404).send(`Constituency with ID ${constituencyId} is invalid`);
         }
-        existingConstituency.candidates.includes(
-          candidate._id
-        )
-         ? existingConstituency.candidates.splice(existingConstituency.candidates.indexOf(candidate._id), 1)
-         : existingConstituency.candidates.push(candidate._id);
-         await existingConstituency.save();
+
+        // Check if candidate is already in the constituency
+        if (!constituency.candidates.includes(candidate._id)) {
+          constituency.candidates.push(candidate._id); // Add candidate to constituency
+        }
+        await constituency.save();
       }
-      res.json(candidate);
-    } catch (error) {
-      next(error);
+
+      // Remove candidate from constituencies not included in the new list
+      const constituenciesToRemove = currentConstitencyIds.filter(id => !req.body.constituency.includes(id));
+      for (const id of constituenciesToRemove) {
+        const constituency = await Constituency.findById(id);
+        if (constituency) {
+          constituency.candidates = constituency.candidates.filter(candidateId => !candidateId.equals(candidate._id)); // Remove candidate from constituency
+          await constituency.save();
+        }
+      }
     }
-  });
-  
+
+    res.json(candidate);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 // Delete a candidate by ID with error handling enabled
 router.delete('/:id', async (req, res, next) => {
@@ -160,5 +203,51 @@ router.delete('/:id', async (req, res, next) => {
     next(error);
   }
 });
+
+// Get all candidates with error handling enabled
+router.get('/', async (req, res, next) => {
+  try {
+    // Extract the constituency query parameter
+    const { constituency } = req.query;
+
+    if (constituency) {
+      const constituencies = await Constituency.find({ name: { "$regex": constituency, "$options": "i" } }) // Added case-insensitive search
+        .populate({
+          path: 'candidates',
+          model: 'Candidate',
+          populate: [
+            {
+              path: 'party',  // Populate party for each candidate
+              model: 'Party',
+            },
+            {
+              path: 'constituency',  // Populate constituency for each candidate
+              model: 'Constituency',
+            },
+          ],
+        });
+
+      // Check if any constituencies were found
+      if (constituencies.length === 0) {
+        return res.json({ candidates: [] });
+      }
+
+      // Sort candidates by totalVotes in descending order
+      const sortedCandidates = constituencies[0].candidates.sort((a, b) => b.totalVotes - a.totalVotes); // Sort in descending order
+
+      return res.json(sortedCandidates);
+    }
+
+    // If no constituency is provided, fetch all candidates and populate their party and constituency
+    const candidates = await Candidate.find()
+      .populate('party constituency')
+      .sort({ totalVotes: -1 }); // Sort by totalVotes in descending order
+
+    res.json(candidates);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 module.exports = router;

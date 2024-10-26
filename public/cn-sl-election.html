@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Carousel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .carousel-container {
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .carousel {
+            height: 500px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            width: 300px;
+            position: absolute;
+            left: 50%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .card.active {
+            transform: translateX(-50%) scale(1);
+            z-index: 3;
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .card.prev {
+            transform: translateX(-150%) scale(0.85);
+            z-index: 2;
+            visibility: visible;
+            opacity: 0.7;
+        }
+
+        .card.next {
+            transform: translateX(50%) scale(0.85);
+            z-index: 2;
+            visibility: visible;
+            opacity: 0.7;
+        }
+
+        .party-header {
+            height: 80px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+        }
+
+        .profile-circle {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            bottom: -40px;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .profile-circle svg {
+            width: 40px;
+            height: 40px;
+            color: #666;
+        }
+
+        .card-content {
+            padding: 50px 20px 20px;
+            text-align: center;
+        }
+
+        .candidate-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .candidate-details {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .party-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .constituency-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .constituency-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .constituency-state {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #f8f9fa;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-button.prev {
+            left: 20px;
+        }
+
+        .nav-button.next {
+            right: 20px;
+        }
+
+        .nav-button svg {
+            width: 20px;
+            height: 20px;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .carousel {
+                height: 450px;
+            }
+
+            .card {
+                width: 280px;
+            }
+
+            .card.prev {
+                transform: translateX(-120%) scale(0.85);
+            }
+
+            .card.next {
+                transform: translateX(20%) scale(0.85);
+            }
+
+            .nav-button {
+                width: 36px;
+                height: 36px;
+            }
+
+            .nav-button.prev {
+                left: 10px;
+            }
+
+            .nav-button.next {
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card.prev,
+            .card.next {
+                visibility: hidden;
+                opacity: 0;
+            }
+
+            .nav-button {
+                top: auto;
+                bottom: 20px;
+            }
+
+            .nav-button.prev {
+                left: 50%;
+                transform: translateX(-60px);
+            }
+
+            .nav-button.next {
+                right: 50%;
+                transform: translateX(60px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="card-wrapper" id="cardWrapper">
+                <!-- Cards will be inserted here by JavaScript -->
+            </div>
+        </div>
+        
+        <button class="nav-button prev" id="prevBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button class="nav-button next" id="nextBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        let candidates = [
+            {
+                name: "Mohan",
+                age: 55,
+                gender: "Male",
+                party: {
+                    party: "JMM",
+                    color_code: "#004B1F",
+                    votes_percentage: 67
+                },
+                totalVotes: 38045763457,
+                constituency: [{
+                    name: "Simaria",
+                    state: "Jharkhand"
+                }]
+            },
+            {
+                name: "Rahul",
+                age: 45,
+                gender: "Male",
+                party: {
+                    party: "INC",
+                    color_code: "#0078D4",
+                    votes_percentage: 58
+                },
+                totalVotes: 28045763457,
+                constituency: [{
+                    name: "Ranchi",
+                    state: "Jharkhand"
+                }]
+            },
+            {
+                name: "Priya",
+                age: 42,
+                gender: "Female",
+                party: {
+                    party: "BJP",
+                    color_code: "#FF9933",
+                    votes_percentage: 62
+                },
+                totalVotes: 32045763457,
+                constituency: [{
+                    name: "Dhanbad",
+                    state: "Jharkhand"
+                }]
+            }
+        ];
+
+        async function getCandidates(){
+            try {
+                const response = await fetch('/api/candidate');
+                const data = await response.json();
+                candidates = data;
+            } catch (error) {
+                candidates = [];
+            }
+        }
+
+        function createCard(candidate) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            card.innerHTML = `
+                <div class="party-header" style="background-color: ${candidate.party.color_code}">
+                    <div class="profile-circle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3 class="candidate-name">${candidate.name}</h3>
+                    <p class="candidate-details">${candidate.age} years • ${candidate.gender}</p>
+                    <span class="party-badge" style="background-color: ${candidate.party.color_code}">
+                        ${candidate.party.party}
+                    </span>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Vote Share</div>
+                            <div class="stat-value">${candidate.party.votes_percentage}%</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Total Votes</div>
+                            <div class="stat-value">${formatNumber(candidate.totalVotes)}</div>
+                        </div>
+                    </div>
+                    <div class="constituency-box">
+                        <div class="constituency-name">${candidate.constituency[0].name}</div>
+                        <div class="constituency-state">${candidate.constituency[0].state}</div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-IN', {
+                notation: 'compact',
+                compactDisplay: 'short',
+                maximumFractionDigits: 1
+            }).format(num);
+        }
+
+        let currentIndex = 0;
+        const cardWrapper = document.getElementById('cardWrapper');
+
+        function updateCarousel() {
+            cardWrapper.innerHTML = '';
+            
+            candidates.forEach((candidate, index) => {
+                const card = createCard(candidate);
+                
+                if (index === currentIndex) {
+                    card.classList.add('active');
+                } else if (index === currentIndex - 1 || (currentIndex === 0 && index === candidates.length - 1)) {
+                    card.classList.add('prev');
+                } else if (index === currentIndex + 1 || (currentIndex === candidates.length - 1 && index === 0)) {
+                    card.classList.add('next');
+                }
+                
+                cardWrapper.appendChild(card);
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + candidates.length) % candidates.length;
+            updateCarousel();
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % candidates.length;
+            updateCarousel();
+        });
+
+        // Initialize carousel
+        updateCarousel();
+
+        // Handle touch events for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const swipeLength = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeLength) > swipeThreshold) {
+                if (swipeLength > 0) {
+                    document.getElementById('prevBtn').click();
+                } else {
+                    document.getElementById('nextBtn').click();
+                }
+            }
+        }
+
+        getCandidates();
+    </script>
+</body>
+</html>

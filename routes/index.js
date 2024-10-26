@@ -225,5 +225,49 @@ router.get('/assembly-election', async function(req, res, next) {
   }
 });
 
+router.get('/cons-candidates', async function(req, res, next) {
+  try {
+    const constituencies = await Constituency.find();
+    const parties = await Party.find();
+
+    if (req.query.cons) {
+      // Find constituency by name (case-insensitive) and fetch candidates associated with it
+      const constituency = await Constituency.findOne({ name: { $regex: req.query.cons, $options: 'i' } });
+
+      // If the constituency does not exist, render empty candidates array
+      const candidates = constituency 
+        ? await Candidate.find({ constituency: constituency._id })
+            .populate('party')
+            .sort({ totalVotes: -1 }) // Sort candidates by totalVotes in descending order
+        : [];
+      
+      return res.render('cons-candidates.ejs', {
+        candidates,
+        constituencies,
+        parties,
+        selectedCons: req.query.cons, // Pass selected constituency name to the template
+      });
+    }
+
+    // Render with all candidates if no constituency selected
+    const candidates = await Candidate.find()
+      .populate('party')
+      .sort({ totalVotes: -1 }); // Sort all candidates by totalVotes in descending order
+
+    res.render('cons-candidates.ejs', {
+      candidates,
+      constituencies,
+      parties,
+      selectedCons: '', // No constituency selected by default
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Error fetching candidates.');
+  }
+});
+
+
+
+
 
 module.exports = router;

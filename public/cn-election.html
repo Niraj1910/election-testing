@@ -1,398 +1,424 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contesting Candidates</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .election-table-container {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 20px auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 0 10px;
+      max-height: 400px;
+      width: 100%;
+      overflow: scroll;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            padding: 20px;
-        }
+    .election-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+    }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
+    .election-table th {
+      background-color: #f8f9fa;
+      color: #374151;
+      font-weight: 600;
+      padding: 16px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 2px solid #e5e7eb;
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #800000;
-        }
+    .election-table td {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #1f2937;
+      font-size: 14px;
+      background-color: white;
+    }
 
-        .table {
-            width: 100%;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            /* Added for rounded corners */
-        }
+    .main-row:hover {
+      background-color: #f9fafb;
+      cursor: pointer;
+    }
 
-        .header {
-            display: flex;
-            background-color: #ccc;
-            padding: 15px;
-            font-weight: bold;
-        }
+    .candidate-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .candidate-column {
-            flex: 2;
-            text-align: left;
-        }
+    .candidate-avatar {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      background-color: #e5e7eb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
 
-        .party-column {
-            flex: 1;
-            text-align: right;
-        }
+    .candidate-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-        .candidate-row {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
+    .candidate-details {
+      display: flex;
+      flex-direction: column;
+    }
 
-        .candidate-row:hover {
-            background-color: #f0f0f0;
-        }
+    .candidate-name {
+      font-weight: 600;
+      color: #111827;
+    }
 
-        .candidate-info {
-            flex: 2;
-            display: flex;
-            align-items: center;
-        }
+    .candidate-meta {
+      color: #6b7280;
+      font-size: 12px;
+    }
 
-        .candidate-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
+    .party-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 12px;
+      color: white;
+      white-space: nowrap;
+    }
 
-        .party-logo {
-            flex: 1;
-            text-align: right;
-        }
+    .expand-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
 
-        .party-logo img {
-            width: 40px;
-            height: 40px;
-        }
+    .expand-button:hover {
+      background-color: #f3f4f6;
+    }
 
-        .candidate-details {
-            display: none;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ccc;
-        }
+    .expand-icon {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.2s;
+    }
 
-        .candidate-details.active {
-            display: block;
-        }
+    .expanded-row {
+      display: none;
+    }
 
-        /* Search Input Styles */
-        .search-container {
-            display: flex;
-            position: relative;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
+    .expanded-row.active {
+      display: table-row;
+    }
 
-        .search-container input {
-            width: 48%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
+    .expanded-content {
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
 
-        .search-container input:focus {
-            border-color: #800000;
-        }
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
 
-        .dropdown-list {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: white;
-            z-index: 100;
-            display: none;
-            /* Hidden initially */
-        }
+    .detail-section {
+      background-color: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-        .dropdown-list.active {
-            display: block;
-            /* Show dropdown when active */
-        }
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 12px;
+    }
 
-        .dropdown-list div {
-            padding: 10px;
-            cursor: pointer;
-        }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+    }
 
-        .dropdown-list div:hover {
-            background-color: #f0f0f0;
-        }
+    .stat-item {
+      padding: 8px;
+      background-color: #f9fafb;
+      border-radius: 6px;
+    }
 
-        .selected {
-            background-color: #dcdcdc;
-            font-weight: bold;
-        }
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
 
+    .stat-value {
+      font-weight: 600;
+      color: #111827;
+      font-size: 14px;
+      word-break: break-word;
+    }
 
+    .percentage-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      background-color: #ecfdf5;
+      color: #047857;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+    }
 
-        /* Styles for collapsible details */
-        .candidate-details {
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 10px;
-            background-color: #f9f9f9;
-        }
+    @media (max-width: 768px) {
+      .election-table-container {
+        border-radius: 8px;
+        padding: 0;
+      }
 
-        .candidate-details p {
-            margin: 5px 0;
-        }
+      .election-table th,
+      .election-table td {
+        padding: 12px 8px;
+      }
 
-        .candidate-details strong {
-            color: #800000;
-        }
+      .hide-mobile {
+        display: none;
+      }
 
-        /* Keep existing styles above, then add the following styles */
+      .party-badge {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
 
-        /* Fixed height for candidate list with scroll */
-        .candidates-list {
-            max-height: 400px;
-            /* Fixed height */
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            transition: max-height 0.3s ease;
-            /* Smooth transition for expanding */
-        }
+      .candidate-avatar {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+      }
 
-        /* Improved styles for candidate details */
-        .candidate-details {
-            display: none;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ccc;
-            animation: fadeIn 0.3s ease;
-            /* Animation for details */
-        }
+      .candidate-name {
+        font-size: 13px;
+      }
 
-        /* Keyframes for fade-in effect */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
+      .candidate-meta {
+        font-size: 11px;
+      }
 
-            to {
-                opacity: 1;
-            }
-        }
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
 
-        /* Adjustments for mobile screens */
-        @media (max-width: 600px) {
-            .candidate-info {
-                /* Stack elements on mobile */
-                align-items: center;
-                /* Align to the left */
-            }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
 
-            .candidate-info img {
-                margin-bottom: 10px;
-                /* Space below image */
-            }
+      .expanded-content {
+        padding: 12px 8px;
+      }
 
-            .candidate-row {
-                /* Stack rows */
-                padding: 10px;
-                /* Add padding */
-            }
+      .expand-button {
+        padding: 4px;
+      }
 
-            .party-logo {
-                margin-top: 10px;
-                /* Space above party logo */
-            }
+      .expand-icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+    .election-table-container {
+        border-radius: 8px;
+        padding: 0;
+      }
 
-            .party-logo img {
-                max-width: 100%;
-                /* Ensure logo fits within mobile */
-                height: auto;
-                /* Maintain aspect ratio */
-            }
-            .search-container input {
-                width: 100%;
-            }
-        }
-    </style>
+      .election-table th,
+      .election-table td {
+        padding: 12px 8px;
+      }
+
+      .hide-mobile {
+        display: none;
+      }
+
+      .party-badge {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+
+      .candidate-avatar {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+      }
+
+      .candidate-name {
+        font-size: 13px;
+      }
+
+      .candidate-meta {
+        font-size: 11px;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .expanded-content {
+        padding: 12px 8px;
+      }
+
+      .expand-button {
+        padding: 4px;
+      }
+
+      .expand-icon {
+        width: 16px;
+        height: 16px;
+      }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Contesting Candidates</h1>
 
-        <!-- Search inputs -->
-        <div class="search-container">
-            <input type="text" id="search-constituency" placeholder="Search by constituency">
-            <div id="constituency-dropdown" class="dropdown-list"></div> <!-- Dropdown for constituency search -->
-        </div>
+  <div class="election-table-container">
+    <table class="election-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Candidate</th>
+          <th>Party</th>
+          <th class="hide-mobile">Vote Share</th>
+          <th>Total Votes</th>
+        </tr>
+      </thead>
+      <tbody id="candidatesTableBody">
+        <!-- Data will be dynamically inserted here -->
+      </tbody>
+    </table>
+  </div>
 
-        <div class="table">
-            <div class="header">
-                <div class="candidate-column">Candidate</div>
-                <div class="party-column">Party</div>
-            </div>
-            <div class="candidates-list" id="candidates-list">
-                <!-- Candidate rows will be populated here dynamically -->
-            </div>
-        </div>
-    </div>
+  <script>
+    let candidatesData = [];
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const candidatesList = document.getElementById('candidates-list');
-            const searchConstituencyInput = document.getElementById('search-constituency');
-            const constituencyDropdown = document.getElementById('constituency-dropdown');
+    function createCandidateRow(candidate) {
+      const candidateImgUrl = candidate.image || "https://s3.amazonaws.com/37assets/svn/765-default-avatar.png";
+      return `
+        <tr class="main-row" onclick="toggleRow('${candidate._id}')">
+            <td>
+                <button class="expand-button">
+                    <svg class="expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </td>
+            <td>
+                <div class="candidate-info">
+                    <div class="candidate-avatar">
+                        <img src="${candidateImgUrl}" alt="${candidate.name}">
+                    </div>
+                    <div class="candidate-details">
+                        <span class="candidate-name">${candidate.name}</span>
+                        <span class="candidate-meta">${candidate.age} years • ${candidate.gender}</span>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="party-badge" style="background-color: ${candidate.party.color_code}">
+                    ${candidate.party.party}
+                </div>
+            </td>
+            <td class="hide-mobile">
+                <span class="percentage-badge">${candidate.party.votes_percentage}%</span>
+            </td>
+            <td>${candidate.totalVotes}</td>
+        </tr>
+        <tr id="expandedRow${(candidate._id).toString()}" class="expanded-row">
+            <td colspan="5">
+                <div class="expanded-content">
+                    <div class="details-grid">
+                        <div class="detail-section">
+                            <div class="section-title">Constituency Details</div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-label">Constituency</div>
+                                    <div class="stat-value">${candidate.constituency[0].name}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">State</div>
+                                    <div class="stat-value">${candidate.constituency[0].state}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Total Votes</div>
+                                    <div class="stat-value">${candidate.constituency[0].totalVotes}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-section">
+                            <div class="section-title">Party Details</div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-label">Total Seats</div>
+                                    <div class="stat-value">${candidate.party.total_seat}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Party Votes</div>
+                                    <div class="stat-value">${candidate.party.total_votes}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Vote Share</div>
+                                    <div class="stat-value">${candidate.party.votes_percentage}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+    }
 
-            let candidatesData = [];
-            let constituencies = [];
+    async function renderCandidates() {
+      await getCandidates();
+      const tableBody = document.getElementById('candidatesTableBody');
+      tableBody.innerHTML = candidatesData.map(candidate => createCandidateRow(candidate)).join('');
+    }
 
-            // Fetch constituencies from the API
-            fetch('/api/constituency')
-                .then(response => response.json())
-                .then(data => {
-                    constituencies = data; // Store the fetched constituency data
-                })
-                .catch(error => {
-                    console.error('Error fetching constituency data:', error);
-                });
+    function toggleRow(rowId) {
+      console.log(rowId);
+      const expandedRow = document.getElementById(`expandedRow${rowId}`);
+      const button = expandedRow.previousElementSibling.querySelector('.expand-icon');
 
-            // Fetch and render candidates
-            function fetchCandidates(query = '') {
-                fetch(`/api/candidate${query}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        candidatesData = data;
-                        renderCandidates(candidatesData);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching candidate data:', error);
-                    });
-            }
+      expandedRow.classList.toggle('active');
+      button.style.transform = expandedRow.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
+    }
 
-            // Initial fetch without search
-            fetchCandidates();
+    // Initialize the table with data
+    renderCandidates();
 
-            // Function to render candidates
-            function renderCandidates(candidates) {
-                candidatesList.innerHTML = ''; // Clear previous content
-                if(candidates.length <= 0){
-                    candidatesList.innerHTML = 'NOT FOUND'; 
-                }
-                candidates.forEach(candidate => {
-                    const candidateRow = document.createElement('div');
-                    candidateRow.classList.add('candidate-row');
+    async function getCandidates() {
+      const response = await fetch('/api/candidate');
+      const candidatesList = await response.json();
+      candidatesData = candidatesList;
+    }
 
-                    const candidateInfo = document.createElement('div');
-                    candidateInfo.classList.add('candidate-info');
-                    candidateInfo.innerHTML = `
-                        <img src="${candidate.image || 'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png'}" alt="Candidate Image">
-                        <span>${candidate.name} (${candidate.party.party})</span>
-                    `;
+  </script>
 
-                    const partyLogo = document.createElement('div');
-                    partyLogo.classList.add('party-logo');
-                    partyLogo.innerHTML = `<img src="${candidate.party.party_logo || 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ='}" alt="Party Logo">`;
-
-                    candidateRow.appendChild(candidateInfo);
-                    candidateRow.appendChild(partyLogo);
-
-                    // Create collapsible section for additional details
-                    const candidateDetails = document.createElement('div');
-                    candidateDetails.classList.add('candidate-details');
-                    candidateDetails.innerHTML = `
-                        <p><strong>Constituency:</strong> ${candidate.constituency.name || 'N/A'}</p>
-                        <p><strong>Age:</strong> ${candidate.age || 'N/A'}</p>
-                        <p><strong>Gender:</strong> ${candidate.gender || 'N/A'}</p>
-                        <p><strong>Total Votes:</strong> ${candidate.totalVotes || 'N/A'}</p>
-                        <p><strong>Party Name:</strong> ${candidate.party.party || 'N/A'}</p>
-                    `;
-
-                    // Toggle details on click
-                    candidateRow.addEventListener('click', () => {
-                        candidateDetails.classList.toggle('active'); // Toggle visibility
-                        candidateDetails.style.display = candidateDetails.classList.contains('active') ? 'block' : 'none'; // Show/hide details
-                    });
-
-                    candidatesList.appendChild(candidateRow);
-                    candidatesList.appendChild(candidateDetails); // Append details after each row
-                });
-            }
-
-            // Event listener for constituency search input
-            searchConstituencyInput.addEventListener('input', () => {
-                const query = searchConstituencyInput.value.toLowerCase();
-                if (query) {
-                    // Filter constituencies based on the query
-                    const filteredConstituencies = constituencies.filter(cons =>
-                        cons.name.toLowerCase().includes(query)
-                    );
-
-                    // Render the dropdown with filtered constituencies
-                    renderConstituencyDropdown(filteredConstituencies);
-                } else {
-                    constituencyDropdown.classList.remove('active'); // Hide dropdown if no input
-                    fetchCandidates(); // Fetch all candidates when input is cleared
-                }
-            });
-
-            // Function to render constituency dropdown
-            function renderConstituencyDropdown(constituencies) {
-                constituencyDropdown.innerHTML = '';
-                constituencyDropdown.classList.add('active');
-
-                constituencies.forEach(cons => {
-                    const div = document.createElement('div');
-                    div.textContent = cons.name;
-                    div.addEventListener('click', () => {
-                        searchConstituencyInput.value = cons.name; // Set input value
-                        constituencyDropdown.classList.remove('active'); // Hide dropdown
-                        fetchCandidates(`?constituency=${encodeURIComponent(cons.name)}`); // Fetch candidates based on selected constituency
-                    });
-                    constituencyDropdown.appendChild(div);
-                });
-            }
-
-            // Hide dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!constituencyDropdown.contains(e.target) && e.target !== searchConstituencyInput) {
-                    constituencyDropdown.classList.remove('active');
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>

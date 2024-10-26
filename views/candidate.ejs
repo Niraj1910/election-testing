@@ -38,7 +38,9 @@
                             <td class="py-2 px-4 border-b text-center"><%= candidate.age || 'N/A' %></td>
                             <td class="py-2 px-4 border-b text-center"><%= candidate.gender || 'N/A' %></td>
                             <td class="py-2 px-4 border-b text-center"><%= candidate.party ? candidate.party.party : 'N/A' %></td>
-                            <td class="py-2 px-4 border-b text-center"><%= candidate.constituency ? candidate.constituency.name : 'N/A' %></td>
+                            <td class="py-2 px-4 border-b text-center">
+                                <%= candidate.constituency && candidate.constituency.length > 0 ? candidate.constituency.map(cons => cons.name).join(', ') : 'N/A' %>
+                            </td>                            
                             <td class="py-2 px-4 border-b text-center"><%= candidate.totalVotes %></td>
                             <td class="py-2 px-4 border-b text-center">
                                 <% if (candidate.image) { %>

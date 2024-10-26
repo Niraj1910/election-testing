@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidates</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/tailwind.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+
+<body class="bg-gray-100">
+    <%- include('navbar.ejs') %>
+        <div id="toast" class="fixed right-4 bottom-4 bg-green-500 text-white px-4 py-2 rounded shadow-md hidden">
+            Candidate details saved successfully.
+        </div>
+        <div class="container mx-auto my-6">
+            <h1 class="text-2xl font-bold mb-4 text-center">List of Candidates</h1>
+
+            <!-- Constituency Dropdown -->
+            <div class="flex justify-center mb-4">
+                <label for="constituency" class="mr-2 font-bold">Select Constituency:</label>
+                <select id="constituency" class="border px-3 py-2 rounded">
+                    <option value="">-- Select Constituency --</option>
+                    <% constituencies.forEach(constituency=> { %>
+                        <option value="<%= constituency.name %>" <%=constituency.name===selectedCons ? 'selected' : ''
+                            %>><%= constituency.name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-lg" id="candidateTable">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="py-2 px-4 border-b">Name</th>
+                            <th class="py-2 px-4 border-b">Age</th>
+                            <th class="py-2 px-4 border-b">Gender</th>
+                            <th class="py-2 px-4 border-b">Party</th>
+                            <th class="py-2 px-4 border-b">Total Votes</th>
+                            <th class="py-2 px-4 border-b">Image</th>
+                            <th class="py-2 px-4 border-b">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% candidates.forEach(candidate=> { %>
+                            <tr class="hover:bg-gray-100" data-id="<%= candidate._id %>">
+                                <td class="py-2 px-4 border-b">
+                                    <input type="text" class="border p-2 rounded w-full"
+                                        value="<%= candidate.name %>" />
+                                </td>
+                                <td class="py-2 px-4 border-b">
+                                    <input type="number" class="border p-2 rounded w-full"
+                                        value="<%= candidate.age || '' %>" />
+                                </td>
+                                <td class="py-2 px-4 border-b">
+                                    <select class="border p-2 rounded w-full">
+                                        <option value="" <%=!candidate.gender ? 'selected' : '' %>>-- Select Gender --
+                                        </option>
+                                        <option value="Male" <%=candidate.gender==='Male' ? 'selected' : '' %>>Male
+                                        </option>
+                                        <option value="Female" <%=candidate.gender==='Female' ? 'selected' : '' %>
+                                            >Female</option>
+                                        <option value="Other" <%=candidate.gender==='Other' ? 'selected' : '' %>>Other
+                                        </option>
+                                    </select>
+                                </td>
+                                <td class="py-2 px-4 border-b">
+                                    <!-- Party dropdown -->
+                                    <select class="border p-2 rounded w-full">
+                                        <% parties.forEach(party=> { %>
+                                            <option value="<%= party._id %>" <%=candidate.party &&
+                                                String(candidate.party._id)===String(party._id) ? 'selected' : '' %>><%=
+                                                    party.party %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </td>
+                                <td class="py-2 px-4 border-b">
+                                    <input type="number" class="border p-2 rounded w-full"
+                                        value="<%= candidate.totalVotes || 0 %>" />
+                                </td>
+                                <td class="py-2 px-4 border-b text-center">
+                                    <img src="<%= candidate.image || '' %>" alt="<%= candidate.name %>"
+                                        class="h-10 w-10 cursor-pointer" />
+                                </td>
+                                <td class="py-2 px-4 border-b text-center">
+                                    <button
+                                        class="save-btn bg-green-500 text-white py-1 px-3 rounded hover:bg-green-700">Save</button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const constituencyDropdown = document.getElementById('constituency');
+
+                // Redirect to selected constituency
+                constituencyDropdown.addEventListener('change', () => {
+                    const selectedCons = constituencyDropdown.value;
+                    window.location.href = selectedCons ? `/cons-candidates?cons=${selectedCons}` : '/cons-candidates';
+                });
+
+                // Save candidate details
+                async function saveCandidate(event) {
+                    const row = event.target.closest('tr'); // Get the closest row for the button clicked
+                    if (!row) {
+                        console.error('Row not found for candidate save operation.');
+                        return;
+                    }
+
+                    const candidateId = row.getAttribute('data-id'); // Get candidate ID from row
+                    const inputs = row.querySelectorAll('input'); // Get all input fields in the row
+                    const genderSelect = row.querySelector('select'); // Get the select dropdown for gender
+                    const partySelect = row.querySelectorAll('select')[1]; // Get the second select dropdown for party
+
+                    // Check if candidate ID and elements exist 
+                    if (!candidateId) {
+                        console.error('Candidate ID not found.');
+                        return;
+                    }
+                    if (!genderSelect || !partySelect) {
+                        console.error('Required inputs or select dropdown not found.');
+                        return;
+                    }
+
+                    // Construct updated candidate object
+                    const updatedCandidate = {
+                        name: inputs[0].value || '',
+                        age: parseInt(inputs[1].value) || null,
+                        gender: genderSelect.value || '',
+                        party: partySelect.value || '',
+                        totalVotes: parseInt(inputs[2].value) || 0,
+                    };
+
+                    try {
+                        const response = await fetch(`/api/candidate/${candidateId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(updatedCandidate),
+                        });
+
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            const errorText = await response.text(); // Get response text for better error handling
+                            console.error('Failed response:', response, errorText);
+                            alert('Failed to save candidate details.');
+                        }
+                    } catch (error) {
+                        console.error('Error during fetch request:', error);
+                        alert('An error occurred. Please try again.');
+                    }
+                }
+
+                // Attach save button event listeners
+                const saveButtons = document.querySelectorAll('.save-btn');
+                if (saveButtons.length === 0) {
+                    console.warn('No save buttons found. Ensure that .save-btn elements are rendered.');
+                }
+                saveButtons.forEach(button => {
+                    button.addEventListener('click', saveCandidate);
+                });
+            });
+        </script>
+
+
+
+</body>
+
+</html>
+
+</html>

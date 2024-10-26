@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/tippy.js@6/dist/tippy.css" rel="stylesheet" />
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+
 </head>
 
 <style>
@@ -52,10 +56,130 @@
         }
 
     }
+
+    .popover-container {
+            position: relative;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            width: 200px;
+        }
+
+        .constituency-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .candidate-section {
+            font-size: 12px;
+            padding-left: 8px;
+            margin-bottom: 8px;
+        }
+
+        .winner {
+            border-left: 2px solid #10b981;
+        }
+
+        .trailing {
+            border-left: 2px solid #ef4444;
+        }
+
+        .candidate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .candidate-name {
+            color: black;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+
+        .status-won {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-trailing {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .party-votes {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .party-info {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .party-symbol {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .party-name {
+            color: #4b5563;
+        }
+
+        .votes {
+            font-weight: 500;
+        }
+
+        .margin-info {
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .margin-label {
+            color: #6b7280;
+        }
+
+        .margin-value-won {
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .margin-value-trailing {
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        .tippy-box[data-theme~='light'] {
+            background-color: transparent;
+        }
 </style>
 
 <body>
-    <h5 class="main_title p-[20px] text-[22px] font-bold"></h5>
+    <div id="popover" class="popover">
+
+    </div>
+
+    <h5 class="main_title p-[20px] text-[22px] font-bold underline"></h5>
     <div class="svg_container pb-12 flex flex-col items-center" id="svg_container" style="width: 100%;">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:g="http://base.google.com/ns/1.0" stroke-linejoin="round"
             stroke-linecap="round" viewBox="0 0 800 584" height="400" width="500" baseProfile="tiny" version="1.2">
@@ -225,13 +349,14 @@
             </g>
         </svg>
         <div class="party_name_color flex gap-5 mt-5">
-            
+
         </div>
     </div>
 
-    <div id="popover" class="popover"></div>
-
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script>
+        let currentTippy;
+
         function getData() {
             fetch('/api/assembly-elections/state/jharkhand')
                 .then(response => response.json())
@@ -243,156 +368,193 @@
                 .catch(error => console.error('Error fetching colors:', error));
         }
 
-        function getParties(){
+        function getParties() {
             fetch('/api/party')
-               .then(response => response.json())
-               .then(data => {
-                    console.log(data)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
                     renderPartiesColorAndName(data);
                 })
-               .catch(error => console.error('Error fetching parties:', error));
+                .catch(error => console.error('Error fetching parties:', error));
         }
 
-        function renderPartiesColorAndName(data){
-            // <div class="party_name_color"> get this element and show the list of parties in horizontal first with color and then name
-                const partyContainer = document.querySelector('.party_name_color');
-                partyContainer.innerHTML = '';
-                data.forEach(party => {
-                    const partyElement = document.createElement('div');
-                    partyElement.style.display ='flex';
-                    partyElement.style.alignItems ='center';
-                    partyElement.style.justifyContent ='center';
-                    partyElement.style.gap ='10px';
+        function renderPartiesColorAndName(data) {
+            const partyContainer = document.querySelector('.party_name_color');
+            partyContainer.innerHTML = '';
+            data.forEach(party => {
+                const partyElement = document.createElement('div');
+                partyElement.style.display = 'flex';
+                partyElement.style.alignItems = 'center';
+                partyElement.style.gap = '10px';
 
-                    const partyNameElement = document.createElement('span');
-                    partyNameElement.style.backgroundColor = party.color_code;
-                    partyNameElement.style.height = "12px";
-                    partyNameElement.style.width = "12px";
+                const partyColorElement = document.createElement('span');
+                partyColorElement.style.backgroundColor = party.color_code;
+                partyColorElement.style.height = "12px";
+                partyColorElement.style.width = "12px";
+                partyColorElement.style.borderRadius = '50%';
 
+                const partyNameElement = document.createElement('span');
+                partyNameElement.innerText = party.party;
 
-                    partyElement.innerText = party.party;
+                partyElement.appendChild(partyColorElement);
+                partyElement.appendChild(partyNameElement);
 
-                    partyElement.appendChild(partyNameElement);
-
-                    partyContainer.appendChild(partyElement);
-                });
+                partyContainer.appendChild(partyElement);
+            });
         }
 
         function applyColorsAndPopovers(data) {
             const svgContainer = document.getElementById('svg_container');
-            // const popover = createPopover(svgContainer);
-            const popover = document.getElementById('popover')
+            const popover = document.getElementById('popover');
 
-            data.constituency.forEach((constituency, index) => {
+            data.constituency.forEach((constituency) => {
                 const constituencyId = `cns-${constituency.name.toLowerCase()}`;
                 const path = document.querySelector(`path[data-id="${constituencyId}"]`);
 
                 if (path) {
                     const color = constituency.color;
                     const candidate = constituency.leadingCandidate;
+                    const trailingCandidate = constituency.trailingCandidate;
                     path.setAttribute('data-constituency', constituency.name || '');
                     path.setAttribute('fill', color);
+
+
                     if (candidate) {
                         path.setAttribute('data-candidate', candidate.name || 'Unknown');
                         path.setAttribute('data-totalVotes', candidate.totalVotes || '0');
                         path.setAttribute('data-partyName', candidate.party.party || 'N/A');
                         path.setAttribute('data-partyLogo', candidate.party.party_logo || '');
-                    }
 
-                    // Add event listeners for popover
-                    path.addEventListener('mouseover', (e) => {
-                        showPopover(e, path, popover);
-                        // add overlay in path so that it will hilighted add styles
-                        path.style.opacity = '0.6'
-                    });
-                    path.addEventListener('mouseleave', () => {
-                        hidePopover(popover);
-                        path.style.opacity = '1'
-                    });
+                        path.setAttribute('data-trail-partyLogo', trailingCandidate.party.party_logo || '');
+                        path.setAttribute('data-trail-candidate', trailingCandidate.name || '');
+                        path.setAttribute('data-trail-totalVotes', trailingCandidate.totalVotes || '');
+                        path.setAttribute('data-trail-partyName', trailingCandidate.party.party || '');
+
+                    }
                 } else {
                     console.warn(`Path not found for constituency ID: ${constituencyId}`);
                 }
             });
         }
 
-        // Function to show the popover with constituency details
-        function showPopover(event, path, popover) {
-            const candidate = path.getAttribute('data-candidate');
-            const totalVotes = path.getAttribute('data-totalVotes');
-            const partyName = path.getAttribute('data-partyName');
-            let partyLogo = path.getAttribute('data-partyLogo');
-            const constituency = path.getAttribute('data-constituency');
-            const status = path.getAttribute('data-status'); // won, incumbent, etc.
+        function showPopover(event, path) {
+            const candidate = path.getAttribute('data-candidate') || 'Unknown';
+            const totalVotes = path.getAttribute('data-totalVotes') || '0';
+            const partyName = path.getAttribute('data-partyName') || 'N/A';
+            const constituency = path.getAttribute('data-constituency') || 'Unknown';
+            const partyLogo = path.getAttribute('data-partyLogo') || 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=';
 
-            // Default logo if none is available
-            if (!partyLogo) {
-                partyLogo = 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=';
+            const trailCandidate = path.getAttribute('data-trail-candidate') || 'Unknown';
+            const trailTotalVotes = path.getAttribute('data-trail-totalVotes') || '0';
+            const trailPartyName = path.getAttribute('data-trail-partyName') || 'N/A';
+            const trailPartyLogo = path.getAttribute('data-trail-partyLogo') || 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=';
+
+            if (currentTippy) {
+                currentTippy.destroy();
             }
 
-            // Define status label with cleaner styles
-            let statusLabel = '';
-            if (status === 'won') {
-                statusLabel = '<div class="status-label won">WON</div>';
-            } else if (status === 'incumbent') {
-                statusLabel = '<div class="status-label incumbent">INCUMBENT</div>';
-            }
+            currentTippy = tippy(event.target, {
+                content: `
+                    <div class="popover-container">
+        <div class="card">
+            <div class="constituency-header">
+                ${constituency} (JHARKHAND)
+            </div>
 
-            // Construct the popover HTML content
-            popover.innerHTML = `
-    <div id="tooltip1" role="tooltip" class="z-10 popover-content -mt-20 w-64 absolute transition duration-150 ease-in-out bottom-0 right-10 ml-8 shadow-lg bg-white p-4 rounded">
-        <p class="text-sm font-bold text-gray-800 pb-1">${constituency} - (${totalVotes})</p>
-        <p class="text-xs leading-4 text-gray-600 pb-3">${candidate} (WON)</p>
-        <div class="flex items-center gap-5">
-            <span class="text-xs leading-4 text-gray-600 pb-3">${partyName}</span>
-            <img class="leading-4 text-gray-600 pb-3 h-10 w-10 object-contain" src="${partyLogo}"/>
+            <!-- Winner Candidate -->
+            <div class="candidate-section winner">
+                <div class="candidate-header">
+                    <span class="candidate-name">${candidate}</span>
+                    <span class="status-badge status-won">LEADING</span>
+                </div>
+                <div class="party-votes">
+                    <div class="party-info">
+                        <div class="party-symbol">
+                            <img src="${partyLogo}" alt="${partyName}"/>   
+                        </div>
+                        <span class="party-name">${partyName}</span>
+                    </div>
+                </div>
+                <div class="margin-info">
+                    <span class="margin-label">Leading by:</span>
+                    <span class="margin-value-won">${totalVotes} votes</span>
+                </div>
+            </div>
+
+            <!-- Runner-up Candidate -->
+            <div class="candidate-section trailing">
+                <div class="candidate-header">
+                    <span class="candidate-name">${trailCandidate}</span>
+                    <span class="status-badge status-trailing">TRAILING</span>
+                </div>
+                <div class="party-votes">
+                    <div class="party-info">
+                        <div class="party-symbol">
+                            <img src="${trailPartyLogo}" alt="${trailPartyName}"/>    
+                        </div>
+                        <span class="party-name">${trailPartyName}</span>
+                    </div>
+                </div>
+                <div class="margin-info">
+                    <span class="margin-label">Trailing by:</span>
+                    <span class="margin-value-trailing">${trailTotalVotes} votes</span>
+                </div>
+            </div>
+
+            <div class="arrow"></div>
         </div>
-    </div>`;
+    </div>
+                `,
+                // content: `
+                //     <div class="popover-content">
+                //         <p class="text-sm font-bold text-gray-800">${constituency} - (${totalVotes})</p>
+                //         <p class="text-xs text-gray-600">${candidate} (WON)</p>
+                //         <div class="flex items-center gap-2">
+                //             <span class="text-xs text-gray-600">${partyName}</span>
+                //             <img class="h-10 w-10 object-contain" src="${partyLogo}" alt="${partyName} Logo" />
+                //         </div>
+                //         <div class="arrow-down"></div>
+                //     </div>
+                // `,
+                placement: 'top',
+                arrow: true,
+                interactive: false,
+                trigger: 'manual',
+                allowHTML: true,
+                theme: 'light',
+                hideOnClick: false,
+                delay: [0, 0],
+                showOnInit: false,
+                onShow(instance) {
+                    path.style.opacity = '0.6';
+                },
+                onHide(instance) {
+                    path.style.opacity = '1';
+                },
+            });
 
-            // Show the popover
-            popover.style.display = 'block';
-            popover.style.opacity = '1';
-            popover.style.transform = 'scale(1)';
+            console.log(currentTippy);
 
-            // Calculate positions for the popover
-            // let left = event.pageX + 15; // Offset from cursor
-            // let top = event.pageY + 15;
-
-            // const popoverRect = popover.getBoundingClientRect(); // Get popover size
-            // const viewportWidth = window.innerWidth;
-            // const viewportHeight = window.innerHeight;
-
-            // Adjust positioning if the popover would overflow the right side
-            // if (left + popoverRect.width > viewportWidth) {
-            //     left = event.pageX - popoverRect.width - 15; // Shift the popover to the left
-            // }
-
-            // // Adjust positioning if the popover would overflow the left side (if shifted left)
-            // if (left < 0) {
-            //     left = 15; // Prevent the popover from going off the left edge of the screen
-            // }
-
-            // // Adjust positioning if the popover would overflow the bottom side
-            // if (top + popoverRect.height > viewportHeight) {
-            //     top = viewportHeight - popoverRect.height - 15; // Adjust top position
-            // }
-
-            // Apply the calculated position
-            // popover.style.left = `${left}px`;
-            // popover.style.top = `${top}px`;
+            currentTippy.show();
         }
 
-        // Function to hide the popover when mouse leaves the path
-        function hidePopover(popover) {
-            popover.style.display = 'none';
-            popover.style.opacity = '0';
-            popover.style.transform = 'scale(0.9)';
-        }
+        document.querySelectorAll('path').forEach(path => {
+            path.addEventListener('mouseenter', (e) => {
+                showPopover(e, path);
+            });
 
-        // Call getData to initialize
+            path.addEventListener('mouseleave', () => {
+                if (currentTippy) {
+                    currentTippy.hide();
+                }
+            });
+        });
+
+
         getData();
         setInterval(getData, 10000);
-
     </script>
+
 </body>
 
 </html>
