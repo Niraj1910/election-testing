@@ -19,6 +19,81 @@ const storage = multer.diskStorage({
   });
   
 const upload = multer({ storage });
+
+router.get('/cn-list', async (req, res, next) => {
+  try {
+    // Extract the search query parameter
+    const { constituency } = req.query;
+
+    if (constituency) {
+      // If a constituency is provided, fetch the candidates from that constituency
+      const constituencies = await Constituency.find({
+        name: { "$regex": constituency, "$options": "i" }, // Case-insensitive search
+      }).populate({
+        path: 'candidates',
+        model: 'Candidate',
+        populate: [
+          {
+            path: 'party', // Populate party for each candidate
+            model: 'Party',
+          },
+          {
+            path: 'constituency', // Populate constituency for each candidate
+            model: 'Constituency',
+          },
+        ],
+      });
+
+      // Check if any constituencies were found
+      if (constituencies.length === 0) {
+        return res.json([]);
+      }
+
+      // Sort candidates by totalVotes in descending order
+      const sortedCandidates = constituencies[0].candidates.sort((a, b) => b.totalVotes - a.totalVotes);
+      return res.json(sortedCandidates);
+    }
+
+    // If no constituency is provided, fetch the first 3 candidates for each constituency
+    const allConstituencies = await Constituency.find().populate({
+      path: 'candidates',
+      model: 'Candidate',
+      populate: [
+        {
+          path: 'party', // Populate party for each candidate
+          model: 'Party',
+        },
+        {
+          path: 'constituency', // Populate constituency for each candidate
+          model: 'Constituency',
+        },
+      ],
+    });
+
+    // Use a Set to track unique candidate IDs and avoid duplicates
+    const uniqueCandidates = new Set();
+    const candidatesList = [];
+
+    allConstituencies.forEach((constituency) => {
+      // Sort the candidates by totalVotes in descending order and get the first 3
+      const topCandidates = constituency.candidates
+        .sort((a, b) => b.totalVotes - a.totalVotes)
+        .slice(0, 3); // Get the first 3 candidates
+
+      topCandidates.forEach((candidate) => {
+        if (!uniqueCandidates.has(candidate._id.toString())) {
+          uniqueCandidates.add(candidate._id.toString());
+          candidatesList.push(candidate);
+        }
+      });
+    });
+
+    res.json(candidatesList);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.put('/:id', upload.single('image'), async (req, res, next) => {
   try {
     const existingCandidate = await Candidate.findById(req.params.id);
@@ -68,7 +143,6 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
     next(error);
   }
 });
-
 
 // Get single candidate by ID with error handling enabled
 router.get('/:id', async (req, res, next) => {

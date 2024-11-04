@@ -3,6 +3,10 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
   <style>
     .election-table-container {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -291,11 +295,92 @@
         width: 16px;
         height: 16px;
       }
+
+
+
+      /* Google Fonts - Poppins */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+.input-box {
+  position: relative;
+  height: 60px;
+  /* max-width: 900px; */
+  width: 100%;
+  background: #fff;
+  /* margin: 0 20px; */
+  border-radius: 8px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+.input-box i,
+.input-box .button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.input-box i {
+  left: 20px;
+  font-size: 20px;
+  color: #707070;
+}
+.input-box input {
+  height: 100%;
+  width: 100%;
+  outline: none;
+  font-size: 18px;
+  font-weight: 400;
+  border: none;
+  padding: 0 155px 0 55px;
+  background-color: transparent;
+}
+.input-box .button {
+  right: 20px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 6px;
+  background-color: #eaa31e;
+  cursor: pointer;
+}
+.input-box .button.clicked {
+  transform: translateY(-50%) scale(0.98);
+}
+
+/* Responsive */
+@media screen and (max-width: 500px) {
+  .input-box {
+    height: 50px;
+  }
+  .input-box i {
+    left: 12px;
+    font-size: 20px;
+  }
+  .input-box input {
+    padding: 0 112px 0 45px;
+  }
+  .input-box .button {
+    right: 12px;
+    font-size: 12px;
+    padding: 8px 18px;
+  }
+}
+
   </style>
 </head>
 
 <body>
-
+  <div class="input-box">
+    <i class="uil uil-search"></i>
+    <input type="text" id="const_search" placeholder="Constituency Search" />
+    <button class="button" id="search_btn_con">Search</button>
+  </div>
   <div class="election-table-container">
     <table class="election-table">
       <thead>
@@ -394,7 +479,7 @@
     }
 
     async function renderCandidates() {
-      await getCandidates();
+      // await getCandidates();
       const tableBody = document.getElementById('candidatesTableBody');
       tableBody.innerHTML = candidatesData.map(candidate => createCandidateRow(candidate)).join('');
     }
@@ -409,13 +494,37 @@
     }
 
     // Initialize the table with data
-    renderCandidates();
+    // renderCandidates();
 
-    async function getCandidates() {
-      const response = await fetch('/api/candidate');
+    async function getCandidates(query = undefined) {
+      if (query){
+        const response = await fetch(`/api/candidate/cn-list?constituency=${query}`);
+        const candidatesList = await response.json();
+        candidatesData = candidatesList;
+          renderCandidates();
+        return;
+      }
+      const response = await fetch('/api/candidate/cn-list');
       const candidatesList = await response.json();
       candidatesData = candidatesList;
+          renderCandidates();
     }
+
+    const button = document.querySelector("#search_btn_con");
+    button.addEventListener("mousedown", (e) => {
+      const input = document.querySelector('#const_search');
+      if (input) {
+        getCandidates(input.value); // Use input.value for your function
+        renderCandidates();
+      }
+    });
+
+    getCandidates();
+
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 300000)
 
   </script>
 
