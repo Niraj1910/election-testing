@@ -115,14 +115,30 @@
       animation: spin 0.8s linear infinite;
     }
 
+    .status-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 0.25rem;
+    }
+
+    .status-icon--up {
+      color: green;
+    }
+
+    .status-icon--down {
+      color: red;
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
     @media (max-width: 640px) {
-      .hide-mobile {
+      /* .hide-mobile {
         display: none;
-      }
+      } */
 
       .candidates-table td,
       .candidates-table th {
@@ -160,7 +176,7 @@
           <th>Candidate</th>
           <th>Party</th>
           <th class="hide-mobile">Votes</th>
-          <th>Share</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody id="candidatesTableBody">
@@ -218,7 +234,7 @@
       }
 
       updateConstituencyDropdown() {
-        const sortedConstituencies = Array.from(this.constituencies).sort();
+        const sortedConstituencies = Array.from(this.constituencies);
         this.constituencySelect.innerHTML = sortedConstituencies.map(constituency => 
           `<option value="${constituency}">${constituency}</option>`
         ).join('');
@@ -226,9 +242,9 @@
 
       async fetchCandidates(constituency) {
         const now = Date.now();
-        if (this.isLoading || (now - this.lastFetchTime < this.FETCH_COOLDOWN)) {
-          return;
-        }
+        // if (this.isLoading || (now - this.lastFetchTime < this.FETCH_COOLDOWN)) {
+        //   return;
+        // }
 
         this.showLoading();
         this.isLoading = true;
@@ -249,19 +265,10 @@
         }
       }
 
-      renderCandidates() {
-        if (!this.candidatesData.length) {
-          this.candidatesTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No candidates found</td></tr>';
-          return;
-        }
+      createCandidateRow(candidate, isFirstCandidate) {
+        const statusIconClass = isFirstCandidate ? 'status-icon status-icon--up' : 'status-icon status-icon--down';
+        const statusIconHtml = `<span class="${statusIconClass}">${isFirstCandidate ? '&#x2191;' : '&#x2193;'}</span>`;
 
-        this.candidatesTableBody.innerHTML = this.candidatesData
-          .sort((a, b) => b.party.votes_percentage - a.party.votes_percentage)
-          .map(this.createCandidateRow)
-          .join('');
-      }
-
-      createCandidateRow(candidate) {
         return `
           <tr>
             <td>
@@ -285,12 +292,25 @@
               </div>
             </td>
             <td class="hide-mobile">${Number(candidate.totalVotes).toLocaleString()}</td>
-            <td class="vote-share">${candidate.party.votes_percentage}%</td>
+            <td>${statusIconHtml}</td>
           </tr>
         `;
       }
 
+      renderCandidates() {
+        if (!this.candidatesData.length) {
+          this.candidatesTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No candidates found</td></tr>';
+          return;
+        }
+
+        this.candidatesTableBody.innerHTML = this.candidatesData
+          .sort((a, b) => b.party.votes_percentage - a.party.votes_percentage)
+          .map((candidate, index) => this.createCandidateRow(candidate, index === 0))
+          .join('');
+      }
+
       async handleConstituencyChange(event) {
+        console.log(event.target.value);
         const constituency = event.target.value;
         if (constituency) {
           await this.fetchCandidates(constituency);
@@ -317,7 +337,7 @@
       showError(message) {
         this.candidatesTableBody.innerHTML = `
           <tr>
-            <td colspan="4" class="text-center py-4 text-red-500">${message}</td>
+            <td colspan="5" class="text-center py-4 text-red-500">${message}</td>
           </tr>
         `;
       }
