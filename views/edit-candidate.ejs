@@ -52,6 +52,15 @@
                 </div>
 
                 <div>
+                    <label class="block text-gray-700 font-bold mb-2" for="hotCandidate">Hot Candidate</label>
+                    <select id="hotCandidate" name="hotCandidate" class="w-full py-3 px-4 border rounded shadow focus:outline-none focus:ring focus:ring-blue-300">
+                        <option value="true" <%= candidate.hotCandidate === true ? 'selected' : '' %>>True</option>
+                        <option value="false" <%= candidate.hotCandidate === false ? 'selected' : '' %>>False</option>
+                    </select>
+                </div>
+                
+
+                <div>
                     <label class="block text-gray-700 font-bold mb-2" for="constituency">Constituency</label>
                     <select id="constituency" name="constituency" multiple
                         class="w-full py-3 px-4 border rounded shadow focus:outline-none focus:ring focus:ring-blue-300">
@@ -116,6 +125,9 @@
                 if (party) {
                     formData.append('party', party);
                 }
+
+                const hotCandidate = document.getElementById('hotCandidate').value;
+                formData.append('hotCandidate', hotCandidate);
 
                 // Handle multiple constituency selections
                 const selectedConstituencies = Array.from(document.getElementById('constituency').selectedOptions).map(option => option.value);

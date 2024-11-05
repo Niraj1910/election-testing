@@ -6,6 +6,7 @@ const candidateSchema = new mongoose.Schema({
     gender: { type: String, default: null },
     party: { type: mongoose.Schema.Types.ObjectId, ref: 'Party', required: true }, // Reference to Party model
     totalVotes: { type: Number, required: true },
+    hotCandidate: { type: Boolean, default: false },
     image: { type: String },
     constituency: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Constituency' }] // Reference to Constituency model
 });

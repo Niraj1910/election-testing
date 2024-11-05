@@ -7,7 +7,6 @@ const mime = require('mime-types');
 const { getFullImagePath } = require('../utils');
 const Constituency = require('../models/constituency');
 
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, 'public/uploads/candidates');
@@ -98,6 +97,8 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
   try {
     const existingCandidate = await Candidate.findById(req.params.id);
     if (!existingCandidate) return res.status(404).send('Candidate not found');
+
+    console.log(req.body);
     
     // Prepare candidate updates
     const candidateUpdates = {
@@ -105,6 +106,7 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
       party: req.body.party,
       age: req.body.age,
       gender: req.body.gender,
+      hotCandidate: req.body.hotCandidate || existingCandidate.hotCandidate || false, // Assuming this is a boolean value
       totalVotes: req.body.totalVotes,
       constituency: req.body.constituency || existingCandidate.constituency, // Assuming this comes as an array of constituency IDs
       image: req.file ? getFullImagePath(req, 'candidates') : req.body.image || existingCandidate.image,
@@ -158,6 +160,10 @@ router.get('/:id', async (req, res, next) => {
 // Add a new candidate with error handling enabled
 router.post('/', upload.single('image'), async (req, res, next) => {
   try {
+    // Convert the hotCandidate value to a boolean
+    const hotCandidate = req.body.hotCandidate === 'true';
+    console.log(req.body, hotCandidate)
+
     let constituencyIds = Array.isArray(req.body.constituency) 
       ? req.body.constituency 
       : req.body.constituency ? [req.body.constituency] : [];
@@ -167,6 +173,7 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       party: req.body.party,
       totalVotes: req.body.totalVotes,
       age: req.body.age,
+      hotCandidate: hotCandidate, // Now it is a boolean
       gender: req.body.gender,
       image: req.file ? getFullImagePath(req, 'candidates') : null,
       constituency: constituencyIds, // Now it's already an array
@@ -188,6 +195,7 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       party: candidateData.party,
       totalVotes: candidateData.totalVotes,
       age: candidateData.age,
+      hotCandidate: candidateData.hotCandidate, // Boolean value
       gender: candidateData.gender,
       image: candidateData.image,
       constituency: validConstituencies, // Store valid constituencies
@@ -222,6 +230,7 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
       party: req.body.party,
       age: req.body.age,
       gender: req.body.gender,
+      hotCandidate: req.body.hotCandidate || existingCandidate.hotCandidate || false,
       totalVotes: req.body.totalVotes,
       constituency: req.body.constituency,
       image: req.file ? getFullImagePath(req, 'candidates') : req.body.image || existingCandidate.image,
@@ -265,7 +274,6 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
     next(error);
   }
 });
-
 
 // Delete a candidate by ID with error handling enabled
 router.delete('/:id', async (req, res, next) => {

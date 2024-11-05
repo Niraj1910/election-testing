@@ -27,6 +27,7 @@
                         <th class="py-2 px-4 border-b">Party</th>
                         <th class="py-2 px-4 border-b">Constituency</th>
                         <th class="py-2 px-4 border-b">Total Votes</th>
+                        <th class="py-2 px-4 border-b">Hot Candidate</th>
                         <th class="py-2 px-4 border-b">Image</th>
                         <th class="py-2 px-4 border-b">Actions</th>
                     </tr>
@@ -42,6 +43,7 @@
                                 <%= candidate.constituency && candidate.constituency.length > 0 ? candidate.constituency.map(cons => cons.name).join(', ') : 'N/A' %>
                             </td>                            
                             <td class="py-2 px-4 border-b text-center"><%= candidate.totalVotes %></td>
+                            <td class="py-2 px-4 border-b text-center"><%= candidate.hotCandidate || false %></td>
                             <td class="py-2 px-4 border-b text-center">
                                 <% if (candidate.image) { %>
                                     <a href="<%= candidate.image %>" target="_blank" rel="noopener noreferrer">
