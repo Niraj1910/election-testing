@@ -293,59 +293,14 @@
     </div>
 
     <script>
-        let candidates = [
-            {
-                name: "Mohan",
-                age: 55,
-                gender: "Male",
-                party: {
-                    party: "JMM",
-                    color_code: "#004B1F",
-                    votes_percentage: 67
-                },
-                totalVotes: 38045763457,
-                constituency: [{
-                    name: "Simaria",
-                    state: "Jharkhand"
-                }]
-            },
-            {
-                name: "Rahul",
-                age: 45,
-                gender: "Male",
-                party: {
-                    party: "INC",
-                    color_code: "#0078D4",
-                    votes_percentage: 58
-                },
-                totalVotes: 28045763457,
-                constituency: [{
-                    name: "Ranchi",
-                    state: "Jharkhand"
-                }]
-            },
-            {
-                name: "Priya",
-                age: 42,
-                gender: "Female",
-                party: {
-                    party: "BJP",
-                    color_code: "#FF9933",
-                    votes_percentage: 62
-                },
-                totalVotes: 32045763457,
-                constituency: [{
-                    name: "Dhanbad",
-                    state: "Jharkhand"
-                }]
-            }
-        ];
+        let candidates = [];
 
         async function getCandidates() {
             try {
-                const response = await fetch('/api/candidate');
+                const response = await fetch('/api/candidate/hot-candidates');
                 const data = await response.json();
                 candidates = data;
+                updateCarousel();
             } catch (error) {
                 candidates = [];
             }
@@ -436,7 +391,7 @@
         });
 
         carouselContainer.addEventListener('mouseleave', () => {
-            setInterval(nextSlide, 5000);
+            setInterval(nextSlide, 3000);
         });
 
         // Button click events

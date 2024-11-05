@@ -19,75 +19,37 @@ const storage = multer.diskStorage({
   
 const upload = multer({ storage });
 
+
+// create a route to get only the list of hotcandidates and populate party and constituency
+router.get('/hot-candidates', async (req, res, next) => {
+  try {
+    console.log("hello world")
+    const candidates = await Candidate.find({ hotCandidate: true })
+     .populate('party constituency')
+     .sort({ totalVotes: -1 }); // Sort by total votes in descending order
+
+    res.json(candidates);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/cn-list', async (req, res, next) => {
   try {
-    // Extract the search query parameter
-    const { constituency } = req.query;
+  //  get the constituency query and send the candidates list which belong to this constitiuency
 
-    if (constituency) {
-      // If a constituency is provided, fetch the candidates from that constituency
-      const constituencies = await Constituency.find({
-        name: { "$regex": constituency, "$options": "i" }, // Case-insensitive search
-      }).populate({
-        path: 'candidates',
-        model: 'Candidate',
-        populate: [
-          {
-            path: 'party', // Populate party for each candidate
-            model: 'Party',
-          },
-          {
-            path: 'constituency', // Populate constituency for each candidate
-            model: 'Constituency',
-          },
-        ],
-      });
-
-      // Check if any constituencies were found
-      if (constituencies.length === 0) {
-        return res.json([]);
+  const constituencyId = req.query.constituency;
+  const candidates = await Candidate.find().populate('constituency party').sort({ totalVotes: -1 }); // Sort by total votes in descending
+  const sortedCandidates = [];
+  candidates.forEach((can) => {
+    can.constituency.forEach((consCan) => {
+      if(consCan.name === constituencyId){
+        sortedCandidates.push(can);
       }
-
-      // Sort candidates by totalVotes in descending order
-      const sortedCandidates = constituencies[0].candidates.sort((a, b) => b.totalVotes - a.totalVotes);
-      return res.json(sortedCandidates);
-    }
-
-    // If no constituency is provided, fetch the first 3 candidates for each constituency
-    const allConstituencies = await Constituency.find().populate({
-      path: 'candidates',
-      model: 'Candidate',
-      populate: [
-        {
-          path: 'party', // Populate party for each candidate
-          model: 'Party',
-        },
-        {
-          path: 'constituency', // Populate constituency for each candidate
-          model: 'Constituency',
-        },
-      ],
     });
+  })
+  res.json(sortedCandidates);
 
-    // Use a Set to track unique candidate IDs and avoid duplicates
-    const uniqueCandidates = new Set();
-    const candidatesList = [];
-
-    allConstituencies.forEach((constituency) => {
-      // Sort the candidates by totalVotes in descending order and get the first 3
-      const topCandidates = constituency.candidates
-        .sort((a, b) => b.totalVotes - a.totalVotes)
-        .slice(0, 3); // Get the first 3 candidates
-
-      topCandidates.forEach((candidate) => {
-        if (!uniqueCandidates.has(candidate._id.toString())) {
-          uniqueCandidates.add(candidate._id.toString());
-          candidatesList.push(candidate);
-        }
-      });
-    });
-
-    res.json(candidatesList);
   } catch (error) {
     next(error);
   }

@@ -1,533 +1,332 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link
-      rel="stylesheet"
-      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
-    />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
   <style>
-    .election-table-container {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 20px auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      padding: 0 10px;
-      max-height: 400px;
-      width: 100%;
-      overflow: scroll;
+    :root {
+      --primary-color: #FF6B00;
+      --secondary-color: #2563EB;
+      --background-color: #F8FAFC;
+      --border-color: #E2E8F0;
     }
 
-    .election-table {
+    .widget-container {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .widget-header {
+      padding: 0.75rem;
+      background: var(--background-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .constituency-select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.875rem;
+      background-color: white;
+    }
+
+    .candidates-table {
       width: 100%;
       border-collapse: collapse;
-      background-color: white;
+      font-size: 0.875rem;
     }
 
-    .election-table th {
-      background-color: #f8f9fa;
-      color: #374151;
-      font-weight: 600;
-      padding: 16px;
+    .candidates-table th {
+      padding: 0.75rem;
       text-align: left;
-      font-size: 14px;
-      border-bottom: 2px solid #e5e7eb;
+      font-weight: 600;
+      color: #475569;
+      background: var(--background-color);
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .election-table td {
-      padding: 16px;
-      border-bottom: 1px solid #e5e7eb;
-      color: #1f2937;
-      font-size: 14px;
-      background-color: white;
-    }
-
-    .main-row:hover {
-      background-color: #f9fafb;
-      cursor: pointer;
+    .candidates-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .candidate-info {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0.5rem;
     }
 
     .candidate-avatar {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      background-color: #e5e7eb;
+      width: 2rem;
+      height: 2rem;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: var(--background-color);
       overflow: hidden;
-    }
-
-    .candidate-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .candidate-details {
-      display: flex;
-      flex-direction: column;
+      flex-shrink: 0;
     }
 
     .candidate-name {
-      font-weight: 600;
-      color: #111827;
+      font-weight: 500;
+      color: #1F2937;
+      font-size: 0.875rem;
     }
 
     .candidate-meta {
-      color: #6b7280;
-      font-size: 12px;
+      color: #6B7280;
+      font-size: 0.75rem;
     }
 
     .party-badge {
       display: inline-flex;
       align-items: center;
-      padding: 6px 12px;
-      border-radius: 6px;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
       font-weight: 500;
-      font-size: 12px;
       color: white;
       white-space: nowrap;
     }
 
-    .expand-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
-      transition: background-color 0.2s;
-    }
-
-    .expand-button:hover {
-      background-color: #f3f4f6;
-    }
-
-    .expand-icon {
-      width: 20px;
-      height: 20px;
-      transition: transform 0.2s;
-    }
-
-    .expanded-row {
-      display: none;
-    }
-
-    .expanded-row.active {
-      display: table-row;
-    }
-
-    .expanded-content {
-      padding: 20px;
-      background-color: #f8f9fa;
-    }
-
-    .details-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .detail-section {
-      background-color: white;
-      padding: 16px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .section-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 12px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 12px;
-    }
-
-    .stat-item {
-      padding: 8px;
-      background-color: #f9fafb;
-      border-radius: 6px;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-weight: 600;
-      color: #111827;
-      font-size: 14px;
-      word-break: break-word;
-    }
-
-    .percentage-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 8px;
-      background-color: #ecfdf5;
-      color: #047857;
-      border-radius: 9999px;
-      font-size: 12px;
+    .vote-share {
       font-weight: 500;
+      color: var(--primary-color);
     }
 
-    @media (max-width: 768px) {
-      .election-table-container {
-        border-radius: 8px;
-        padding: 0;
-      }
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+    }
 
-      .election-table th,
-      .election-table td {
-        padding: 12px 8px;
-      }
+    .loading-spinner {
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 2px solid var(--border-color);
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
 
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
       .hide-mobile {
         display: none;
       }
 
-      .party-badge {
-        padding: 4px 8px;
-        font-size: 11px;
+      .candidates-table td,
+      .candidates-table th {
+        padding: 0.5rem;
       }
 
       .candidate-avatar {
-        width: 32px;
-        height: 32px;
-        min-width: 32px;
+        width: 1.5rem;
+        height: 1.5rem;
       }
 
-      .candidate-name {
-        font-size: 13px;
-      }
-
-      .candidate-meta {
-        font-size: 11px;
-      }
-
-      .details-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .expanded-content {
-        padding: 12px 8px;
-      }
-
-      .expand-button {
-        padding: 4px;
-      }
-
-      .expand-icon {
-        width: 16px;
-        height: 16px;
+      .party-badge {
+        padding: 0.125rem 0.375rem;
+        font-size: 0.6875rem;
       }
     }
-    .election-table-container {
-        border-radius: 8px;
-        padding: 0;
-      }
-
-      .election-table th,
-      .election-table td {
-        padding: 12px 8px;
-      }
-
-      .hide-mobile {
-        display: none;
-      }
-
-      .party-badge {
-        padding: 4px 8px;
-        font-size: 11px;
-      }
-
-      .candidate-avatar {
-        width: 32px;
-        height: 32px;
-        min-width: 32px;
-      }
-
-      .candidate-name {
-        font-size: 13px;
-      }
-
-      .candidate-meta {
-        font-size: 11px;
-      }
-
-      .details-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .expanded-content {
-        padding: 12px 8px;
-      }
-
-      .expand-button {
-        padding: 4px;
-      }
-
-      .expand-icon {
-        width: 16px;
-        height: 16px;
-      }
-
-
-
-      /* Google Fonts - Poppins */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-.input-box {
-  position: relative;
-  height: 60px;
-  /* max-width: 900px; */
-  width: 100%;
-  background: #fff;
-  /* margin: 0 20px; */
-  border-radius: 8px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-}
-.input-box i,
-.input-box .button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.input-box i {
-  left: 20px;
-  font-size: 20px;
-  color: #707070;
-}
-.input-box input {
-  height: 100%;
-  width: 100%;
-  outline: none;
-  font-size: 18px;
-  font-weight: 400;
-  border: none;
-  padding: 0 155px 0 55px;
-  background-color: transparent;
-}
-.input-box .button {
-  right: 20px;
-  font-size: 16px;
-  font-weight: 400;
-  color: #fff;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 6px;
-  background-color: #eaa31e;
-  cursor: pointer;
-}
-.input-box .button.clicked {
-  transform: translateY(-50%) scale(0.98);
-}
-
-/* Responsive */
-@media screen and (max-width: 500px) {
-  .input-box {
-    height: 50px;
-  }
-  .input-box i {
-    left: 12px;
-    font-size: 20px;
-  }
-  .input-box input {
-    padding: 0 112px 0 45px;
-  }
-  .input-box .button {
-    right: 12px;
-    font-size: 12px;
-    padding: 8px 18px;
-  }
-}
-
   </style>
 </head>
 
 <body>
-  <div class="input-box">
-    <i class="uil uil-search"></i>
-    <input type="text" id="const_search" placeholder="Constituency Search" />
-    <button class="button" id="search_btn_con">Search</button>
-  </div>
-  <div class="election-table-container">
-    <table class="election-table">
+  <div class="widget-container">
+    <div class="widget-header">
+      <select id="constituencySelect" class="constituency-select">
+        <option value="">Loading constituencies...</option>
+      </select>
+    </div>
+
+    <div id="loadingSpinner" class="loading">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <table class="candidates-table">
       <thead>
         <tr>
-          <th></th>
           <th>Candidate</th>
           <th>Party</th>
-          <th class="hide-mobile">Vote Share</th>
-          <th>Total Votes</th>
+          <th class="hide-mobile">Votes</th>
+          <th>Share</th>
         </tr>
       </thead>
       <tbody id="candidatesTableBody">
-        <!-- Data will be dynamically inserted here -->
+        <!-- Data will be inserted here -->
       </tbody>
     </table>
   </div>
 
   <script>
-    let candidatesData = [];
-
-    function createCandidateRow(candidate) {
-      const candidateImgUrl = candidate.image || "https://s3.amazonaws.com/37assets/svn/765-default-avatar.png";
-      return `
-        <tr class="main-row" onclick="toggleRow('${candidate._id}')">
-            <td>
-                <button class="expand-button">
-                    <svg class="expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
-            </td>
-            <td>
-                <div class="candidate-info">
-                    <div class="candidate-avatar">
-                        <img src="${candidateImgUrl}" alt="${candidate.name}">
-                    </div>
-                    <div class="candidate-details">
-                        <span class="candidate-name">${candidate.name}</span>
-                        <span class="candidate-meta">${candidate.age} years • ${candidate.gender}</span>
-                    </div>
-                </div>
-            </td>
-            <td>
-                <div class="party-badge" style="background-color: ${candidate.party.color_code}">
-                    ${candidate.party.party}
-                </div>
-            </td>
-            <td class="hide-mobile">
-                <span class="percentage-badge">${candidate.party.votes_percentage}%</span>
-            </td>
-            <td>${candidate.totalVotes}</td>
-        </tr>
-        <tr id="expandedRow${(candidate._id).toString()}" class="expanded-row">
-            <td colspan="5">
-                <div class="expanded-content">
-                    <div class="details-grid">
-                        <div class="detail-section">
-                            <div class="section-title">Constituency Details</div>
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <div class="stat-label">Constituency</div>
-                                    <div class="stat-value">${candidate.constituency[0].name}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">State</div>
-                                    <div class="stat-value">${candidate.constituency[0].state}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">Total Votes</div>
-                                    <div class="stat-value">${candidate.constituency[0].totalVotes}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="detail-section">
-                            <div class="section-title">Party Details</div>
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <div class="stat-label">Total Seats</div>
-                                    <div class="stat-value">${candidate.party.total_seat}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">Party Votes</div>
-                                    <div class="stat-value">${candidate.party.total_votes}</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-label">Vote Share</div>
-                                    <div class="stat-value">${candidate.party.votes_percentage}%</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    `;
-    }
-
-    async function renderCandidates() {
-      // await getCandidates();
-      const tableBody = document.getElementById('candidatesTableBody');
-      tableBody.innerHTML = candidatesData.map(candidate => createCandidateRow(candidate)).join('');
-    }
-
-    function toggleRow(rowId) {
-      console.log(rowId);
-      const expandedRow = document.getElementById(`expandedRow${rowId}`);
-      const button = expandedRow.previousElementSibling.querySelector('.expand-icon');
-
-      expandedRow.classList.toggle('active');
-      button.style.transform = expandedRow.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
-    }
-
-    // Initialize the table with data
-    // renderCandidates();
-
-    async function getCandidates(query = undefined) {
-      if (query){
-        const response = await fetch(`/api/candidate/cn-list?constituency=${query}`);
-        const candidatesList = await response.json();
-        candidatesData = candidatesList;
-          renderCandidates();
-        return;
+    class ElectionWidget {
+      constructor() {
+        this.candidatesData = [];
+        this.constituencies = new Set();
+        this.isLoading = false;
+        this.lastFetchTime = 0;
+        this.FETCH_COOLDOWN = 5000;
+        
+        this.constituencySelect = document.getElementById('constituencySelect');
+        this.loadingSpinner = document.getElementById('loadingSpinner');
+        this.candidatesTableBody = document.getElementById('candidatesTableBody');
+        
+        this.initialize();
       }
-      const response = await fetch('/api/candidate/cn-list');
-      const candidatesList = await response.json();
-      candidatesData = candidatesList;
-          renderCandidates();
+
+      async initialize() {
+        // First, fetch the list of constituencies
+        await this.fetchConstituencies();
+        
+        // Set up event listeners
+        this.constituencySelect.addEventListener('change', (e) => this.handleConstituencyChange(e));
+        
+        // Set up periodic refresh
+        this.setupRefreshInterval();
+      }
+
+      async fetchConstituencies() {
+        try {
+          const response = await fetch('/api/constituency');
+          if (!response.ok) throw new Error('Failed to fetch constituencies');
+          
+          const constituencies = await response.json();
+          this.constituencies = new Set(constituencies.map(c => c.name));
+          this.updateConstituencyDropdown();
+          
+          // Select and load first constituency
+          if (constituencies.length > 0) {
+            const firstConstituency = constituencies[0].name;
+            this.constituencySelect.value = firstConstituency;
+            await this.fetchCandidates(firstConstituency);
+          }
+        } catch (error) {
+          console.error('Error fetching constituencies:', error);
+          this.constituencySelect.innerHTML = '<option value="">Failed to load constituencies</option>';
+        }
+      }
+
+      updateConstituencyDropdown() {
+        const sortedConstituencies = Array.from(this.constituencies).sort();
+        this.constituencySelect.innerHTML = sortedConstituencies.map(constituency => 
+          `<option value="${constituency}">${constituency}</option>`
+        ).join('');
+      }
+
+      async fetchCandidates(constituency) {
+        const now = Date.now();
+        if (this.isLoading || (now - this.lastFetchTime < this.FETCH_COOLDOWN)) {
+          return;
+        }
+
+        this.showLoading();
+        this.isLoading = true;
+
+        try {
+          const response = await fetch(`/api/candidate/cn-list?constituency=${constituency}`);
+          if (!response.ok) throw new Error('Failed to fetch candidates');
+          
+          this.candidatesData = await response.json();
+          this.renderCandidates();
+          this.lastFetchTime = now;
+        } catch (error) {
+          console.error('Error fetching candidates:', error);
+          this.showError('Failed to load candidates');
+        } finally {
+          this.hideLoading();
+          this.isLoading = false;
+        }
+      }
+
+      renderCandidates() {
+        if (!this.candidatesData.length) {
+          this.candidatesTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No candidates found</td></tr>';
+          return;
+        }
+
+        this.candidatesTableBody.innerHTML = this.candidatesData
+          .sort((a, b) => b.party.votes_percentage - a.party.votes_percentage)
+          .map(this.createCandidateRow)
+          .join('');
+      }
+
+      createCandidateRow(candidate) {
+        return `
+          <tr>
+            <td>
+              <div class="candidate-info">
+                <div class="candidate-avatar">
+                  <img src="${candidate.image || 'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png'}" 
+                       alt="${candidate.name}"
+                       width="32" height="32"
+                       loading="lazy"
+                       onerror="this.src='https://s3.amazonaws.com/37assets/svn/765-default-avatar.png'">
+                </div>
+                <div>
+                  <div class="candidate-name">${candidate.name}</div>
+                  <div class="candidate-meta">${candidate.age} yrs</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="party-badge" style="background-color: ${candidate.party.color_code}">
+                ${candidate.party.party}
+              </div>
+            </td>
+            <td class="hide-mobile">${Number(candidate.totalVotes).toLocaleString()}</td>
+            <td class="vote-share">${candidate.party.votes_percentage}%</td>
+          </tr>
+        `;
+      }
+
+      async handleConstituencyChange(event) {
+        const constituency = event.target.value;
+        if (constituency) {
+          await this.fetchCandidates(constituency);
+        }
+      }
+
+      setupRefreshInterval() {
+        setInterval(() => {
+          const selectedConstituency = this.constituencySelect.value;
+          if (selectedConstituency) {
+            this.fetchCandidates(selectedConstituency);
+          }
+        }, 300000); // 5 minutes
+      }
+
+      showLoading() {
+        this.loadingSpinner.style.display = 'flex';
+      }
+
+      hideLoading() {
+        this.loadingSpinner.style.display = 'none';
+      }
+
+      showError(message) {
+        this.candidatesTableBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center py-4 text-red-500">${message}</td>
+          </tr>
+        `;
+      }
     }
 
-    const button = document.querySelector("#search_btn_con");
-    button.addEventListener("mousedown", (e) => {
-      const input = document.querySelector('#const_search');
-      if (input) {
-        getCandidates(input.value); // Use input.value for your function
-        renderCandidates();
-      }
+    // Initialize the widget when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new ElectionWidget();
     });
-
-    getCandidates();
-
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 300000)
-
   </script>
-
 </body>
-
 </html>
