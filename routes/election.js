@@ -122,8 +122,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-
-
+router.get('/parties-summary')
 
 
 module.exports = router;

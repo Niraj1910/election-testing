@@ -30,6 +30,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.get('/top-parties', async (req, res) => {
+  try {
+    const topParties = await Party.find().sort({ total_votes: -1 }).limit(10);
+    res.json(topParties);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve Top parties' });
+  }
+});
+
 // POST route to create a new party
 router.post('/', upload.single('party_logo'), async (req, res) => {
     try {

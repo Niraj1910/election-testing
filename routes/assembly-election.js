@@ -1,6 +1,7 @@
 const express = require('express');
 const Joi = require('joi');
 const AssemblyElection = require('../models/assembly-election.model');
+const Candidate = require('../models/candidates');
 const router = express.Router();
 
 const electionSchema = Joi.object({
@@ -81,8 +82,7 @@ router.delete('/:id', async (req, res) => {
 // route with /state/:id 
 router.get('/state/:name', async (req, res) => {
   try {
-    console.log(req.params.name);
-    
+    // Fetch the elections with full population of nested documents
     const elections = await AssemblyElection.findOne({ state: req.params.name })
       .populate({
         path: 'constituencies',
@@ -98,63 +98,58 @@ router.get('/state/:name', async (req, res) => {
 
     if (!elections) return res.status(404).send('No elections found in this state');
 
-    const constituencies = [];
+    // Process each constituency to determine leading and trailing candidates
+    const constituencies = await Promise.all(
+      elections.constituencies.map(async (constituency) => {
+        // Fetch sorted candidates for the constituency
+        const cands = await Candidate.find({ constituency: constituency._id })
+          .sort({ totalVotes: -1 })  // Sort by total votes in descending order
+          .populate('party');
 
-    // Extract leading and trailing candidates and their party colors in each constituency
-    elections.constituencies.forEach((constituency) => {
-      // Check if candidates array is not empty before using reduce
-      const highestVoteCandidate = constituency.candidates.length > 0 
-        ? constituency.candidates.reduce((prev, current) =>
-            prev.totalVotes > current.totalVotes ? prev : current
-          )
-        : null; // Set to null if no candidates
+        const highestVoteCandidate = cands[0]; // Leading candidate (highest votes)
+        const lowestVoteCandidate = cands[cands.length - 1]; // Trailing candidate (lowest votes)
 
-      const lowestVoteCandidate = constituency.candidates.length > 0 
-        ? constituency.candidates.reduce((prev, current) =>
-            prev.totalVotes < current.totalVotes ? prev : current
-          )
-        : null; // Set to null if no candidates
+        const leadingPartyColor = highestVoteCandidate ? highestVoteCandidate.party.color_code : null;
+        const trailingPartyColor = lowestVoteCandidate ? lowestVoteCandidate.party.color_code : null;
 
-      // If no leading candidate, default to null values
-      const leadingPartyColor = highestVoteCandidate ? highestVoteCandidate.party.color_code : null;
-      const trailingPartyColor = lowestVoteCandidate ? lowestVoteCandidate.party.color_code : null;
+        // Construct the constituency object with leading and trailing candidates
+        return {
+          _id: constituency._id,
+          name: constituency.name,
+          state: constituency.state,
+          totalVotes: constituency.totalVotes,
+          color: leadingPartyColor,
+          leadingCandidate: highestVoteCandidate
+            ? {
+                _id: highestVoteCandidate._id,
+                name: highestVoteCandidate.name,
+                totalVotes: highestVoteCandidate.totalVotes,
+                party: {
+                  _id: highestVoteCandidate.party._id,
+                  party: highestVoteCandidate.party.party,
+                  color_code: leadingPartyColor,
+                  party_logo: highestVoteCandidate.party.party_logo,
+                },
+              }
+            : null,
+          trailingCandidate: lowestVoteCandidate
+            ? {
+                _id: lowestVoteCandidate._id,
+                name: lowestVoteCandidate.name,
+                totalVotes: lowestVoteCandidate.totalVotes,
+                party: {
+                  _id: lowestVoteCandidate.party._id,
+                  party: lowestVoteCandidate.party.party,
+                  color_code: trailingPartyColor,
+                  party_logo: lowestVoteCandidate.party.party_logo,
+                },
+              }
+            : null,
+        };
+      })
+    );
 
-      // Create a simplified version of the constituency object
-      constituencies.push({
-        _id: constituency._id, // Keeping only necessary fields
-        name: constituency.name,
-        state: constituency.state,
-        totalVotes: constituency.totalVotes,
-        color: leadingPartyColor,
-        leadingCandidate: highestVoteCandidate
-          ? {
-              _id: highestVoteCandidate._id,
-              name: highestVoteCandidate.name,
-              totalVotes: highestVoteCandidate.totalVotes,
-              party: {
-                _id: highestVoteCandidate.party._id,
-                party: highestVoteCandidate.party.party,
-                color_code: leadingPartyColor,
-                party_logo: highestVoteCandidate.party.party_logo,
-              },
-            }
-          : null,
-        trailingCandidate: lowestVoteCandidate
-          ? {
-              _id: lowestVoteCandidate._id,
-              name: lowestVoteCandidate.name,
-              totalVotes: lowestVoteCandidate.totalVotes,
-              party: {
-                _id: lowestVoteCandidate.party._id,
-                party: lowestVoteCandidate.party.party,
-                color_code: trailingPartyColor,
-                party_logo: lowestVoteCandidate.party.party_logo,
-              },
-            }
-          : null,
-      });
-    });
-
+    // Send the response with structured data
     res.json({
       state: elections.state,
       year: elections.year,
@@ -168,6 +163,7 @@ router.get('/state/:name', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
 
 
 module.exports = router;
