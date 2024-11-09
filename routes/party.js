@@ -2,6 +2,7 @@ const Joi = require('joi');
 const express = require('express');
 const router = express.Router();
 const Party = require('../models/party.model'); // Adjust the path as necessary
+const Constituency = require('../models/constituency'); // Adjust the path as necessary
 const multer = require('multer');
 const mime = require('mime-types')
 const {getFullImagePath} = require('../utils');
@@ -38,6 +39,30 @@ router.get('/top-parties', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve Top parties' });
   }
 });
+
+router.get('/parties-summary', async (req, res) => {
+  try {
+    const parties = await Party.find().sort({createdAt: -1});
+    let partiesList = [];
+    parties.forEach(part => {
+      console.log(part);
+      if(part.party === 'BJP+' || part.party === 'JMM+' || part.party === 'बीजेपी+' || part.party === 'जेएमएम+'){
+        partiesList.push({
+          party: part.party,
+          color_code: part.color_code,
+          total_votes: part.total_votes,
+          total_seat: part.total_seat,
+          party_logo: part.party_logo ? getFullImagePath(req, "party_logos/" + part.party_logo) : null // Use file path if available
+        })
+      }
+    });
+
+    const totalSeats = await Constituency.find().countDocuments();
+    res.json({ totalSeats, partiesList });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
 
 // POST route to create a new party
 router.post('/', upload.single('party_logo'), async (req, res) => {
