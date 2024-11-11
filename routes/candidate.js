@@ -19,30 +19,6 @@ const storage = multer.diskStorage({
   
 const upload = multer({ storage });
 
-
-// create a route to get only the list of hotcandidates and populate party and constituency
-// router.get('/hot-candidates', async (req, res, next) => {
-//   try {
-//     const candidates = await Candidate.find({ hotCandidate: true })
-//      .populate('party constituency')
-//      .sort({ totalVotes: -1 }); // Sort by total votes in descending order
-
-//     const cand = candidates.map(async candidate => {
-//         const constitiuency = candidate.constituency.length > 0 ? candidate.constituency[0] : null;
-//         const candidatesList = await Candidate.find({ constituency: {
-//           $eq: constitiuency._id
-//         }}).sort({totalVotes: -1});
-//         if(candidatesList.length > 0) {
-//           if(candidatesList[0].totalVotes >= candidatesList.length)
-//         }
-//     });
-
-//     res.json(candidates);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
 router.get('/hot-candidates', async (req, res, next) => {
   try {
     const candidates = await Candidate.find({ hotCandidate: true })
