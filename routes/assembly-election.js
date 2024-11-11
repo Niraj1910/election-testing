@@ -118,7 +118,7 @@ router.get('/state/:name', async (req, res) => {
           name: constituency.name,
           state: constituency.state,
           totalVotes: constituency.totalVotes,
-          color: leadingPartyColor,
+          color: highestVoteCandidate && highestVoteCandidate.totalVotes > 0 ? leadingPartyColor : "#C0C0C0",
           leadingCandidate: highestVoteCandidate
             ? {
                 _id: highestVoteCandidate._id,

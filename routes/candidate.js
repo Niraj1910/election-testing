@@ -21,14 +21,61 @@ const upload = multer({ storage });
 
 
 // create a route to get only the list of hotcandidates and populate party and constituency
+// router.get('/hot-candidates', async (req, res, next) => {
+//   try {
+//     const candidates = await Candidate.find({ hotCandidate: true })
+//      .populate('party constituency')
+//      .sort({ totalVotes: -1 }); // Sort by total votes in descending order
+
+//     const cand = candidates.map(async candidate => {
+//         const constitiuency = candidate.constituency.length > 0 ? candidate.constituency[0] : null;
+//         const candidatesList = await Candidate.find({ constituency: {
+//           $eq: constitiuency._id
+//         }}).sort({totalVotes: -1});
+//         if(candidatesList.length > 0) {
+//           if(candidatesList[0].totalVotes >= candidatesList.length)
+//         }
+//     });
+
+//     res.json(candidates);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
 router.get('/hot-candidates', async (req, res, next) => {
   try {
-    console.log("hello world")
     const candidates = await Candidate.find({ hotCandidate: true })
-     .populate('party constituency')
-     .sort({ totalVotes: -1 }); // Sort by total votes in descending order
+      .populate('party constituency')
+      .sort({ totalVotes: -1 }); // Sort by total votes in descending order
 
-    res.json(candidates);
+    const hotCandidates = await Promise.all(candidates.map(async candidate => {
+      const constituencyId = candidate.constituency[0]?._id;
+      
+      if (constituencyId) {
+        // Get all candidates in the same constituency, sorted by total votes in descending order
+        const candidatesInConstituency = await Candidate.find({ constituency: {
+            $eq: constituencyId
+          }})
+          .populate('constituency')
+          .sort({ totalVotes: -1 });
+
+        // Determine if the current candidate is leading or trailing
+        const isLeading = candidatesInConstituency[0]._id.equals(candidate._id);
+
+        return {
+          ...candidate.toObject(),
+          status: isLeading ? 'leading' : 'trailing'
+        };
+      } else {
+        return {
+          ...candidate.toObject(),
+          status: 'no constituency' // In case there is no constituency data
+        };
+      }
+    }));
+
+    res.json(hotCandidates);
   } catch (error) {
     next(error);
   }

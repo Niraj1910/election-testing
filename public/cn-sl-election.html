@@ -323,14 +323,14 @@
                 </div>
                 <div class="card-content">
                     <h3 class="candidate-name">${candidate.name}</h3>
-                    <p class="candidate-details">${candidate.age} years • ${candidate.gender}</p>
+                    <p class="candidate-details"> ${candidate.gender}</p>
                     <span class="party-badge" style="background-color: ${candidate.party.color_code}">
                         ${candidate.party.party}
                     </span>
                     <div class="stats-grid">
                         <div class="stat-box">
-                            <div class="stat-label">Vote Share</div>
-                            <div class="stat-value">${candidate.party.votes_percentage}%</div>
+                            <div class="stat-label">LEAD / TRAIL</div>
+                            <div class="stat-value">${candidate.status === 'trailing' ? `<img src="/images/down.png" alt="down" />` : `<img src="/images/up.png" alt="down" />`}</div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-label">Total Votes</div>

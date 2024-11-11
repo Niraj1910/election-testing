@@ -44,7 +44,7 @@
 
     .candidates-table th {
       padding: 0.75rem;
-      text-align: left;
+      text-align: center;
       font-weight: 600;
       color: #475569;
       background: var(--background-color);
@@ -53,7 +53,12 @@
 
     .candidates-table td {
       padding: 0.75rem;
+      text-align: center;
       border-bottom: 1px solid var(--border-color);
+    }
+
+    .candidates-table td:nth-child(1){
+      text-align: left;
     }
 
     .candidate-info {
@@ -176,7 +181,7 @@
           <th>Candidate</th>
           <th>Party</th>
           <th class="hide-mobile">Votes</th>
-          <th>Status</th>
+          <th>Leading / Trailing</th>
         </tr>
       </thead>
       <tbody id="candidatesTableBody">
@@ -282,7 +287,6 @@
                 </div>
                 <div>
                   <div class="candidate-name">${candidate.name}</div>
-                  <div class="candidate-meta">${candidate.age} yrs</div>
                 </div>
               </div>
             </td>
