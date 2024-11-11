@@ -36,6 +36,7 @@ router.get('/top-parties', async (req, res) => {
     const topParties = await Party.find().sort({ total_votes: -1 }).limit(10);
     res.json(topParties);
   } catch (error) {
+    console.log('top-parties error', error);
     res.status(500).json({ error: 'Failed to retrieve Top parties' });
   }
 });
