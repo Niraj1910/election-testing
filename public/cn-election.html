@@ -11,6 +11,12 @@
       --border-color: #E2E8F0;
     }
 
+    img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+
     .widget-container {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: white;
@@ -101,6 +107,10 @@
     .vote-share {
       font-weight: 500;
       color: var(--primary-color);
+    }
+
+    .cand_img {
+      object-fit: cover;
     }
 
     .loading {
@@ -228,7 +238,7 @@
           
           // Select and load first constituency
           if (constituencies.length > 0) {
-            const firstConstituency = constituencies[0].name;
+            const firstConstituency = 'Ranchi';
             this.constituencySelect.value = firstConstituency;
             await this.fetchCandidates(firstConstituency);
           }
@@ -271,8 +281,8 @@
       }
 
       createCandidateRow(candidate, isFirstCandidate) {
-        const statusIconClass = isFirstCandidate ? 'status-icon status-icon--up' : 'status-icon status-icon--down';
-        const statusIconHtml = `<span class="${statusIconClass}">${isFirstCandidate ? '&#x2191;' : '&#x2193;'}</span>`;
+        const statusIconClass = isFirstCandidate ? 'status-icon--up' : 'status-icon--down';
+        const statusIconHtml = ``;
 
         return `
           <tr>
@@ -283,6 +293,7 @@
                        alt="${candidate.name}"
                        width="32" height="32"
                        loading="lazy"
+                       class="cand_img"
                        onerror="this.src='https://s3.amazonaws.com/37assets/svn/765-default-avatar.png'">
                 </div>
                 <div>
@@ -296,7 +307,7 @@
               </div>
             </td>
             <td class="hide-mobile">${Number(candidate.totalVotes).toLocaleString()}</td>
-            <td>${statusIconHtml}</td>
+            <td class="${statusIconClass}">${isFirstCandidate ? "Leading" : "Trailing"}</td>
           </tr>
         `;
       }
@@ -314,7 +325,6 @@
       }
 
       async handleConstituencyChange(event) {
-        console.log(event.target.value);
         const constituency = event.target.value;
         if (constituency) {
           await this.fetchCandidates(constituency);

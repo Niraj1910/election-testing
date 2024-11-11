@@ -270,6 +270,17 @@
                 transform: translateX(60px);
             }
         }
+
+
+        .red {
+            color: red;
+            font-size: 12px;
+        }
+        .green {
+            color: green;
+            font-size: 12px;
+
+        }
     </style>
 </head>
 
@@ -333,7 +344,7 @@
                     <div class="stats-grid">
                         <div class="stat-box">
                             <div class="stat-label">LEAD / TRAIL</div>
-                            <div class="stat-value">${candidate.status === 'trailing' ? `<img src="/images/down.png" alt="down" />` : `<img src="/images/up.png" alt="down" />`}</div>
+                            <div class="stat-value ${candidate.status === 'trailing' ? "red": "green"}">${candidate.status === 'trailing' ? "Trailing" : "Leading"}</div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-label">Total Votes</div>
