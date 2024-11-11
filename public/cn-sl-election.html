@@ -90,6 +90,7 @@
             background: white;
             border-radius: 50%;
             position: absolute;
+            overflow: hidden;
             left: 50%;
             bottom: -40px;
             transform: translateX(-50%);
@@ -315,10 +316,12 @@
             card.innerHTML = `
                 <div class="party-header" style="background-color: ${candidate.party.color_code}">
                     <div class="profile-circle">
+                        ${candidate.image ? `<img  src="${candidate.image}" height="100%" width="100%"/>` : `
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                        </svg>`}
+                        
                     </div>
                 </div>
                 <div class="card-content">
@@ -384,17 +387,17 @@
         }
 
         // Set interval for auto-slide
-        const autoSlideInterval = setInterval(nextSlide, 5000); // Change slide every 3 seconds
+        const autoSlideInterval = setInterval(nextSlide, 3000); // Change slide every 3 seconds
 
         // Pause auto-slide on hover
         const carouselContainer = document.querySelector('.carousel-container');
-        carouselContainer.addEventListener('mouseenter', () => {
-            clearInterval(autoSlideInterval);
-        });
+        // carouselContainer.addEventListener('mouseenter', () => {
+        //     clearInterval(autoSlideInterval);
+        // });
 
-        carouselContainer.addEventListener('mouseleave', () => {
-            setInterval(nextSlide, 3000);
-        });
+        // carouselContainer.addEventListener('mouseleave', () => {
+        //     setInterval(nextSlide, 3000);
+        // });
 
         // Button click events
         document.getElementById('prevBtn').addEventListener('click', () => {
