@@ -5,7 +5,10 @@ const Party = require('../models/party.model');
 const Constituency = require('../models/constituency');
 const Candidate = require('../models/candidates');
 const AssemblyElection = require('../models/assembly-election.model');
+const RedisManager = require('../RedisManager');
 var router = express.Router();
+
+const redis = RedisManager.getInstance();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -134,6 +137,22 @@ router.get('/candidates', async function(req, res, next) {
     const limit = parseInt(req.query.limit) || 10; // Set the limit of items per page
     const skip = (page - 1) * limit; // Calculate the number of items to skip
 
+    const cacheKey = `candidates:${page}:${limit}`; // Cache key based on page and limit
+
+    // Try to fetch data from Redis cache
+    const cachedData = await redis.get(cacheKey);
+
+    if (cachedData) {
+      // If data is found in the cache, return it
+      return res.render('candidate.ejs', {
+        candidates: cachedData.candidates,
+        currentPage: page,
+        totalPages: cachedData.totalPages,
+        limit
+      });
+    }
+
+    // If data is not found in cache, query the database
     const candidates = await Candidate.find()
       .populate('party constituency')
       .skip(skip) // Skip the items based on pagination
@@ -143,6 +162,13 @@ router.get('/candidates', async function(req, res, next) {
 
     // Calculate total pages
     const totalPages = Math.ceil(totalCandidates / limit);
+
+    // Store the data in Redis with TTL of 3600 seconds (1 hour)
+    const dataToCache = {
+      candidates,
+      totalPages
+    };
+    await redis.setWithTTL(cacheKey, dataToCache, 3600);
 
     return res.render('candidate.ejs', {
       candidates: candidates || [],
@@ -265,9 +291,5 @@ router.get('/cons-candidates', async function(req, res, next) {
     res.status(500).send('Error fetching candidates.');
   }
 });
-
-
-
-
 
 module.exports = router;

@@ -1,5 +1,29 @@
 const mongoose = require('mongoose');
 
+
+const subPartySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Party name is required'],
+    trim: true
+  },
+  won: {
+    type: Number,
+    required: [true, 'Number of seats won is required'],
+    min: [0, 'Seats won cannot be negative'],
+    default: 0
+  },
+  leading: {
+    type: Number,
+    min: [0, 'Seats leading cannot be negative'],
+    default: 0
+  },
+  partyColor: {
+    type: String,
+  }
+}, {_id: false});  // No need for an extra _id for each party
+
+
 // Party Schema
 const partySchema = new mongoose.Schema({
   name: {
@@ -20,8 +44,9 @@ const partySchema = new mongoose.Schema({
   },
   partyColor: {
     type: String,
-  }
-}, { _id: false });  // No need for an extra _id for each party
+  },
+  subParties: [subPartySchema]
+}, {_id: false});  // No need for an extra _id for each party
 
 // Election Schema
 const electionSchema = new mongoose.Schema({

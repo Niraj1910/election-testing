@@ -3,10 +3,12 @@ const { body, validationResult } = require('express-validator');
 const Constituency = require('../models/constituency');
 const Joi = require('joi');
 const Candidate = require('../models/candidates');
+const RedisManager = require('../RedisManager'); // Make sure RedisManager is imported
+
 const router = express.Router();
 
-// Middleware for authentication (example)
-// const { authenticate } = require('../middleware/auth');
+const redis = RedisManager.getInstance();
+
 const constituencySchema = Joi.object({
     name: Joi.string().required().messages({
         'string.empty': 'Name is required',
@@ -20,50 +22,59 @@ const constituencySchema = Joi.object({
     candidates: Joi.array().optional(),
 });
 
-router.post(
-    '/',
-    async (req, res, next) => {
-        // Validate the request body against the Joi schema
-        const { error } = constituencySchema.validate(req.body);
-        
-        if (error) {
-            req.flash('error', error.details[0].message); // Set the validation error
+// POST route to create a constituency and cache the data
+router.post('/', async (req, res, next) => {
+    const { error } = constituencySchema.validate(req.body);
+    
+    if (error) {
+        req.flash('error', error.details[0].message);
+        return res.redirect('/create-constituency');
+    }
+    
+    try {
+        const existingConstituency = await Constituency.findOne({ 
+            name: req.body.name, 
+            state: req.body.state 
+        });
+        if (existingConstituency) {
+            req.flash('error', 'Constituency already exists!');
             return res.redirect('/create-constituency');
         }
         
-        try {
-            const existingConstituency = await Constituency.findOne({ 
-                name: req.body.name, 
-                state: req.body.state 
-            });
-            if (existingConstituency) {
-                req.flash('error', 'Constituency already exists!');
-                return res.redirect('/create-constituency');
-            }
-            
-            const constituency = new Constituency(req.body);
-            await constituency.save();
+        const constituency = new Constituency(req.body);
+        await constituency.save();
 
-            if(req.body.candidates){
-                for(let candidate of req.body.candidates){
-                    await Candidate.findByIdAndUpdate(candidate, {
-                        constituency: constituency._id
-                    }, {new: true}).exec();
-                }
+        if (req.body.candidates) {
+            for (let candidate of req.body.candidates) {
+                await Candidate.findByIdAndUpdate(candidate, { constituency: constituency._id }, { new: true }).exec();
             }
-            return res.status(200).json(constituency);
-        } catch (error) {
-            console.log(error);
-            req.flash('error', error.message);
-            res.redirect('/create-constituency');
         }
-    }
-);
 
-// Get all constituencies
+        // Clear cache for constituencies after creation
+        await redis.delete('all-constituencies');
+
+        return res.status(200).json(constituency);
+    } catch (error) {
+        console.log(error);
+        req.flash('error', error.message);
+        res.redirect('/create-constituency');
+    }
+});
+
+// Get all constituencies and cache the result
 router.get('/', async (req, res, next) => {
     try {
-        const constituencies = await Constituency.find().populate('candidates').sort({'name': 1});
+        const cachedConstituencies = await redis.get('all-constituencies');
+
+        if (cachedConstituencies) {
+            return res.json(cachedConstituencies);
+        }
+
+        const constituencies = await Constituency.find().populate('candidates').sort({ 'name': 1 });
+        
+        // Cache the result
+        await redis.set('all-constituencies', constituencies);
+
         res.json(constituencies);
     } catch (error) {
         next(error);
@@ -81,40 +92,33 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-// Update a constituency by ID
+// Update a constituency by ID and clear relevant cache
 router.put('/:id', async (req, res, next) => {
     const { error } = constituencySchema.validate(req.body);
 
     if (error) {
-        req.flash('error', error.details[0].message); // Set the validation error
+        req.flash('error', error.details[0].message);
         return res.redirect(`/edit-constituency/${req.params.id}`);
     }
 
     try {
-        // Fetch the existing constituency before updating
         const existingConstituency = await Constituency.findById(req.params.id).populate('candidates');
         if (!existingConstituency) return res.status(404).send('Constituency not found');
 
-        // Extract candidate IDs from the request body
         const newCandidateIds = req.body.candidates || [];
-
-        // Find candidates that were removed
         const removedCandidates = existingConstituency.candidates.filter(
             (candidate) => !newCandidateIds.includes(String(candidate._id))
         );
 
-        // Update removed candidates, setting their constituency to null
         const updatePromises = removedCandidates.map((candidate) =>
             Candidate.findByIdAndUpdate(candidate._id, { constituency: null })
         );
-        await Promise.all(updatePromises); // Wait for all updates to complete
+        await Promise.all(updatePromises);
 
-        // Update the constituency with the new data
-        const updatedConstituency = await Constituency.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+        const updatedConstituency = await Constituency.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+        // Clear cache for constituencies after update
+        await redis.delete('all-constituencies');
 
         res.json(updatedConstituency);
     } catch (error) {
@@ -124,15 +128,17 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
-
-// Delete a constituency by ID
+// Delete a constituency by ID and clear relevant cache
 router.delete('/:id', async (req, res, next) => {
     try {
-        console.log(req.params.id);
         const constituency = await Constituency.findByIdAndDelete(req.params.id);
-        if (!constituency){
+        if (!constituency) {
             return res.status(404).send('Constituency not found');
         }
+
+        // Clear cache for constituencies after deletion
+        await redis.delete('all-constituencies');
+
         res.json({ message: 'Constituency deleted successfully' });
     } catch (error) {
         console.log(error);
