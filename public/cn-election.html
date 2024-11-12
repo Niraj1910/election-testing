@@ -188,10 +188,10 @@
     <table class="candidates-table">
       <thead>
         <tr>
-          <th>Candidate</th>
-          <th>Party</th>
-          <th class="hide-mobile">Votes</th>
-          <th>Leading / Trailing</th>
+          <th>उम्मीदवार</th>
+          <th>दल</th>
+          <th class="hide-mobile">वोट</th>
+          <th>आगे / पीछे</th>
         </tr>
       </thead>
       <tbody id="candidatesTableBody">
@@ -307,7 +307,7 @@
               </div>
             </td>
             <td class="hide-mobile">${Number(candidate.totalVotes).toLocaleString()}</td>
-            <td class="${statusIconClass}">${isFirstCandidate ? "Leading" : "Trailing"}</td>
+            <td class="${statusIconClass}">${isFirstCandidate ? "आगे" : "पीछे"}</td>
           </tr>
         `;
       }

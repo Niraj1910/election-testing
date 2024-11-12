@@ -63,7 +63,7 @@ router.post(
 // Get all constituencies
 router.get('/', async (req, res, next) => {
     try {
-        const constituencies = await Constituency.find().populate('candidates');
+        const constituencies = await Constituency.find().populate('candidates').sort({'name': 1});
         res.json(constituencies);
     } catch (error) {
         next(error);
