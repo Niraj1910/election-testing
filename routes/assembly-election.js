@@ -3,11 +3,11 @@ const Joi = require('joi');
 const AssemblyElection = require('../models/assembly-election.model');
 const Candidate = require('../models/candidates');
 const RedisManager = require('../RedisManager');
+const { cachedKeys } = require('../utils');
 const router = express.Router();
 
-// Set up Redis client
+const redis = RedisManager.getInstance();
 
-// Schema definition for validation
 const electionSchema = Joi.object({
   year: Joi.string().required(),
   state: Joi.string().required(),
@@ -26,6 +26,7 @@ router.post('/', async (req, res) => {
     const election = new AssemblyElection(req.body);
     await election.save();
 
+    await redis.clearAllKeys();
     
     return res.status(201).redirect('/assembly-election');
   } catch (error) {
@@ -37,17 +38,8 @@ router.post('/', async (req, res) => {
 // Get all AssemblyElections
 router.get('/', async (req, res) => {
   try {
-    // Check if the elections are cached
-    const cachedElections = await redis.get('all_elections_cache');
-    if (cachedElections) {
-      // Return cached elections
-      return res.json(JSON.parse(cachedElections));
-    }
-
     // Fetch from DB if no cache
     const elections = await AssemblyElection.find().populate('constituencies');
-    
-    // Cache the result for future requests
 
     res.json(elections);
   } catch (error) {
@@ -76,7 +68,8 @@ router.put('/:id', async (req, res) => {
 
     const election = await AssemblyElection.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!election) return res.status(404).send('Election not found');
-        
+
+    await redis.clearAllKeys();
     res.json(election);
   } catch (error) {
     console.error(error);
@@ -89,6 +82,8 @@ router.delete('/:id', async (req, res) => {
   try {
     const election = await AssemblyElection.findByIdAndDelete(req.params.id);
     if (!election) return res.status(404).send('Election not found');
+
+    await redis.clearAllKeys();
         
     res.json({ message: 'Election deleted successfully' });
   } catch (error) {
@@ -100,6 +95,12 @@ router.delete('/:id', async (req, res) => {
 // route with /state/:id 
 router.get('/state/:name', async (req, res) => {
   try {
+
+    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION);
+
+    if(cachedData){
+      return res.json(cachedData);
+    }
 
     // Fetch the elections with full population of nested documents
     const elections = await AssemblyElection.findOne({ state: req.params.name })
@@ -169,6 +170,16 @@ router.get('/state/:name', async (req, res) => {
     );
 
     // Send the response with structured data
+
+    await redis.setWithTTL(cachedKeys.ASSEMBLY_ELECTION, {
+      state: elections.state,
+      year: elections.year,
+      total_seat: elections.total_seat,
+      total_votes: elections.total_votes,
+      total_candidate: elections.total_candidate,
+      constituency: constituencies,
+    }, 3600);
+
     res.json({
       state: elections.state,
       year: elections.year,

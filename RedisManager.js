@@ -38,35 +38,8 @@ class RedisManager {
         await this.redisClient.set(key, JSON.stringify(value), 'EX', ttl);
     }
 
-    async deleteKeysByPattern(pattern) {
-        let cursor = '0'; // Initial cursor position for SCAN
-        do {
-            // Log pattern to confirm it's being used correctly
-            console.log(`Scanning for keys with pattern: ${pattern}`);
-    
-            // Scan Redis for keys matching the pattern
-            const scanResult = await this.redisClient.scan(cursor, {
-                MATCH: pattern,
-                COUNT: 100,
-            });
-    
-            // Check the structure of scanResult
-            if (!Array.isArray(scanResult) || scanResult.length < 2) {
-                console.error('Unexpected scan result format:', scanResult);
-                return;
-            }
-    
-            const [newCursor, keys] = scanResult; // Destructure cursor and keys
-            
-            // Ensure keys is an array
-            if (Array.isArray(keys) && keys.length > 0) {
-                console.log(`Deleting ${keys.length} keys:`, keys);
-                await this.redisClient.del(...keys); // Spread keys for deletion
-            }
-    
-            // Update cursor position for the next scan
-            cursor = newCursor;
-        } while (cursor !== '0'); // Continue until the cursor returns to 0
+    async clearAllKeys() {
+        await this.redisClient.flushDb();
     }
     
 }

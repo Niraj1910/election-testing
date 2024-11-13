@@ -4,8 +4,10 @@ const Constituency = require('../models/constituency');
 const Joi = require('joi');
 const Candidate = require('../models/candidates');
 const RedisManager = require('../RedisManager'); // Make sure RedisManager is imported
+const { cachedKeys } = require('../utils');
 
 const router = express.Router();
+const redis = RedisManager.getInstance();
 
 const constituencySchema = Joi.object({
     name: Joi.string().required().messages({
@@ -48,6 +50,8 @@ router.post('/', async (req, res, next) => {
             }
         }
 
+        await redis.clearAllKeys();
+
         return res.status(200).json(constituency);
     } catch (error) {
         console.log(error);
@@ -59,8 +63,17 @@ router.post('/', async (req, res, next) => {
 // Get all constituencies and cache the result
 router.get('/', async (req, res, next) => {
     try {
+        // Check if the constituency list is cached
+        const cachedData = await redis.get(cachedKeys.CONSTITUENCY);
+        if (cachedData) {
+            return res.json(cachedData);
+        }
+
+        // Fetch from DB if no cache
         const constituencies = await Constituency.find().populate('candidates').sort({ 'name': 1 });
-        
+
+        // Cache the result
+        await redis.setWithTTL(cachedKeys.CONSTITUENCY, constituencies, 3600);
         res.json(constituencies);
     } catch (error) {
         next(error);
@@ -87,7 +100,7 @@ router.put('/:id', async (req, res, next) => {
         return res.redirect(`/edit-constituency/${req.params.id}`);
     }
 
-    try {
+    try {        
         const existingConstituency = await Constituency.findById(req.params.id).populate('candidates');
         if (!existingConstituency) return res.status(404).send('Constituency not found');
 
@@ -103,7 +116,7 @@ router.put('/:id', async (req, res, next) => {
 
         const updatedConstituency = await Constituency.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-
+        await redis.clearAllKeys();
         res.json(updatedConstituency);
     } catch (error) {
         console.error(error);
@@ -119,6 +132,7 @@ router.delete('/:id', async (req, res, next) => {
         if (!constituency) {
             return res.status(404).send('Constituency not found');
         }
+        await redis.clearAllKeys();
 
         res.json({ message: 'Constituency deleted successfully' });
     } catch (error) {
