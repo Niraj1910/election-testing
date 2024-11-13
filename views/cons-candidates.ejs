@@ -90,8 +90,11 @@
                                     </select>
                                 </td>
                                 <td class="py-2 px-4 border-b text-center">
-                                    <img src="<%= candidate.image || '' %>" alt="<%= candidate.name %>"
-                                        class="h-10 w-10 cursor-pointer" />
+                                    <% if (candidate.image) { %>
+                                        <img src="<%= candidate.image %>" alt="<%= candidate.name %>" class="h-10 w-10 cursor-pointer" />
+                                    <% } else { %>
+                                        <p>-</p>
+                                    <% } %>
                                 </td>
                                 <td class="py-2 px-4 border-b text-center">
                                     <button

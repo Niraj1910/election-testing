@@ -25,15 +25,6 @@ const upload = multer({ storage });
 
 router.get('/hot-candidates', async (req, res, next) => {
   try {
-    const cacheKey = 'hotCandidates'; // Cache key for Redis
-
-    // Check if the data is in cache
-    const cachedData = await redis.get(cacheKey);
-    
-    if (cachedData) {
-      // If data is in cache, send it directly
-      return res.json(cachedData);
-    }
 
     // If not in cache, query the database
     const candidates = await Candidate.find({ hotCandidate: true })
@@ -64,8 +55,6 @@ router.get('/hot-candidates', async (req, res, next) => {
       }
     }));
 
-    // Cache the result in Redis with an expiration time of 1 hour (3600 seconds)
-    await redis.setWithTTL(cacheKey, hotCandidates, 3600);
 
     // Send the result as a response
     res.json(hotCandidates);
@@ -77,14 +66,6 @@ router.get('/hot-candidates', async (req, res, next) => {
 router.get('/cn-list', async (req, res, next) => {
   try {
     const constituencyId = req.query.constituency;
-    const cacheKey = `cn-list-${constituencyId}`; // Unique cache key for each constituency
-
-    // Check if the data is already in the cache
-    const cachedData = await redis.get(cacheKey);
-    
-    if (cachedData) {
-      return res.json(cachedData);
-    }
 
     // If not in cache, query the database
     const candidates = await Candidate.find().populate('constituency party').sort({ totalVotes: -1 });
@@ -99,8 +80,6 @@ router.get('/cn-list', async (req, res, next) => {
       });
     });
 
-    await redis.setWithTTL(cacheKey, sortedCandidates, 3600);
-
     res.json(sortedCandidates);
 
   } catch (error) {
@@ -113,8 +92,6 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
     const existingCandidate = await Candidate.findById(req.params.id);
     if (!existingCandidate) return res.status(404).send('Candidate not found');
 
-    console.log(req.body);
-    
     // Prepare candidate updates
     const candidateUpdates = {
       name: req.body.name,
@@ -154,10 +131,6 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
         }
       }
     }
-
-    await redis.delete('hotCandidates'); // Delete the hotCandidates cache key
-
-    await redis.deleteKeysByPattern('cn-list-*'); 
 
     res.json(candidate);
   } catch (error) {
@@ -229,9 +202,6 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       await constituency.save();
     }
 
-    await redis.delete('hotCandidates'); // Delete the hotCandidates cache key
-    await redis.deleteKeysByPattern('cn-list-*'); 
-
     res.redirect(`/candidates`);
   } catch (error) {
     next(error);
@@ -291,10 +261,6 @@ router.put('/:id', upload.single('image'), async (req, res, next) => {
       }
     }
 
-    await redis.delete('hotCandidates'); // Delete the hotCandidates cache key
-
-    await redis.deleteKeysByPattern('cn-list-*'); 
-
     res.json(candidate);
   } catch (error) {
     next(error);
@@ -306,8 +272,6 @@ router.delete('/:id', async (req, res, next) => {
   try {
     const candidate = await Candidate.findByIdAndDelete(req.params.id);
     if (!candidate) return res.status(404).send('Candidate not found');
-    await redis.delete('hotCandidates'); // Delete the hotCandidates cache key
-    await redis.deleteKeysByPattern('cn-list-*'); 
     res.json({ message: 'Candidate deleted successfully' });
   } catch (error) {
     next(error);
@@ -323,11 +287,7 @@ router.get('/', async (req, res, next) => {
     // Check for cached data for constituency-based request
     if (constituency) {
       // Check if the constituency list is cached
-      const cachedConstituency = await redis.get(`cn-list-${constituency}`);
-      if (cachedConstituency) {
-        // If cached, return the data
-        return res.json(cachedConstituency);
-      }
+
 
       // If not cached, fetch from DB
       const constituencies = await Constituency.find({ name: { "$regex": constituency, "$options": "i" } }) // Added case-insensitive search
@@ -354,16 +314,7 @@ router.get('/', async (req, res, next) => {
       // Sort candidates by totalVotes in descending order
       const sortedCandidates = constituencies[0].candidates.sort((a, b) => b.totalVotes - a.totalVotes); // Sort in descending order
 
-      // Cache the result in Redis
-      await redis.set(`cn-list-${constituency}`, sortedCandidates);
-
       return res.json(sortedCandidates);
-    }
-
-    // If no constituency is provided, fetch all candidates and populate their party and constituency
-    const cachedCandidates = await redis.get('all-candidates');
-    if (cachedCandidates) {
-      return res.json(cachedCandidates);
     }
 
     // If not cached, fetch from DB
@@ -371,8 +322,6 @@ router.get('/', async (req, res, next) => {
       .populate('party constituency')
       .sort({ totalVotes: -1 }); // Sort by totalVotes in descending order
 
-    // Cache the result in Redis
-    await redis.set('all-candidates', candidates);
 
     res.json(candidates);
   } catch (error) {

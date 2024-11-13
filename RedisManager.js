@@ -41,36 +41,33 @@ class RedisManager {
     async deleteKeysByPattern(pattern) {
         let cursor = '0'; // Initial cursor position for SCAN
         do {
-            // Log the pattern being used
+            // Log pattern to confirm it's being used correctly
             console.log(`Scanning for keys with pattern: ${pattern}`);
     
             // Scan Redis for keys matching the pattern
             const scanResult = await this.redisClient.scan(cursor, {
-                MATCH: pattern, // Use MATCH to filter keys by the pattern
-                COUNT: 100, // Number of keys to check at a time
+                MATCH: pattern,
+                COUNT: 100,
             });
     
-            console.log('scanResult:', scanResult); // Log the scan result to inspect its structure
-    
-            // Check if scanResult is iterable
+            // Check the structure of scanResult
             if (!Array.isArray(scanResult) || scanResult.length < 2) {
-                console.error('Unexpected scan result:', scanResult);
+                console.error('Unexpected scan result format:', scanResult);
                 return;
             }
     
-            const [newCursor, keys] = scanResult; // Destructure the result if it is an array
-    
-            // If keys are found, delete them
-            if (keys.length > 0) {
+            const [newCursor, keys] = scanResult; // Destructure cursor and keys
+            
+            // Ensure keys is an array
+            if (Array.isArray(keys) && keys.length > 0) {
                 console.log(`Deleting ${keys.length} keys:`, keys);
-                await this.redisClient.del(keys); // Delete the keys
+                await this.redisClient.del(...keys); // Spread keys for deletion
             }
     
             // Update cursor position for the next scan
             cursor = newCursor;
-        } while (cursor !== '0'); // Continue scanning until the cursor returns to 0 (end of keys)
+        } while (cursor !== '0'); // Continue until the cursor returns to 0
     }
-    
     
 }
 

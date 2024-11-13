@@ -42,23 +42,11 @@ router.get('/top-parties', async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Try to get the top parties from cache
-    const cacheKey = `top-parties-page-${page}-limit-${limit}`;
-    const cachedData = await redis.get(cacheKey);
-    console.log(cachedData);
-
-    if (cachedData) {
-      return res.json(cachedData); // Send the cached response
-    }
-
     // Fetch top parties from the database with pagination
     const topParties = await Party.find()
       .sort({ total_votes: -1 })
       .skip(skip)
       .limit(limit);
-
-    // Cache the result for future requests
-    await redis.setWithTTL(cacheKey, topParties, 60 * 60); // Cache for 1 hour
 
     res.json(topParties);
   } catch (error) {
@@ -69,15 +57,6 @@ router.get('/top-parties', async (req, res) => {
 
 router.get('/parties-summary', async (req, res) => {
   try {
-
-    // Check if the data is already cached in Redis
-    const cachedData = await redis.get('parties-summary');
-    
-    if (cachedData) {
-      // If data exists in Redis, return it immediately
-      console.log('Cache hit');
-      return res.json(cachedData);
-    }
 
     // Cache miss, proceed to fetch data from the database
     const parties = await Party.find({ 
@@ -99,8 +78,6 @@ router.get('/parties-summary', async (req, res) => {
     // Prepare the response data
     const responseData = { totalSeats, partiesList };
 
-    // Cache the data in Redis with a TTL of 1 hour (3600 seconds)
-    await redis.setWithTTL('parties-summary', responseData, 3600); 
     res.json(responseData);
 
   } catch (error) {
@@ -141,11 +118,6 @@ router.post('/', upload.single('party_logo'), async (req, res) => {
     const newParty = new Party(partyData);
     await newParty.save();
 
-    // Clear the parties summary cache to ensure it reflects the latest data
-    await redis.delete('parties-summary'); // Clear the cache for the summary page
-    await redis.delete('all-parties'); // Clear the cache for the summary page
-    
-
     // Redirect to the list of parties (or return response if desired)
     res.redirect('/parties');
 
@@ -159,16 +131,8 @@ router.post('/', upload.single('party_logo'), async (req, res) => {
 // GET route to retrieve all parties
 router.get('/', async (req, res) => {
   try {
-    // Check if the parties data is cached in Redis
-    const cachedParties = await redis.get('all-parties');
-    if (cachedParties) {
-      // If cached data is available, return it
-      return res.json(cachedParties);
-    }
 
     const parties = await Party.find();
-
-    await redis.setWithTTL('all-parties', parties, 3600); // Cache for 1 hour
 
     res.json(parties);
   } catch (err) {
@@ -236,10 +200,6 @@ router.delete('/:id', async (req, res) => {
     if (!party) {
       return res.status(404).json({ message: 'Party not found' });
     }
-
-    await redis.delete('parties-summary'); // Clear the cache for the summary page
-    await redis.delete('all-parties'); 
-
     return res.status(200).json({ message: 'Deleted party'});
   } catch (err) {
     console.error(err); // Log the error for debugging

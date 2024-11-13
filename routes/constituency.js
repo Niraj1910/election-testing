@@ -7,8 +7,6 @@ const RedisManager = require('../RedisManager'); // Make sure RedisManager is im
 
 const router = express.Router();
 
-const redis = RedisManager.getInstance();
-
 const constituencySchema = Joi.object({
     name: Joi.string().required().messages({
         'string.empty': 'Name is required',
@@ -50,9 +48,6 @@ router.post('/', async (req, res, next) => {
             }
         }
 
-        // Clear cache for constituencies after creation
-        await redis.delete('all-constituencies');
-
         return res.status(200).json(constituency);
     } catch (error) {
         console.log(error);
@@ -64,17 +59,8 @@ router.post('/', async (req, res, next) => {
 // Get all constituencies and cache the result
 router.get('/', async (req, res, next) => {
     try {
-        const cachedConstituencies = await redis.get('all-constituencies');
-
-        if (cachedConstituencies) {
-            return res.json(cachedConstituencies);
-        }
-
         const constituencies = await Constituency.find().populate('candidates').sort({ 'name': 1 });
         
-        // Cache the result
-        await redis.set('all-constituencies', constituencies);
-
         res.json(constituencies);
     } catch (error) {
         next(error);
@@ -117,8 +103,6 @@ router.put('/:id', async (req, res, next) => {
 
         const updatedConstituency = await Constituency.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-        // Clear cache for constituencies after update
-        await redis.delete('all-constituencies');
 
         res.json(updatedConstituency);
     } catch (error) {
@@ -135,9 +119,6 @@ router.delete('/:id', async (req, res, next) => {
         if (!constituency) {
             return res.status(404).send('Constituency not found');
         }
-
-        // Clear cache for constituencies after deletion
-        await redis.delete('all-constituencies');
 
         res.json({ message: 'Constituency deleted successfully' });
     } catch (error) {
