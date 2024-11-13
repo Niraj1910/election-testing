@@ -63,7 +63,7 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.get('/', isAdmin, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { page, limit } = req.query;
     const pageInt = parseInt(page) || 1;
