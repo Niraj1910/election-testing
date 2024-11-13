@@ -81,9 +81,10 @@ router.get('/cn-list', async (req, res, next) => {
     if(cachedData){
       return res.json(cachedData);
     }
-    // If not in cache, query the database
+
     const candidates = await Candidate.find().populate('constituency party').sort({ totalVotes: -1 });
-    const sortedCandidates = [];
+    let sortedCandidates = [];
+    let candidates_sorted = [];
 
     // Filter the candidates by the provided constituencyId
     candidates.forEach((can) => {
@@ -94,9 +95,20 @@ router.get('/cn-list', async (req, res, next) => {
       });
     });
 
-    await redis.setWithTTL(`${cachedKeys.CN_LIST}:${constituencyId}`, sortedCandidates, 3600);
+    sortedCandidates.sort((a, b) => {
+      return b.totalVotes - a.totalVotes;
+    });
 
-    res.json(sortedCandidates);
+    sortedCandidates.forEach((cand, index) => {
+      if(index === 0){
+        candidates_sorted.push({...cand._doc, status: 'leading' });
+      }else {
+        candidates_sorted.push({...cand._doc, status: 'trailing' });
+      }
+    });
+
+    await redis.setWithTTL(`${cachedKeys.CN_LIST}:${constituencyId}`, candidates_sorted, 3600);
+    res.json(candidates_sorted);
 
   } catch (error) {
     next(error);

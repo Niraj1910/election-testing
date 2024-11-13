@@ -170,6 +170,10 @@
         font-size: 0.6875rem;
       }
     }
+
+    .gray {
+      color: gray;
+    }
   </style>
 </head>
 
@@ -280,8 +284,8 @@
         }
       }
 
-      createCandidateRow(candidate, isFirstCandidate) {
-        const statusIconClass = isFirstCandidate ? 'status-icon--up' : 'status-icon--down';
+      createCandidateRow(candidate, isFirstCandidate, showLeadAndTrailing) {
+        const statusIconClass = (isFirstCandidate && showLeadAndTrailing) ? 'status-icon--up' : (!isFirstCandidate && showLeadAndTrailing) ? 'status-icon--down' : "gray";
         const statusIconHtml = ``;
 
         return `
@@ -307,7 +311,7 @@
               </div>
             </td>
             <td class="hide-mobile">${Number(candidate.totalVotes).toLocaleString()}</td>
-            <td class="${statusIconClass}">${isFirstCandidate ? "आगे" : "पीछे"}</td>
+            <td class="${statusIconClass}">${(candidate.status === 'leading' && showLeadAndTrailing) ? "आगे" : (showLeadAndTrailing && candidate.status === 'trailing') ? "पीछे" : "-"}</td>
           </tr>
         `;
       }
@@ -318,9 +322,11 @@
           return;
         }
 
+        const showLeadAndTrailing = this.candidatesData.reduce((sum, candidate) => sum + candidate.totalVotes, 0);
+
         this.candidatesTableBody.innerHTML = this.candidatesData
           .sort((a, b) => b.party.votes_percentage - a.party.votes_percentage)
-          .map((candidate, index) => this.createCandidateRow(candidate, index === 0))
+          .map((candidate, index) => this.createCandidateRow(candidate, candidate.status === 'leading', showLeadAndTrailing))
           .join('');
       }
 
