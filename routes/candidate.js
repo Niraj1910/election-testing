@@ -49,10 +49,6 @@ router.get('/hot-candidates', async (req, res, next) => {
         // Check if the current candidate is leading or trailing
         const isLeading = candidatesInConstituency[0]._id.equals(candidate._id);
 
-        // Add status property to each candidate
-        await redis.setWithTTL(cachedKeys.HOT_CANDIDATES, {...candidate.toObject(),
-          status: isLeading ? 'leading' : 'trailing'}, 3600);
-
         return {
           ...candidate.toObject(),
           status: isLeading ? 'leading' : 'trailing'
@@ -65,7 +61,8 @@ router.get('/hot-candidates', async (req, res, next) => {
       }
     }));
 
-
+    // Cache the result for 1 hour
+    await redis.setWithTTL(cachedKeys.HOT_CANDIDATES, hotCandidates, 3600);
     // Send the result as a response
     res.json(hotCandidates);
   } catch (error) {

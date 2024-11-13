@@ -281,6 +281,10 @@
             font-size: 12px;
 
         }
+
+        .gray {
+            color: gray;
+        }
     </style>
 </head>
 
@@ -344,7 +348,7 @@
                     <div class="stats-grid">
                         <div class="stat-box">
                             <div class="stat-label">आगे / पीछे</div>
-                            <div class="stat-value ${candidate.status === 'trailing' ? "red": "green"}">${candidate.status === 'trailing' ? "पीछे" : "आगे"}</div>
+                            <div class="stat-value ${(candidate.status === 'trailing' && formatNumber(candidate.totalVotes) > 0) ? "red": (candidate.status === 'leading' && formatNumber(candidate.totalVotes) > 0) ? "green" : "gray"}">${(candidate.status === 'trailing' && formatNumber(candidate.totalVotes) > 0) ? "पीछे" : (candidate.status === 'leading' && formatNumber(candidate.totalVotes) > 0) ? "आगे" : "-"}</div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-label">कुल वोट</div>
