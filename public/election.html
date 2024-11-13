@@ -1414,6 +1414,30 @@
                 bottom: 1px;
             }
         }
+
+        /* .subparties-container {
+    margin-left: 20px;
+} */
+
+.subparty {
+    font-size: 0.9em;
+}
+
+.arrow {
+    display: inline-block;
+    margin-right: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.hide {
+    display: none;
+}
+
+/* Optional: Style for the arrow on hover */
+.arrow:hover {
+    opacity: 0.7;
+}
     </style>
     <script src="https://akm-img-a-in.tosshub.com/sites/electiontak/js/jquery-new.min.js"></script>
     <script src="https://akm-img-a-in.tosshub.com/sites/electiontak/js/countingdayhighcharts.js"></script>
@@ -1591,161 +1615,198 @@
 
     <script>
         let selectedTab, timer, dataTimer;
-        var tabLinks = new Array();
-        let contentDivs = new Array();
-        let tabsDesktop = document.getElementById("tabs");
-        let assemblyStates = document.getElementById("assembly-states");
-        let allContentContainer = document.getElementById("all_content");
+var tabLinks = new Array();
+let contentDivs = new Array();
+let tabsDesktop = document.getElementById("tabs");
+let assemblyStates = document.getElementById("assembly-states");
+let allContentContainer = document.getElementById("all_content");
 
-        function init(stateId) {
-            // Grab the tab links and content divs from the page
-            var tabListItems = document.getElementById("tabs").childNodes;
-            for (var i = 0; i < tabListItems.length; i++) {
-                if (tabListItems[i].nodeName == "LI") {
-                    var tabLink = getFirstChildWithTagName(tabListItems[i], "A");
-                    var id = getHash(tabLink.getAttribute("href"));
-                    tabLinks[id] = tabLink;
-                    contentDivs[id] = document.getElementById(id);
+function init(stateId) {
+    var tabListItems = document.getElementById("tabs").childNodes;
+    for (var i = 0; i < tabListItems.length; i++) {
+        if (tabListItems[i].nodeName == "LI") {
+            var tabLink = getFirstChildWithTagName(tabListItems[i], "A");
+            var id = getHash(tabLink.getAttribute("href"));
+            tabLinks[id] = tabLink;
+            contentDivs[id] = document.getElementById(id);
+        }
+    }
+    var i = 0;
+    for (var id in tabLinks) {
+        tabLinks[id].onclick = showTab;
+        tabLinks[id].onfocus = function () {
+            this.blur();
+        };
+        if (stateId) {
+            if (id.includes(stateId)) {
+                tabLinks[id].className = "selected";
+            }
+        } else {
+            if (i == 0) tabLinks[id].className = "selected";
+        }
+        i++;
+    }
+    var i = 0;
+    for (var id in contentDivs) {
+        if (stateId) {
+            if (!id.includes(stateId)) {
+                contentDivs[id].className = "tabContent hide";
+            }
+        } else {
+            if (i != 0) contentDivs[id].className = "tabContent hide";
+        }
+        i++;
+    }
+}
+
+function getFirstChildWithTagName(element, tagName) {
+    for (var i = 0; i < element.childNodes.length; i++) {
+        if (element.childNodes[i].nodeName == tagName) return element.childNodes[i];
+    }
+}
+
+function getHash(url) {
+    var hashPos = url.lastIndexOf("#");
+    return url.substring(hashPos + 1);
+}
+
+function toggleParty(partyId) {
+    const subParties = document.getElementById(`subparties-${partyId}`);
+    const arrow = document.getElementById(`arrow-${partyId}`);
+    if (subParties && arrow) {
+        if (subParties.style.display === 'none') {
+            subParties.style.display = 'block';
+            arrow.textContent = '▼';
+        } else {
+            subParties.style.display = 'none';
+            arrow.textContent = '▶';
+        }
+    }
+}
+
+function generateHighchartsData(data) {
+    return data.map(item => ({
+        name: item[0],
+        y: item[1]
+    }));
+}
+
+function callAjax(stateId) {
+    fetch(`/api/elections/${stateId}`)
+        .then(response => response.json())
+        .then(data => {
+            const stateData = data;
+            const totalSeats = stateData.totalSeats;
+            const Halfway = data.halfWayMark;
+
+            let htmlContent = '';
+            const showLeadingColumn = stateData.parties.some(party => party.leading > 0);
+
+            function createPartyRow(party, indent = 0) {
+                let row = '';
+                const hasSubParties = party.subParties && party.subParties.length > 0;
+                const partyId = party.name.replace(/\s+/g, '-').toLowerCase();
+
+                row += `<li style="margin-left: ${indent}px">
+                    <span>
+                        <a class="remove_cursor" href="#" style="color: ${party.partyColor || '#000'};">`;
+                
+                if (hasSubParties) {
+                    row += `<div id="arrow-${partyId}" style="cursor: pointer; margin-right: 5px; width: fit-content;" 
+                           onclick="event.preventDefault(); toggleParty('${partyId}')">▶</div>`;
+                }
+                
+                row += `<span class="p_clr" style="background-color: ${party.partyColor || '#000'};"></span>
+                        ${party.name}
+                        </a>
+                    </span>`;
+
+                if (showLeadingColumn) {
+                    row += `<span>${party.leading || 0}</span>`;
+                }
+                row += `<span>${party.won || 0}</span>
+                       <span>${(party.won || 0) + (party.leading || 0)}</span>
+                    </li>`;
+
+                if (hasSubParties) {
+                    row += `<div id="subparties-${partyId}" style="display: none;">`;
+                    party.subParties.forEach(subParty => {
+                        row += createPartyRow(subParty, indent + 1);
+                    });
+                    row += '</div>';
+                }
+
+                return row;
+            }
+
+            htmlContent += '<div id="elect_wdgt_slide">';
+            htmlContent += '<div class="asm-result-chart">';
+            htmlContent += `<div id="container${stateId}" style="width:100%;"></div>`;
+            htmlContent += '<ul class="parties">';
+
+            stateData.parties.forEach(party => {
+                const partyName = party.name;
+                htmlContent += `<li class="${partyName}" style="--partycolorchart: ${party.partyColor}">`;
+                htmlContent += `<span></span>`;
+                htmlContent += `${partyName}`;
+                htmlContent += '</li>';
+            });
+
+            htmlContent += '</ul>';
+            htmlContent += '</div>';
+            htmlContent += '<div class="chartDt">';
+            htmlContent += '<div class="dt-inner">';
+            htmlContent += '<ul>';
+
+            htmlContent += '<li class="dt-head"><span><span>Party</span></span>';
+            if (showLeadingColumn) {
+                htmlContent += '<span>Leads</span>';
+            }
+            htmlContent += '<span>Won</span><span>Total</span></li>';
+
+            stateData.parties.forEach(party => {
+                htmlContent += createPartyRow(party, 0);
+            });
+
+            htmlContent += '</ul>';
+            htmlContent += '</div>';
+            htmlContent += '</div>';
+            htmlContent += '</div>';
+
+            $("#" + stateId + "-data").html(htmlContent);
+
+            const chartData = [];
+            const partyColors = [];
+            let totalWon = 0;
+
+            function processPartyForChart(party) {
+                const totalSeatsForParty = (party.won || 0) + (party.leading || 0);
+                if (totalSeatsForParty > 0) {
+                    chartData.push([`${totalSeatsForParty}`, totalSeatsForParty]);
+                    partyColors.push(party.partyColor || '#' + Math.floor(Math.random() * 16777215).toString(16));
+                }
+                totalWon += totalSeatsForParty;
+
+                if (party.subParties && party.subParties.length > 0) {
+                    party.subParties.forEach(processPartyForChart);
                 }
             }
-            // Assign onclick events to the tab links, and highlight the first tab
-            var i = 0;
-            for (var id in tabLinks) {
-                tabLinks[id].onclick = showTab;
-                tabLinks[id].onfocus = function () {
-                    this.blur();
-                };
-                if (stateId) {
-                    if (id.includes(stateId)) {
-                        tabLinks[id].className = "selected";
-                    }
-                } else {
-                    if (i == 0) tabLinks[id].className = "selected";
-                }
 
-                i++;
-            }
-            // Hide all content divs except the first
-            var i = 0;
-            for (var id in contentDivs) {
-                if (stateId) {
-                    if (!id.includes(stateId)) {
-                        contentDivs[id].className = "tabContent hide";
-                    }
-                } else {
-                    if (i != 0) contentDivs[id].className = "tabContent hide";
-                }
+            stateData.parties.forEach(processPartyForChart);
 
-                i++;
-            }
-        }
-
-        function getFirstChildWithTagName(element, tagName) {
-            for (var i = 0; i < element.childNodes.length; i++) {
-                if (element.childNodes[i].nodeName == tagName) return element.childNodes[i];
-            }
-        }
-
-        function getHash(url) {
-            var hashPos = url.lastIndexOf("#");
-            return url.substring(hashPos + 1);
-        }
-
-        function callAjax(stateId) {
-            fetch(`/api/elections/${stateId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const stateData = data;
-                    const totalSeats = stateData.totalSeats;
-                    const Halfway = data.halfWayMark;
-
-                    let htmlContent = '';
-
-                    // Check if any party has a 'leading' value greater than 0
-                    const showLeadingColumn = stateData.parties.some(party => party.leading > 0);
-
-                    console.log(stateData, totalSeats);
-
-                    // Begin the main election result container
-                    htmlContent += '<div id="elect_wdgt_slide">';
-                    htmlContent += '<div class="asm-result-chart">';
-                    htmlContent += `<div id="container${stateId}" style="width:100%;"></div>`;
-                    htmlContent += '<ul class="parties">';
-
-                    // Loop through parties and build the UI
-                    stateData.parties.forEach(party => {
-                        const partyName = party.name;
-                        htmlContent += `<li class="${partyName}" style="--partycolorchart: ${party.partyColor}">`;
-                        htmlContent += ``;
-                        htmlContent += `<span></span>`; // Color box added, fallback color
-                        htmlContent += `${partyName}`;
-                        htmlContent += '</li>';
-                    });
-
-                    htmlContent += '</ul>';
-                    htmlContent += '</div>'; // Close asm-result-chart
-                    htmlContent += '<div class="chartDt">';
-                    htmlContent += '<div class="dt-inner">';
-                    htmlContent += '<ul>';
-
-                    // Conditionally render the "Leads" column
-                    htmlContent += '<li class="dt-head"><span><span>Party</span></span>';
-                    if (showLeadingColumn) {
-                        htmlContent += '<span>Leads</span>';
-                    }
-                    htmlContent += '<span>Won</span><span>Total</span></li>';
-
-                    // Display party data
-                    stateData.parties.forEach(party => {
-                        htmlContent += `<li>
-    <span>
-        <a class="remove_cursor" 
-           href="#" 
-           style="color: ${party.partyColor || '#000'};">
-            <span class="p_clr" style="background-color: ${party.partyColor || '#000'};"></span>
-            ${party.name}
-        </a>
-    </span>`;
-                        if (showLeadingColumn) {
-                            htmlContent += `<span>${party.leading}</span>`;
-                        }
-                        htmlContent += `<span>${party.won}</span><span>${party.won + party.leading}</span></li>`;
-                    });
-
-                    htmlContent += '</ul>';
-                    htmlContent += '</div>'; // Close dt-inner
-                    htmlContent += '</div>'; // Close chartDt
-                    htmlContent += '</div>'; // Close elect_wdgt_slide
-
-                    $("#" + stateId + "-data").html(htmlContent);
-
-                    const chartData = [];
-                    const partyColors = [];
-                    let totalWon = 0;
-
-                    stateData.parties.forEach(party => {
-                        const totalSeatsForParty = party.won + party.leading;
-                        if (totalSeatsForParty > 0) {
-                            chartData.push([`${totalSeatsForParty}`, totalSeatsForParty]); // Corrected to show total seats instead of party name
-                            partyColors.push(party.partyColor || '#' + Math.floor(Math.random() * 16777215).toString(16)); // Generate random colors for parties
-                        }
-                        totalWon += totalSeatsForParty;
-                    });
-
-                    // Build the Highcharts chart
-                    Highcharts.chart("container" + stateId, {
-                        credits: {
-                            enabled: false,
-                        },
-                        chart: {
-                            plotBackgroundColor: null,
-                            plotBorderWidth: 0,
-                            plotShadow: false,
-                        },
-                        title: {
-                            align: "center",
-                            useHTML: true,
-                            text: `<div class="lead-wins">
+            Highcharts.chart("container" + stateId, {
+                credits: {
+                    enabled: false,
+                },
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: 0,
+                    plotShadow: false,
+                },
+                title: {
+                    align: "center",
+                    useHTML: true,
+                    text: `<div class="lead-wins">
                         <div class="l-center">
                             <div class="v-line"></div>
                             <div class="halfway">
@@ -1753,213 +1814,137 @@
                             <span class="ld count">${Halfway}</span>
                         </div>
                       </div>`,
-                            verticalAlign: "middle",
-                            y: -44,
+                    verticalAlign: "middle",
+                    y: -44,
+                },
+                tooltip: {
+                    pointFormat: "{series.name}: <b>{point.y}</b>",
+                },
+                legend: {
+                    align: "center",
+                    verticalAlign: "bottom",
+                    layout: "horizontal",
+                    enabled: true,
+                },
+                plotOptions: {
+                    pie: {
+                        colors: partyColors,
+                        startAngle: -140,
+                        endAngle: 140,
+                        center: ["50%", "65%"],
+                        size: "80%",
+                        showInLegend: false,
+                    },
+                },
+                series: [{
+                    dataLabels: {
+                        connectorShape: "crookedLine",
+                        enabled: true,
+                        distance: 10,
+                        padding: 0,
+                    },
+                    type: "pie",
+                    name: "Seats",
+                    innerSize: "75%",
+                    colorByPoint: true,
+                    enableMouseTracking: false,
+                    data: generateHighchartsData(chartData),
+                }],
+            });
+
+            $(".count, .countUp").each(function () {
+                const txt = $(this).text();
+                if (txt !== "Other") {
+                    $(this).prop("Counter", 0).animate({
+                        Counter: txt,
+                    }, {
+                        duration: 1800,
+                        easing: "swing",
+                        step: function (now) {
+                            $(this).text(Math.ceil(now));
                         },
-                        tooltip: {
-                            pointFormat: "{series.name}: <b>{point.y}</b>",
-                        },
-                        legend: {
-                            align: "center",
-                            verticalAlign: "bottom",
-                            layout: "horizontal",
-                            enabled: true,
-                        },
-                        plotOptions: {
-                            pie: {
-                                colors: partyColors,
-                                startAngle: -140,
-                                endAngle: 140,
-                                center: ["50%", "65%"],
-                                size: "80%",
-                                showInLegend: false,
-                            },
-                        },
-                        series: [{
-                            dataLabels: {
-                                connectorShape: "crookedLine",
-                                enabled: true,
-                                distance: 10,
-                                padding: 0,
-                            },
-                            type: "pie",
-                            name: "Seats",
-                            innerSize: "75%",
-                            colorByPoint: true,
-                            enableMouseTracking: false,
-                            data: generateHighchartsData(chartData),
-                        }],
                     });
-
-        //             Highcharts.chart("container" + stateId, {
-        //                 credits: {
-        //                     enabled: false,
-        //                 },
-        //                 chart: {
-        //                     plotBackgroundColor: null,
-        //                     plotBorderWidth: 0,
-        //                     plotShadow: false,
-        //                 },
-        //                 title: {
-        //                     align: "center",
-        //                     useHTML: true,
-        //                     text: `<div class="lead-wins">
-        //     <div class="l-center">
-        //         <div class="v-line"></div>
-        //         <div class="halfway"></div>
-        //         <span class="ld count">${Halfway}</span>
-        //     </div>
-        // </div>`,
-        //                     verticalAlign: "middle",
-        //                     y: -44,
-        //                 },
-        //                 tooltip: {
-        //                     pointFormat: "{series.name}: <b>{point.y}</b>",
-        //                 },
-        //                 legend: {
-        //                     align: "center",
-        //                     verticalAlign: "bottom",  // Align the legend to the bottom of the chart
-        //                     layout: "horizontal",    // Display legend items in a row
-        //                     enabled: true,           // Show the legend
-        //                     useHTML: true,           // Use HTML for custom styling
-        //                     labelFormatter: function () {
-        //                         // Custom legend label: show color box and party name
-        //                         // return `<span style="background-color: ${this.color}; width: 12px; height: 12px; display: flex; margin-right: 5px;"></span>${this.name}`;
-        //                     },
-        //                 },
-        //                 plotOptions: {
-        //                     pie: {
-        //                         colors: partyColors,
-        //                         startAngle: -140,
-        //                         endAngle: 140,
-        //                         center: ["50%", "65%"],
-        //                         size: "80%",
-        //                         showInLegend: true,  // Enable the legend for this series
-        //                     },
-        //                 },
-        //                 series: [{
-        //                     dataLabels: {
-        //                         connectorShape: "crookedLine",
-        //                         enabled: true,
-        //                         distance: 10,
-        //                         padding: 0,
-        //                     },
-        //                     type: "pie",
-        //                     name: "Seats",
-        //                     innerSize: "75%",
-        //                     colorByPoint: true,
-        //                     enableMouseTracking: false,
-        //                     // data: chartData,  // Data for the pie chart
-        //                     data: generateHighchartsData(chartData),  // Data for the pie chart
-        //                 }],
-        //             });
-
-                    // Number animation
-                    $(".count, .countUp").each(function () {
-                        const txt = $(this).text();
-                        if (txt !== "Other") {
-                            $(this).prop("Counter", 0).animate({
-                                Counter: txt,
-                            }, {
-                                duration: 1800,
-                                easing: "swing",
-                                step: function (now) {
-                                    $(this).text(Math.ceil(now));
-                                },
-                            });
-                        }
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-
-        function showTab(isRequestFromTab = true) {
-            var selectedId;
-            if (isRequestFromTab) selectedId = getHash(this.getAttribute("href"));
-            else selectedId = $("#assembly-states").find("option:selected").attr("data-tab-sel");
-            // Highlight the selected tab, and dim all others.
-            // Also show the selected content div, and hide all others.
-            for (var id in contentDivs) {
-                if (id == selectedId) {
-                    tabLinks[id].className = "selected";
-                    contentDivs[id].className = "tabContent";
-                } else {
-                    tabLinks[id].className = "";
-                    contentDivs[id].className = "tabContent hide";
                 }
-            }
-            // Stop the browser following the link
-            return false;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function showTab(isRequestFromTab = true) {
+    var selectedId;
+    if (isRequestFromTab) selectedId = getHash(this.getAttribute("href"));
+    else selectedId = $("#assembly-states").find("option:selected").attr("data-tab-sel");
+    
+    for (var id in contentDivs) {
+        if (id == selectedId) {
+            tabLinks[id].className = "selected";
+            contentDivs[id].className = "tabContent";
+        } else {
+            tabLinks[id].className = "";
+            contentDivs[id].className = "tabContent hide";
         }
+    }
+    return false;
+}
 
-        const fetchStatesData = () => {
-            clearTimeout(dataTimer);
-            tabsDesktop.innerHTML = ``;
-            assemblyStates.innerHTML = ``;
-            allContentContainer.innerHTML = ``;
+const fetchStatesData = () => {
+    clearTimeout(dataTimer);
+    tabsDesktop.innerHTML = ``;
+    assemblyStates.innerHTML = ``;
+    allContentContainer.innerHTML = ``;
 
-            fetch(`/api/elections/states?v=${Date.now()}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    // Check if the response is successful and has data
-                    if (Array.isArray(data.data)) {
-                        let stateArrData = data.data;
-                        console.log(stateArrData)
-                        // Define the initial selected state
-                        let myState;
+    fetch(`/api/elections/states?v=${Date.now()}`)
+        .then((response) => response.json())
+        .then((data) => {
+            if (Array.isArray(data.data)) {
+                let stateArrData = data.data;
+                let myState;
 
-                        for (let state of stateArrData) {
-                            // Prepare state id for usage in IDs
-                            let stateId = state.id;
-                            let stateSlug = state.slug;
+                for (let state of stateArrData) {
+                    let stateId = state.id;
+                    let stateSlug = state.slug;
 
-                            // Create tab content and update the interface
-                            allContentContainer.innerHTML += `<div class="tabContent" id="state_${stateId}">
+                    allContentContainer.innerHTML += `<div class="tabContent" id="state_${stateId}">
                         <div class="mapLeft" id="${stateId}-data"></div>
                     </div>`;
-                            tabsDesktop.innerHTML += `<li id="${stateId}">
+                    tabsDesktop.innerHTML += `<li id="${stateId}">
                         <a href="#state_${stateId}" data-id="${stateId}">${state.name}</a>
                     </li>`;
-                            assemblyStates.innerHTML += `<option value="${stateId}" data-tab-sel="state_${stateId}" id="optn_state1" data-id="${stateId}">${state.name}</option>`;
+                    assemblyStates.innerHTML += `<option value="${stateId}" data-tab-sel="state_${stateId}" id="optn_state1" data-id="${stateId}">${state.name}</option>`;
 
-                            // Set the first state as the selected state
-                            if (!myState) {
-                                myState = stateId;
-                                selectedTab = stateId; // Set selectedTab to the first state
-                            }
-                        }
-
-                        // Initialize with the first state if no tab is selected
-                        if (selectedTab) {
-                            init(selectedTab);
-                            callAjax(selectedTab);
-                        } else if (myState) {
-                            callAjax(myState);
-                            init(myState);
-                        }
-
-                        // Event binding for tabs
-                        $("#tabs li").click(function () {
-                            var stateId = $(this).attr("id");
-                            selectedTab = stateId;
-                            callAjax(stateId);
-                        });
-
-                        // Refresh data every 300 seconds
-                        timer = setTimeout(() => {
-                            fetchStatesData();
-                        }, 300000);
-                    } else {
-                        console.error('Failed to retrieve states:', data.message);
+                    if (!myState) {
+                        myState = stateId;
+                        selectedTab = stateId;
                     }
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        };
+                }
 
-        fetchStatesData();
+                if (selectedTab) {
+                    init(selectedTab);
+                    callAjax(selectedTab);
+                } else if (myState) {
+                    callAjax(myState);
+                    init(myState);
+                }
+
+                $("#tabs li").click(function () {
+                    var stateId = $(this).attr("id");
+                    selectedTab = stateId;
+                    callAjax(stateId);
+                });
+
+                timer = setTimeout(() => {
+                    fetchStatesData();
+                }, 300000);
+            } else {
+                console.error('Failed to retrieve states:', data.message);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
+fetchStatesData();
     </script>
 
 </body>

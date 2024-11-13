@@ -56,7 +56,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Election data not found' });
     }
 
-    res.status(200).json({election});
+    res.status(200).json(election);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
