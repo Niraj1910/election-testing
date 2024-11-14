@@ -1,5 +1,5 @@
 const { createClient } = require( 'redis');
-
+const {cachedKeys} = require('./utils');
 class RedisManager {
     static instance;
     redisClient;
@@ -39,7 +39,19 @@ class RedisManager {
     }
 
     async clearAllKeys() {
-        await this.redisClient.flushDb();
+        await this.getKeysByPattern(cachedKeys.CN_LIST + ':*');
+        await this.getKeysByPattern(cachedKeys.CANDIDATES + ':*');
+        await this.redisClient.del(cachedKeys.CANDIDATES);
+        await this.redisClient.del(cachedKeys.CONSTITUENCY);
+        await this.redisClient.del(cachedKeys.HOT_CANDIDATES);
+        await this.redisClient.del(cachedKeys.PARTY);
+        await this.redisClient.del(cachedKeys.ASSEMBLY_ELECTION);
+        await this.redisClient.del(cachedKeys.CN_LIST);
+    }
+
+    async getKeysByPattern(pattern) {
+        const keys = await this.redisClient.keys(pattern);
+        await this.redisClient.del(keys);
     }
     
 }

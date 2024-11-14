@@ -238,66 +238,66 @@ router.post('/', upload.single('image'), async (req, res, next) => {
 });
 
 
-// Update a candidate by ID with error handling enabled
-router.put('/:id', upload.single('image'), async (req, res, next) => {
-  try {
-    // Find the existing candidate
-    const existingCandidate = await Candidate.findById(req.params.id);
-    if (!existingCandidate) return res.status(404).send('Candidate not found');
+// // Update a candidate by ID with error handling enabled
+// router.put('/:id', upload.single('image'), async (req, res, next) => {
+//   try {
+//     // Find the existing candidate
+//     const existingCandidate = await Candidate.findById(req.params.id);
+//     if (!existingCandidate) return res.status(404).send('Candidate not found');
 
-    // Prepare the candidate updates
-    const candidateUpdates = {
-      name: req.body.name,
-      party: req.body.party,
-      age: req.body.age,
-      gender: req.body.gender,
-      hotCandidate: req.body.hotCandidate || existingCandidate.hotCandidate || false,
-      totalVotes: req.body.totalVotes,
-      constituency: req.body.constituency,
-      image: req.file ? getFullImagePath(req, 'candidates') : req.body.image || existingCandidate.image,
-    };
+//     // Prepare the candidate updates
+//     const candidateUpdates = {
+//       name: req.body.name,
+//       party: req.body.party,
+//       age: req.body.age,
+//       gender: req.body.gender,
+//       hotCandidate: req.body.hotCandidate || existingCandidate.hotCandidate || false,
+//       totalVotes: req.body.totalVotes,
+//       constituency: req.body.constituency,
+//       image: req.file ? getFullImagePath(req, 'candidates') : req.body.image || existingCandidate.image,
+//     };
 
-    // Update the candidate
-    const candidate = await Candidate.findByIdAndUpdate(req.params.id, candidateUpdates, { new: true });
+//     // Update the candidate
+//     const candidate = await Candidate.findByIdAndUpdate(req.params.id, candidateUpdates, { new: true });
 
-    // Update constituencies if provided
-    if (Array.isArray(req.body.constituency)) {
-      // Fetch the current constituencies from the existing candidate
-      const currentConstituencyIds = existingCandidate.constituency.map(c => c.toString());
+//     // Update constituencies if provided
+//     if (Array.isArray(req.body.constituency)) {
+//       // Fetch the current constituencies from the existing candidate
+//       const currentConstituencyIds = existingCandidate.constituency.map(c => c.toString());
 
-      // Update each constituency
-      for (const constituencyId of req.body.constituency) {
-        const constituency = await Constituency.findById(constituencyId);
-        if (!constituency) {
-          return res.status(404).send(`Constituency with ID ${constituencyId} is invalid`);
-        }
+//       // Update each constituency
+//       for (const constituencyId of req.body.constituency) {
+//         const constituency = await Constituency.findById(constituencyId);
+//         if (!constituency) {
+//           return res.status(404).send(`Constituency with ID ${constituencyId} is invalid`);
+//         }
 
-        // Check if candidate is already in the constituency
-        if (!constituency.candidates.includes(candidate._id)) {
-          constituency.candidates.push(candidate._id); // Add candidate to constituency
-        }
-        await constituency.save();
-      }
+//         // Check if candidate is already in the constituency
+//         if (!constituency.candidates.includes(candidate._id)) {
+//           constituency.candidates.push(candidate._id); // Add candidate to constituency
+//         }
+//         await constituency.save();
+//       }
 
-      // Remove candidate from constituencies not included in the new list
-      const constituenciesToRemove = currentConstitencyIds.filter(id => !req.body.constituency.includes(id));
-      for (const id of constituenciesToRemove) {
-        const constituency = await Constituency.findById(id);
-        if (constituency) {
-          constituency.candidates = constituency.candidates.filter(candidateId => !candidateId.equals(candidate._id)); // Remove candidate from constituency
-          await constituency.save();
-        }
-      }
-    }
+//       // Remove candidate from constituencies not included in the new list
+//       const constituenciesToRemove = currentConstitencyIds.filter(id => !req.body.constituency.includes(id));
+//       for (const id of constituenciesToRemove) {
+//         const constituency = await Constituency.findById(id);
+//         if (constituency) {
+//           constituency.candidates = constituency.candidates.filter(candidateId => !candidateId.equals(candidate._id)); // Remove candidate from constituency
+//           await constituency.save();
+//         }
+//       }
+//     }
 
-    await redis.clearAllKeys()
+//     await redis.clearAllKeys()
 
 
-    res.json(candidate);
-  } catch (error) {
-    next(error);
-  }
-});
+//     res.json(candidate);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 // Delete a candidate by ID with error handling enabled
 router.delete('/:id', async (req, res, next) => {
