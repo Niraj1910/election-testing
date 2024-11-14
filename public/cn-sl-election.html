@@ -17,12 +17,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
         }
 
         .carousel-container {
             width: 100%;
             /* max-width: 1200px; */
+            height: fit-content;
             position: relative;
             overflow: hidden;
             margin: 0 auto;
@@ -289,7 +289,7 @@
 </head>
 
 <body>
-    <div class="carousel-container">
+    <div class="carousel-container" id="cn-sl-list-election-iframe">
         <div class="carousel">
             <div class="card-wrapper" id="cardWrapper">
                 <!-- Cards will be inserted here by JavaScript -->
@@ -454,10 +454,18 @@
             }
         }
 
+        function sendHeight() {
+            const element = document.querySelector('#cn-sl-list-election-iframe');
+            const height = element ? element.offsetHeight : 0;
+            window.parent.postMessage({ election_iframe: height }, "*");
+      }
+
         getCandidates();
         setTimeout(() => {
             window.location.reload();
         }, 300000);
+        window.onload = sendHeight;
+        window.onresize = sendHeight;
     </script>
 </body>
 

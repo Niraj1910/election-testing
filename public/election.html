@@ -714,7 +714,6 @@
             border: 1px solid #e2e2e2;
             border-top-width: 6px;
             border-radius: 0 0 8px 8px;
-            min-height: calc(100dvh - 1px);
         }
 
         .elecResults * {
@@ -1559,7 +1558,7 @@
 </head>
 
 <body>
-    <div class="elecResults">
+    <div class="elecResults" id="election_container">
         <!-- <h3 id="titleheading">2019 Assembly Election Results</h3> -->
         <div class="tabArea">
             <div class="stateMob">
@@ -1887,6 +1886,12 @@ function showTab(isRequestFromTab = true) {
     return false;
 }
 
+function sendHeight() {
+    const element = document.querySelector('#election_container');
+    const height = element ? element.offsetHeight : 0;
+    window.parent.postMessage({ election_iframe: height }, "*");
+}
+
 const fetchStatesData = () => {
     clearTimeout(dataTimer);
     tabsDesktop.innerHTML = ``;
@@ -1935,6 +1940,7 @@ const fetchStatesData = () => {
                 timer = setTimeout(() => {
                     fetchStatesData();
                 }, 300000);
+                sendHeight();
             } else {
                 console.error('Failed to retrieve states:', data.message);
             }
@@ -1943,8 +1949,9 @@ const fetchStatesData = () => {
             console.log(err);
         });
 };
-
-fetchStatesData();
+    fetchStatesData();
+    window.onload = sendHeight;
+    window.onresize = sendHeight;
     </script>
 
 </body>

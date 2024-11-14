@@ -178,7 +178,7 @@
 </head>
 
 <body>
-  <div class="widget-container">
+  <div class="widget-container" id="cn-list-container">
     <div class="widget-header">
       <select id="constituencySelect" class="constituency-select">
         <option value="">Loading constituencies...</option>
@@ -363,9 +363,17 @@
       }
     }
 
+    function sendHeight() {
+            const element = document.querySelector('#cn-list-container');
+            const height = element ? element.offsetHeight : 0;
+            window.parent.postMessage({ election_iframe: height }, "*");
+      }
+
     // Initialize the widget when the page loads
     document.addEventListener('DOMContentLoaded', () => {
       new ElectionWidget();
+      window.onload = sendHeight;
+      window.onresize = sendHeight;
     });
   </script>
 </body>
