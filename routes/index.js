@@ -95,6 +95,7 @@ router.get('/constituency', async function(req, res, next) {
         model: 'Party',
       },
     }).sort({'name': 1}); // Fetch all constituencies from the database
+    
     return res.render('constituency.ejs', { constituencies });
   } catch (error) {
     console.log(error);
