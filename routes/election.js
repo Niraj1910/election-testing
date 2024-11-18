@@ -39,18 +39,12 @@ router.post('/', async (req, res) => {
 
 router.get('/states', async (req, res) => {
   try {
-    const cachedData = await redis.get(cachedKeys.STATE_ELECTION);
-    if(cachedData){
-      return res.json(cachedData);
-    }
     const states = await Election.find({});
     const statesWithSlugs = states.map(state => ({
       name: state.state,
       slug: state.stateSlug,
       id: state._id
     }));
-
-    await redis.setWithTTL(cachedKeys.STATE_ELECTION, statesWithSlugs, 3600);
     return res.status(200).json({ message: 'States, their slugs, and ids retrieved successfully', data: statesWithSlugs });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -60,13 +54,17 @@ router.get('/states', async (req, res) => {
 // Get API to retrieve election data by state
 router.get('/:id', async (req, res) => {
   try {
-
     const { id } = req.params;
+    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION + ':' + id);
+    if(cachedData){
+      return res.json(cachedData);
+    }
     const election = await Election.findById(id);
 
     if (!election) {
       return res.status(404).json({ message: 'Election data not found' });
     }
+    await redis.set(cachedKeys.ASSEMBLY_ELECTION + ':' + id, election); // Cache the election data for 10 minutes
 
     res.status(200).json(election);
   } catch (error) {
