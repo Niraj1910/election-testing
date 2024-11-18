@@ -1,5 +1,5 @@
 function getFullImagePath(req, folderName){
-    return req.protocol + '://' + req.get('host') + `/uploads/${folderName}/` + req.file.filename;
+    return `https://election.prabhatkhabar.com/uploads/${folderName}/` + req.file.filename;
 }
 
 const cachedKeys = {
