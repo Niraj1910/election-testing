@@ -49,6 +49,7 @@ class RedisManager {
         await this.redisClient.del(cachedKeys.CN_LIST);
         await this.redisClient.del(cachedKeys.STATE_ELECTION);
         await this.redisClient.del(cachedKeys.ELECTION);
+        await this.redisClient.del(cachedKeys.ASSEMBLY_ELECTION + ':*');
     }
 
     async getKeysByPattern(pattern) {

@@ -96,7 +96,7 @@ router.delete('/:id', async (req, res) => {
 router.get('/state/:name', async (req, res) => {
   try {
 
-    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION);
+    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION + `:${req.params.name}`);
 
     if(cachedData){
       return res.json(cachedData);
@@ -171,7 +171,7 @@ router.get('/state/:name', async (req, res) => {
 
     // Send the response with structured data
 
-    await redis.setWithTTL(cachedKeys.ASSEMBLY_ELECTION, {
+    await redis.setWithTTL(cachedKeys.ASSEMBLY_ELECTION + `:${req.params.name}`, {
       state: elections.state,
       year: elections.year,
       total_seat: elections.total_seat,
