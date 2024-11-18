@@ -5,7 +5,7 @@ const Party = require('../models/party.model'); // Adjust the path as necessary
 const Constituency = require('../models/constituency'); // Adjust the path as necessary
 const multer = require('multer');
 const mime = require('mime-types')
-const {getFullImagePath} = require('../utils');
+const {getFullImagePath, cachedKeys} = require('../utils');
 const RedisManager = require('../RedisManager');
 
 const redis = RedisManager.getInstance();  // Get the Redis instance
@@ -118,6 +118,8 @@ router.post('/', upload.single('party_logo'), async (req, res) => {
     const newParty = new Party(partyData);
     await newParty.save();
 
+    await redis.clearAllKeys();
+
     // Redirect to the list of parties (or return response if desired)
     res.redirect('/parties');
 
@@ -131,9 +133,12 @@ router.post('/', upload.single('party_logo'), async (req, res) => {
 // GET route to retrieve all parties
 router.get('/', async (req, res) => {
   try {
-
+    const cachedData = await redis.get(cachedKeys.PARTY);
+    if(cachedData){
+      return res.json(cachedData);
+    }
     const parties = await Party.find();
-
+    await redis.set(cachedKeys.PARTY, parties); // Cache the result
     res.json(parties);
   } catch (err) {
     console.error(err); // Log the error for debugging
@@ -144,11 +149,17 @@ router.get('/', async (req, res) => {
 // GET route to retrieve a single party by ID
 router.get('/:id', async (req, res) => {
   try {
+    const cachedData = await redis.get(cachedKeys.PARTY + ':' +req.params.id);
+    if(cachedData){
+      return res.json(cachedData);
+    }
     const party = await Party.findById(req.params.id);
 
     if (!party) {
       return res.status(404).json({ message: 'Party not found' });
     }
+
+    await redis.set(cachedKeys.PARTY + ':' + req.params.id, party); // Cache the result
 
     res.json(party);
   } catch (err) {
@@ -185,6 +196,8 @@ router.put('/:id', upload.single('party_logo'), async (req, res) => {
       return res.status(404).json({ message: 'Party not found' });
     }
 
+    await redis.clearAllKeys(); // Clear Redis cache when a party is updated or deleted
+
     res.json(party);
   } catch (err) {
     console.error(err); // Log the error for debugging
@@ -200,6 +213,7 @@ router.delete('/:id', async (req, res) => {
     if (!party) {
       return res.status(404).json({ message: 'Party not found' });
     }
+    await redis.clearAllKeys();
     return res.status(200).json({ message: 'Deleted party'});
   } catch (err) {
     console.error(err); // Log the error for debugging
