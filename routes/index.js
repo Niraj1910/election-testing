@@ -94,7 +94,7 @@ router.get('/constituency', async function(req, res, next) {
         path: 'party',
         model: 'Party',
       },
-    }); // Fetch all constituencies from the database
+    }).sort({'name': 1}); // Fetch all constituencies from the database
     return res.render('constituency.ejs', { constituencies });
   } catch (error) {
     console.log(error);
@@ -131,13 +131,14 @@ router.get('/edit-constituency/:id', async function(req, res, next) {
   }
 });
 
-router.get('/candidates', async function(req, res, next) {
+router.get('/candidates', async function (req, res, next) {
   try {
     const page = parseInt(req.query.page) || 1; // Get the current page number from query params
     const limit = parseInt(req.query.limit) || 10; // Set the limit of items per page
+    const search = req.query.search || ''; // Get the search term from query params
     const skip = (page - 1) * limit; // Calculate the number of items to skip
 
-    const cacheKey = `candidates:${page}:${limit}`; // Cache key based on page and limit
+    const cacheKey = `candidates:${page}:${limit}:${search}`; // Cache key based on page, limit, and search term
 
     // Try to fetch data from Redis cache
     const cachedData = await redis.get(cacheKey);
@@ -148,17 +149,29 @@ router.get('/candidates', async function(req, res, next) {
         candidates: cachedData.candidates,
         currentPage: page,
         totalPages: cachedData.totalPages,
-        limit
+        limit,
+        search
       });
     }
 
-    // If data is not found in cache, query the database
-    const candidates = await Candidate.find()
+    // Create a search filter for MongoDB
+    const searchFilter = search
+      ? {
+          $or: [
+            { name: { $regex: search, $options: 'i' } }, // Case-insensitive search in name
+            { 'party.name': { $regex: search, $options: 'i' } }, // Search in party name
+            { 'constituency.name': { $regex: search, $options: 'i' } }, // Search in constituency name
+          ],
+        }
+      : {};
+
+    // Query the database
+    const candidates = await Candidate.find(searchFilter)
       .populate('party constituency')
       .skip(skip) // Skip the items based on pagination
       .limit(limit); // Limit the number of items returned
 
-    const totalCandidates = await Candidate.countDocuments(); // Get the total number of candidates
+    const totalCandidates = await Candidate.countDocuments(searchFilter); // Get the total number of candidates matching the search
 
     // Calculate total pages
     const totalPages = Math.ceil(totalCandidates / limit);
@@ -166,7 +179,7 @@ router.get('/candidates', async function(req, res, next) {
     // Store the data in Redis with TTL of 3600 seconds (1 hour)
     const dataToCache = {
       candidates,
-      totalPages
+      totalPages,
     };
     await redis.setWithTTL(cacheKey, dataToCache, 3600);
 
@@ -174,7 +187,8 @@ router.get('/candidates', async function(req, res, next) {
       candidates: candidates || [],
       currentPage: page,
       totalPages,
-      limit
+      limit,
+      search
     });
   } catch (error) {
     console.log(error);
@@ -253,7 +267,7 @@ router.get('/assembly-election', async function(req, res, next) {
 
 router.get('/cons-candidates', async function(req, res, next) {
   try {
-    const constituencies = await Constituency.find();
+    const constituencies = await Constituency.find().sort({ 'name': 1 });
     const parties = await Party.find();
 
     if (req.query.cons) {

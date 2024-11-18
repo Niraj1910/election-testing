@@ -2,6 +2,10 @@ const express = require('express');
 const { z } = require('zod'); // Import Zod for validation
 const Election = require('../models/election.model');
 const isAdmin = require('../middleware/admin');
+const RedisManager = require('../RedisManager');
+const { cachedKeys } = require('../utils');
+
+const redis = RedisManager.getInstance();
 
 const router = express.Router();
 
@@ -26,6 +30,7 @@ router.post('/', async (req, res) => {
     });
 
     const savedElection = await election.save();
+    await redis.clearAllKeys(); // Clear all Redis keys when a new election is created
     res.status(201).json(savedElection);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -34,12 +39,18 @@ router.post('/', async (req, res) => {
 
 router.get('/states', async (req, res) => {
   try {
+    const cachedData = await redis.get(cachedKeys.STATE_ELECTION);
+    if(cachedData){
+      return res.json(cachedData);
+    }
     const states = await Election.find({});
     const statesWithSlugs = states.map(state => ({
       name: state.state,
       slug: state.stateSlug,
       id: state._id
     }));
+
+    await redis.setWithTTL(cachedKeys.STATE_ELECTION, statesWithSlugs, 3600);
     return res.status(200).json({ message: 'States, their slugs, and ids retrieved successfully', data: statesWithSlugs });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -49,6 +60,7 @@ router.get('/states', async (req, res) => {
 // Get API to retrieve election data by state
 router.get('/:id', async (req, res) => {
   try {
+
     const { id } = req.params;
     const election = await Election.findById(id);
 
@@ -101,6 +113,8 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Election not found' });
     }
 
+    await redis.clearAllKeys(); // Clear Redis cache when an election is deleted
+
     res.status(200).json({ message: 'Election successfully deleted' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -115,6 +129,7 @@ router.put('/:id', async (req, res) => {
     if (!updatedElection) {
       return res.status(404).json({ message: 'Election not found' });
     }
+    await redis.clearAllKeys(); // Clear Redis cache when an election is updated
 
     res.status(200).json(updatedElection);
   } catch (error) {
