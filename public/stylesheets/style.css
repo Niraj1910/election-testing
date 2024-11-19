@@ -1087,10 +1087,6 @@ video {
   padding: 1.5rem;
 }
 
-.p-\[20px\] {
-  padding: 20px;
-}
-
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1209,6 +1205,10 @@ video {
   font-size: 16px;
 }
 
+.text-\[35px\] {
+  font-size: 35px;
+}
+
 .text-base {
   font-size: 1rem;
   line-height: 1.5rem;
@@ -1234,20 +1234,16 @@ video {
   line-height: 1rem;
 }
 
-.text-\[22px\] {
-  font-size: 22px;
-}
-
-.text-\[35px\] {
-  font-size: 35px;
-}
-
 .font-bold {
   font-weight: 700;
 }
 
 .font-medium {
   font-weight: 500;
+}
+
+.font-normal {
+  font-weight: 400;
 }
 
 .font-semibold {

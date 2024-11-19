@@ -143,7 +143,7 @@ router.get('/state/:name', async (req, res) => {
           .populate('party');
 
         const highestVoteCandidate = cands[0]; // Leading candidate (highest votes)
-        const lowestVoteCandidate = cands[cands.length - 1]; // Trailing candidate (lowest votes)
+        const lowestVoteCandidate = cands[1]; // Trailing candidate (lowest votes)
 
         const leadingPartyColor = highestVoteCandidate ? highestVoteCandidate.party.color_code : null;
         const trailingPartyColor = lowestVoteCandidate ? lowestVoteCandidate.party.color_code : null;
