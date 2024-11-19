@@ -105,21 +105,38 @@ electionSchema.statics.findByState = function(state) {
 
 electionSchema.pre('save', function (next) {
   if (this.parties) {
+    this.parties.forEach((party) => {
+      if (party.subParties && party.subParties.length > 0) {
+        // Calculate total won and leading for the party based on sub-parties
+        party.won = party.subParties.reduce((acc, subParty) => acc + subParty.won, 0);
+        party.leading = party.subParties.reduce((acc, subParty) => acc + subParty.leading, 0);
+      }
+    });
+
+    // Update declaredSeats based on the parties' won seats
     this.declaredSeats = this.parties.reduce((acc, party) => acc + party.won, 0);
   }
   next();
 });
 
-// Middleware to update `declaredSeats` before updating
 electionSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate();
   if (update.parties) {
-    const declaredSeats = update.parties.reduce((acc, party) => acc + party.won, 0);
-    update.declaredSeats = declaredSeats; // Set the calculated value
+    update.parties.forEach((party) => {
+      if (party.subParties && party.subParties.length > 0) {
+        // Calculate total won and leading for the party based on sub-parties
+        party.won = party.subParties.reduce((acc, subParty) => acc + subParty.won, 0);
+        party.leading = party.subParties.reduce((acc, subParty) => acc + subParty.leading, 0);
+      }
+    });
+
+    // Update declaredSeats based on the updated parties' won seats
+    update.declaredSeats = update.parties.reduce((acc, party) => acc + party.won, 0);
     this.setUpdate(update);
   }
   next();
 });
+
 
 // Export the model
 const Election = mongoose.model('Election', electionSchema);

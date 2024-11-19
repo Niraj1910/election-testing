@@ -55,22 +55,44 @@ router.get('/states', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Check if data exists in Redis cache
     const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION + ':' + id);
-    if(cachedData){
-      return res.json(cachedData);
+    if (cachedData) {
+      return res.json(cachedData); // Ensure cached data is parsed back to JSON
     }
+
+    // Fetch election data from database
     const election = await Election.findById(id);
 
     if (!election) {
       return res.status(404).json({ message: 'Election data not found' });
     }
-    await redis.set(cachedKeys.ASSEMBLY_ELECTION + ':' + id, election); // Cache the election data for 10 minutes
+
+    // Sort parties and their subParties by 'won' in descending order
+    if (election.parties && election.parties.length > 0) {
+      election.parties.sort((a, b) => b.won - a.won); // Sort parties
+
+      election.parties.forEach((party) => {
+        if (party.subParties && party.subParties.length > 0) {
+          party.subParties.sort((a, b) => b.won - a.won); // Sort subParties
+        }
+      });
+    }
+
+    // Cache the sorted data for 10 minutes (600 seconds)
+    await redis.setWithTTL(
+      cachedKeys.ASSEMBLY_ELECTION + ':' + id,
+      election,
+      3600
+    );
 
     res.status(200).json(election);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 
 router.get('/', async (req, res) => {
