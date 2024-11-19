@@ -64,7 +64,7 @@ router.post('/',isAdmin, async (req, res) => {
 
 router.get('/states', async (req, res) => {
   try {
-    const states = await Election.find({});
+    const states = await Election.find({}).sort({createdAt: -1});
     const statesWithSlugs = states.map(state => ({
       name: state.state,
       slug: state.stateSlug,
