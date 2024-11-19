@@ -38,8 +38,16 @@ router.post('/', async (req, res) => {
 // Get all AssemblyElections
 router.get('/', async (req, res) => {
   try {
+    // Fetch from cache if available
+    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION);
+    if(cachedData){
+      return res.json(cachedData);
+    }
+
+    // Clear cache after 5 minutes
     // Fetch from DB if no cache
     const elections = await AssemblyElection.find().populate('constituencies');
+    await redis.setWithTTL(cachedKeys.ASSEMBLY_ELECTION, elections, 3600); // Cache for 5 minutes
 
     res.json(elections);
   } catch (error) {
@@ -51,8 +59,15 @@ router.get('/', async (req, res) => {
 // Get an AssemblyElection by ID
 router.get('/:id', async (req, res) => {
   try {
+    const { id } = req.params;
+    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION + ':' + req.params.id);
+    if(cachedData){
+      return res.json(cachedData);
+    }
+
     const election = await AssemblyElection.findById(req.params.id).populate('constituencies');
     if (!election) return res.status(404).send('Election not found');
+    await redis.setWithTTL(cachedKeys.ASSEMBLY_ELECTION + ':' + req.params.id, election, 3600); // Cache the result
     res.json(election);
   } catch (error) {
     console.error(error);

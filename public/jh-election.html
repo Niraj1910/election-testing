@@ -444,7 +444,8 @@
                     loading = false;
                     updateLoading();
                     applyColorsAndPopovers(data);
-                    document.querySelector('.main_title').innerText = `${(data.state).toUpperCase()} (${data.year})`;
+                    console.log(data);
+                    document.querySelector('.main_title').innerText = `Assembly Election-${data.year} (${data.constituency.length})`;
                     getParties();
                 })
                 .catch(error => console.error('Error fetching colors:', error));
@@ -531,6 +532,9 @@
             const trailPartyName = path.getAttribute('data-trail-partyName') || 'N/A';
             const trailPartyLogo = path.getAttribute('data-trail-partyLogo') || 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=';
 
+            const showColors = Number(trailTotalVotes + totalVotes) > 0;
+            console.log(showColors);
+
             if (currentTippy) {
                 currentTippy.destroy();
             }
@@ -544,10 +548,10 @@
             </div>
 
             <!-- Winner Candidate -->
-            <div class="candidate-section winner">
+            <div class="candidate-section winner" style="border-left: ${showColors ? '' : '#D3D3D3'};">
                 <div class="candidate-header">
                     <span class="candidate-name">${candidate}</span>
-                    <span class="status-badge status-won">LEADING</span>
+                    <span class="status-badge status-won" style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${showColors ? "LEADING" : "AWAITING"}</span>
                 </div>
                 <div class="party-votes">
                     <div class="party-info">
@@ -559,15 +563,15 @@
                 </div>
                 <div class="margin-info">
                     <span class="margin-label">Leading by:</span>
-                    <span class="margin-value-won">${totalVotes} votes</span>
+                    <span class="margin-value-won" style="color: ${showColors ? '' : 'gray'}">${totalVotes} votes</span>
                 </div>
             </div>
 
             <!-- Runner-up Candidate -->
-            <div class="candidate-section trailing">
+            <div class="candidate-section trailing"  style="border-left: ${showColors ? '' : '#D3D3D3'};">
                 <div class="candidate-header">
                     <span class="candidate-name">${trailCandidate}</span>
-                    <span class="status-badge status-trailing">TRAILING</span>
+                    <span class="status-badge status-trailing"  style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${showColors ? "TRAILING" : "AWAITING"}</span>
                 </div>
                 <div class="party-votes">
                     <div class="party-info">
@@ -579,7 +583,7 @@
                 </div>
                 <div class="margin-info">
                     <span class="margin-label">Trailing by:</span>
-                    <span class="margin-value-trailing">${trailTotalVotes} votes</span>
+                    <span class="margin-value-trailing" style="color: ${showColors ? '' : 'gray'}">${trailTotalVotes} votes</span>
                 </div>
             </div>
 
@@ -587,17 +591,6 @@
         </div>
     </div>
                 `,
-                // content: `
-                //     <div class="popover-content">
-                //         <p class="text-sm font-bold text-gray-800">${constituency} - (${totalVotes})</p>
-                //         <p class="text-xs text-gray-600">${candidate} (WON)</p>
-                //         <div class="flex items-center gap-2">
-                //             <span class="text-xs text-gray-600">${partyName}</span>
-                //             <img class="h-10 w-10 object-contain" src="${partyLogo}" alt="${partyName} Logo" />
-                //         </div>
-                //         <div class="arrow-down"></div>
-                //     </div>
-                // `,
                 placement: 'top',
                 arrow: true,
                 interactive: false,
@@ -614,8 +607,6 @@
                     path.style.opacity = '1';
                 },
             });
-
-            console.log(currentTippy);
 
             currentTippy.show();
         }
