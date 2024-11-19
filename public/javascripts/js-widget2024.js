@@ -43,7 +43,7 @@ async function openPresident(){
       $('.s-party-scorenumber').text(secondParty.won).css("color", secondParty.partyColor);
       
       // Calculate bar widths
-      const totalSeats = 81;
+      const totalSeats = 41;
       const firstPartyWidth = (firstParty.won / totalSeats) * 50; // Cap at 50%
       const secondPartyWidth = (secondParty.won / totalSeats) * 50; // Cap at 50%
       

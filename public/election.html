@@ -41,6 +41,7 @@
             animation-fill-mode: both;
             -webkit-animation-name: bounceIn;
             animation-name: bounceIn;
+            bottom: 4%;
         }
 
         @-webkit-keyframes bounceIn {
@@ -857,6 +858,9 @@
             .chartDt .dt-inner ul li>span:nth-child(1) {
                 flex: 0 0 103px;
             }
+            .lead-wins {
+                bottom: 4% !important;
+            }
         }
 
         /* PARTY POSITION */
@@ -1445,6 +1449,18 @@
 .arrow:hover {
     opacity: 0.7;
 }
+    .declared_seats {
+        position: absolute;
+        bottom: 30%;
+        left: 25%;
+    }
+
+    @media (max-width: 450px) {
+        .declared_seats {
+            bottom: 10%;
+            left: 22%;
+        }
+    }
     </style>
     <script src="https://akm-img-a-in.tosshub.com/sites/electiontak/js/jquery-new.min.js"></script>
     <script src="https://akm-img-a-in.tosshub.com/sites/electiontak/js/countingdayhighcharts.js"></script>
@@ -1725,6 +1741,7 @@ function callAjax(stateId) {
             const stateData = data;
             const totalSeats = stateData.totalSeats;
             const Halfway = data.halfWayMark;
+            const declared_seats = stateData.declaredSeats;
 
             let htmlContent = '';
             const showLeadingColumn = stateData.parties.some(party => party.leading > 0);
@@ -1753,8 +1770,9 @@ function callAjax(stateId) {
                     row += `<span>${party.leading || 0}</span>`;
                 }
                 row += `<span>${party.won || 0}</span>
-                       <span>${(party.won || 0) + (party.leading || 0)}</span>
                     </li>`;
+                    // <span>${(party.won || 0) + (party.leading || 0)}</span>
+
 
                 if (hasSubParties) {
                     row += `<div id="subparties-${partyId}" style="display: none;">`;
@@ -1790,7 +1808,8 @@ function callAjax(stateId) {
             if (showLeadingColumn) {
                 htmlContent += '<span>Leads</span>';
             }
-            htmlContent += `<span>Won</span><span>Total (${totalSeats})</span></li>`;
+            htmlContent += `<span>Won</span></li>`;
+            // <span>Total (${totalSeats})</span>
 
             stateData.parties.forEach(party => {
                 htmlContent += createPartyRow(party, 0);
@@ -1841,6 +1860,8 @@ function callAjax(stateId) {
                             </div>
                             <span class="ld count">${Halfway}</span>
                         </div>
+                            
+                            <span class="declared_seats">${declared_seats}/${totalSeats}</span>
                       </div>`,
                     verticalAlign: "middle",
                     y: -44,
