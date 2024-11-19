@@ -28,7 +28,7 @@ router.get('/edit-election/:id',isLoggedIn, isAdmin, async function(req, res, ne
     if (!election) {
       return res.status(404).send('Election not found');
     }
-    res.render('edit-election.ejs', { election });
+    res.render('edit-election.ejs', { election, user: req.session.user });
   } catch (error) {
     next(error);
   }
