@@ -4,6 +4,7 @@ const AssemblyElection = require('../models/assembly-election.model');
 const Candidate = require('../models/candidates');
 const RedisManager = require('../RedisManager');
 const { cachedKeys } = require('../utils');
+const isAdmin = require('../middleware/admin');
 const router = express.Router();
 
 const redis = RedisManager.getInstance();
@@ -18,7 +19,7 @@ const electionSchema = Joi.object({
 });
 
 // Create a new AssemblyElection
-router.post('/', async (req, res) => {
+router.post('/',isAdmin, async (req, res) => {
   try {
     const { error } = electionSchema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -76,7 +77,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update an AssemblyElection by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', isAdmin,async (req, res) => {
   try {
     const { error } = electionSchema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -93,7 +94,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete an AssemblyElection by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',isAdmin, async (req, res) => {
   try {
     const election = await AssemblyElection.findByIdAndDelete(req.params.id);
     if (!election) return res.status(404).send('Election not found');

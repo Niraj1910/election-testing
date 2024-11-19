@@ -7,6 +7,7 @@ const mime = require('mime-types');
 const { getFullImagePath, cachedKeys } = require('../utils');
 const Constituency = require('../models/constituency');
 const RedisManager = require('../RedisManager');
+const isAdmin = require('../middleware/admin');
 
 const redis = RedisManager.getInstance();
 
@@ -112,7 +113,7 @@ router.get('/cn-list', async (req, res, next) => {
   }
 });
 
-router.put('/:id', upload.single('image'), async (req, res, next) => {
+router.put('/:id',isAdmin, upload.single('image'), async (req, res, next) => {
   try {
     const existingCandidate = await Candidate.findById(req.params.id);
     if (!existingCandidate) return res.status(404).send('Candidate not found');
@@ -177,7 +178,7 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // Add a new candidate with error handling enabled
-router.post('/', upload.single('image'), async (req, res, next) => {
+router.post('/',isAdmin, upload.single('image'), async (req, res, next) => {
   try {
     // Convert the hotCandidate value to a boolean
     const hotCandidate = req.body.hotCandidate === 'true';
@@ -300,7 +301,7 @@ router.post('/', upload.single('image'), async (req, res, next) => {
 // });
 
 // Delete a candidate by ID with error handling enabled
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id',isAdmin, async (req, res, next) => {
   try {
     const candidate = await Candidate.findByIdAndDelete(req.params.id);
     if (!candidate) return res.status(404).send('Candidate not found');

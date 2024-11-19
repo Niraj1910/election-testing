@@ -9,7 +9,7 @@ const redis = RedisManager.getInstance();
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/',isAdmin, async (req, res) => {
   try {
     const { state, totalSeats, declaredSeats, halfWayMark, parties } = req.body;
     const stateSlug = state.toLowerCase().replace(/ /g, '_');
@@ -102,7 +102,7 @@ router.get('/', async (req, res) => {
 });
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const election = await Election.findByIdAndDelete(id);
@@ -119,7 +119,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const updatedElection = await Election.findByIdAndUpdate(id, req.body);

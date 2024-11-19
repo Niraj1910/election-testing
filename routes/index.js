@@ -6,6 +6,7 @@ const Constituency = require('../models/constituency');
 const Candidate = require('../models/candidates');
 const AssemblyElection = require('../models/assembly-election.model');
 const RedisManager = require('../RedisManager');
+const isLoggedIn = require('../middleware/login');
 var router = express.Router();
 
 const redis = RedisManager.getInstance();
@@ -18,7 +19,7 @@ router.get('/', function(req, res, next) {
   res.redirect('/dashboard');
 });
 
-router.get('/edit-election/:id', async function(req, res, next) {
+router.get('/edit-election/:id',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const electionId = req.params.id;
     console.log(electionId);
@@ -33,7 +34,7 @@ router.get('/edit-election/:id', async function(req, res, next) {
   }
 });
 
-router.get('/create-election', function(req, res, next) {
+router.get('/create-election',isLoggedIn, isAdmin, function(req, res, next) {
   return res.render('create-election.ejs')
 });
 
@@ -45,7 +46,7 @@ router.get('/login', function(req, res, next) {
   res.render('login.ejs');
 });
 
-router.get('/dashboard', function(req, res, next) {
+router.get('/dashboard',isLoggedIn, isAdmin, function(req, res, next) {
   if (!req.session.user) {
     return res.redirect('/login');
   }
@@ -56,7 +57,7 @@ router.get('/dashboard', function(req, res, next) {
 });
 
 // create a party route 
-router.get('/parties', async function(req, res, next) {
+router.get('/parties',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const parties = await Party.find(); // Fetch all parties from the database
     return res.render('party.ejs', { parties });
@@ -67,11 +68,11 @@ router.get('/parties', async function(req, res, next) {
 });
 
 // create party page
-router.get('/create-party', function(req, res, next) {
+router.get('/create-party',isLoggedIn, isAdmin, function(req, res, next) {
   res.render('create-party.ejs');
 });
 
-router.get('/edit-party/:id', async function(req, res, next) {
+router.get('/edit-party/:id',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const partyId = req.params.id;
     const party = await Party.findById(partyId);
@@ -85,7 +86,7 @@ router.get('/edit-party/:id', async function(req, res, next) {
 });
 
 // create constituency route
-router.get('/constituency', async function(req, res, next) {
+router.get('/constituency',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const constituencies = await Constituency.find().populate({
       path: 'candidates',
@@ -104,13 +105,13 @@ router.get('/constituency', async function(req, res, next) {
 });
 
 // create constituency page create-constituency
-router.get('/create-constituency',async function(req, res, next) {
+router.get('/create-constituency',isLoggedIn, isAdmin, async function(req, res, next) {
   const candidates = await Candidate.find();
   const errorMessages = req.flash('error');
   res.render('create-constituency.ejs', { candidates, error: errorMessages });
 });
 
-router.get('/edit-constituency/:id', async function(req, res, next) {
+router.get('/edit-constituency/:id',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const constituencyId = req.params.id;
     const constituency = await Constituency.findById(constituencyId).populate({
@@ -132,7 +133,7 @@ router.get('/edit-constituency/:id', async function(req, res, next) {
   }
 });
 
-router.get('/candidates', async function (req, res, next) {
+router.get('/candidates',isLoggedIn, isAdmin, async function (req, res, next) {
   try {
     const page = parseInt(req.query.page) || 1; // Get the current page number from query params
     const limit = parseInt(req.query.limit) || 10; // Set the limit of items per page
@@ -197,7 +198,7 @@ router.get('/candidates', async function (req, res, next) {
   }
 });
 
-router.get('/create-candidate', async function(req, res, next) {
+router.get('/create-candidate',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const parties = await Party.find(); // Fetch all parties 
     const constituencies = await Constituency.find(); // Fetch all constituencies
@@ -208,7 +209,7 @@ router.get('/create-candidate', async function(req, res, next) {
   }
 });
 
-router.get('/edit-candidate/:id', async function(req, res, next) {
+router.get('/edit-candidate/:id',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const candidateId = req.params.id;
     const candidate = await Candidate.findById(candidateId).populate('party constituency');
@@ -227,7 +228,7 @@ router.get('/edit-candidate/:id', async function(req, res, next) {
 });
 
 // create for assembly-election
-router.get('/create-assembly-election', async function(req, res, next) {
+router.get('/create-assembly-election',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const constituencies = await Constituency.find(); // Fetch all constituencies
     return res.render('create-assembly-election.ejs', { constituencies, error: null });
@@ -239,7 +240,7 @@ router.get('/create-assembly-election', async function(req, res, next) {
 
 
 // create for edit assembly-election
-router.get('/edit-assembly-election/:id', async function(req, res, next) {
+router.get('/edit-assembly-election/:id',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const electionId = req.params.id;
     const assemblyElection = await AssemblyElection.findById(electionId);
@@ -256,7 +257,7 @@ router.get('/edit-assembly-election/:id', async function(req, res, next) {
 });
 
 // get route for show the assembly-election
-router.get('/assembly-election', async function(req, res, next) {
+router.get('/assembly-election',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const assemblyElections = await AssemblyElection.find().populate('constituencies'); // Fetch all elections
     res.render('assembly-election.ejs', { assemblyElections });
@@ -266,7 +267,7 @@ router.get('/assembly-election', async function(req, res, next) {
   }
 });
 
-router.get('/cons-candidates', async function(req, res, next) {
+router.get('/cons-candidates',isLoggedIn, isAdmin, async function(req, res, next) {
   try {
     const constituencies = await Constituency.find().sort({ 'name': 1 });
     const parties = await Party.find();

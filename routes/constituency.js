@@ -5,6 +5,7 @@ const Joi = require('joi');
 const Candidate = require('../models/candidates');
 const RedisManager = require('../RedisManager'); // Make sure RedisManager is imported
 const { cachedKeys } = require('../utils');
+const isAdmin = require('../middleware/admin');
 
 const router = express.Router();
 const redis = RedisManager.getInstance();
@@ -23,7 +24,7 @@ const constituencySchema = Joi.object({
 });
 
 // POST route to create a constituency and cache the data
-router.post('/', async (req, res, next) => {
+router.post('/',isAdmin, async (req, res, next) => {
     const { error } = constituencySchema.validate(req.body);
     
     if (error) {
@@ -92,7 +93,7 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // Update a constituency by ID and clear relevant cache
-router.put('/:id', async (req, res, next) => {
+router.put('/:id',isAdmin, async (req, res, next) => {
     const { error } = constituencySchema.validate(req.body);
 
     if (error) {
@@ -126,7 +127,7 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // Delete a constituency by ID and clear relevant cache
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id',isAdmin, async (req, res, next) => {
     try {
         const constituency = await Constituency.findByIdAndDelete(req.params.id);
         if (!constituency) {

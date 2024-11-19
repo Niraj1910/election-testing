@@ -20,6 +20,7 @@ const assemblyElectionRouter = require('./routes/assembly-election');
 const partyRouter = require('./routes/party');
 const candidateRouter = require('./routes/candidate');
 const constituenciesRouter = require('./routes/constituency');
+const isAdmin = require('./middleware/admin');
 
 var app = express();
 
