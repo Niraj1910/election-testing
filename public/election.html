@@ -1678,15 +1678,35 @@ function getHash(url) {
 }
 
 function toggleParty(partyId) {
-    const subParties = document.getElementById(`subparties-${partyId}`);
-    const arrow = document.getElementById(`arrow-${partyId}`);
-    if (subParties && arrow) {
-        if (subParties.style.display === 'none') {
-            subParties.style.display = 'block';
-            arrow.textContent = '▼';
+    // Get all subparties containers
+    const allSubParties = document.querySelectorAll('[id^="subparties-"]');
+    const allArrows = document.querySelectorAll('[id^="arrow-"]');
+    
+    // Get the clicked subparties container and arrow
+    const targetSubParties = document.getElementById(`subparties-${partyId}`);
+    const targetArrow = document.getElementById(`arrow-${partyId}`);
+    
+    // First close all other subparties that are not the target
+    allSubParties.forEach(subParty => {
+        if (subParty.id !== `subparties-${partyId}` && subParty.style.display === 'block') {
+            subParty.style.display = 'none';
+            // Reset corresponding arrow
+            const otherId = subParty.id.replace('subparties-', '');
+            const otherArrow = document.getElementById(`arrow-${otherId}`);
+            if (otherArrow) {
+                otherArrow.textContent = '▶';
+            }
+        }
+    });
+    
+    // Toggle the clicked subparties
+    if (targetSubParties && targetArrow) {
+        if (targetSubParties.style.display === 'none') {
+            targetSubParties.style.display = 'block';
+            targetArrow.textContent = '▼';
         } else {
-            subParties.style.display = 'none';
-            arrow.textContent = '▶';
+            targetSubParties.style.display = 'none';
+            targetArrow.textContent = '▶';
         }
     }
 }
