@@ -127,54 +127,57 @@
 
             // Save all candidates
             async function saveAllCandidates() {
-                const rows = document.querySelectorAll('#candidateTable tbody tr');
-                const updates = [];
+    const rows = document.querySelectorAll('#candidateTable tbody tr');
+    const updates = [];
 
-                rows.forEach(row => {
-                    const candidateId = row.getAttribute('data-id');
-                    const inputs = row.querySelectorAll('input');
-                    const selects = row.querySelectorAll('select');
+    rows.forEach(row => {
+        const candidateId = row.getAttribute('data-id');
+        const inputs = row.querySelectorAll('input');
+        const selects = row.querySelectorAll('select');
 
-                    const updatedCandidate = {
-                        id: candidateId,
-                        name: inputs[0].value || '',
-                        gender: selects[0].value || '',
-                        party: selects[1].value || '',
-                        totalVotes: parseInt(inputs[1].value) || 0,
-                        hotCandidate: selects[2].value === 'true'
-                    };
+        const updatedCandidate = {
+            id: candidateId,
+            name: inputs[0].value || '',
+            gender: selects[0].value || '',
+            party: selects[1].value || '',
+            totalVotes: parseInt(inputs[1].value) || 0,
+            hotCandidate: selects[2].value === 'true',
+        };
 
-                    updates.push(updatedCandidate);
-                });
+        updates.push(updatedCandidate);
+    });
 
-                try {
-                    const promises = updates.map(candidate =>
-                        fetch(`/api/candidate/${candidate.id}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(candidate),
-                        })
-                    );
+    try {
+        // Create fetch promises
+        const promises = updates.map(candidate =>
+            fetch(`/api/candidate/${candidate.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(candidate),
+            })
+        );
 
-                    const results = await Promise.allSettled(promises);
-                    
-                    // Check if all updates were successful
-                    const allSuccessful = results.every(result => result.status === 'fulfilled' && result.value.ok);
-                    
-                    if (allSuccessful) {
-                        showToast('All candidates updated successfully');
-                        setTimeout(() => window.location.reload(), 1000);
-                    } else {
-                        showToast('Some updates failed. Please try again.', false);
-                        console.error('Some updates failed:', results);
-                    }
-                } catch (error) {
-                    console.error('Error saving candidates:', error);
-                    showToast('Failed to save changes. Please try again.', false);
-                }
-            }
+        // Use Promise.all
+        const responses = await Promise.all(promises);
+
+        // Check if all responses are successful
+        const allSuccessful = responses.every(response => response.ok);
+
+        if (allSuccessful) {
+            showToast('All candidates updated successfully');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            const failedResponses = responses.filter(response => !response.ok);
+            console.error('Some updates failed:', failedResponses);
+            showToast('Some updates failed. Please try again.', false);
+        }
+    } catch (error) {
+        console.error('Error saving candidates:', error);
+        showToast('Failed to save changes. Please try again.', false);
+    }
+}
 
             saveAllBtn.addEventListener('click', saveAllCandidates);
         });
