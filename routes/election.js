@@ -9,6 +9,31 @@ const redis = RedisManager.getInstance();
 
 const router = express.Router();
 
+
+router.get('/party-summary', async (req, res) => {
+  try {
+    const election = await Election.findOne({ state: 'झारखंड 2024' });
+
+    if (!election) {
+      return res.status(404).json({ error: 'Election not found' });
+    }
+
+    // Filter for BJP+ and JMM+ parties
+    const filteredParties = election.parties.filter(party => 
+      party.name === 'BJP+' || party.name === 'JMM+'
+    );
+
+    res.status(200).json({
+      state: election.state,
+      totalSeats: election.totalSeats,
+      declaredSeats: election.declaredSeats,
+      parties: filteredParties,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post('/',isAdmin, async (req, res) => {
   try {
     const { state, totalSeats, declaredSeats, halfWayMark, parties } = req.body;
@@ -156,5 +181,6 @@ router.put('/:id', isAdmin, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 module.exports = router;

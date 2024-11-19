@@ -10,6 +10,10 @@
     <script src="/javascripts/tippy.js"></script>
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="/stylesheets/tailwind.css">
+
+    <!-- <link rel="stylesheet" href="/stylesheets/css-normalize.css"> -->
+    <link href="/stylesheets/css-bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/css-widget.css" rel="stylesheet">
 </head>
 
 <style>
@@ -208,14 +212,151 @@
     }
 </style>
 
+<style>
+    body {
+      overflow-x: hidden;
+      overflow-y: hidden;
+      background-color: #ffffff;
+      color: #000000;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    a:link {
+      color: #000000;
+    }
+
+    a:visited {
+      color: #000000;
+    }
+
+    a:hover {
+      color: #000000;
+    }
+
+    a:active {
+      color: #000000;
+    }
+
+    .electoralvote {
+      color: #000000;
+    }
+
+    .completeresults {
+      color: #333333;
+    }
+
+    .lineelect {
+      border-bottom: 1px solid #000000;
+    }
+
+    .hide-above-300 {
+      display: block;
+    }
+
+    .hide-below-300 {
+      display: none;
+    }
+
+
+
+    @media (min-width: 341px) {
+      .hide-above-300 {
+        display: none;
+      }
+
+      .hide-below-300 {
+        display: block;
+      }
+
+    }
+
+    .row {
+        margin: 0;
+        padding: 0 20px;
+    }
+
+    @media (max-width:350px) {
+      .h4 {
+        font-size: 14px;
+      }
+
+      .widgetresults .col-xs-6 {
+        padding-left: 7px;
+        padding-right: 7px;
+      }
+    }
+
+    #presidency-results {
+      margin-top: 65px;
+    }
+  </style>
+
 <body>
     <div id="main-jh">
 
         <div id="popover" class="popover">
 
         </div>
-
         <h5 class="main_title p-[20px] text-[12px] md:text-[22px] font-bold underline"></h5>
+
+        <div id="content">
+            <!-- live results start -->
+            <section id="presidency-results">
+              <div class="container_comp">
+                <div class="row">
+                  <div class="col-xs-6 harris-left text-left">
+                    <div id="aj-ahc"></div>
+                    <!-- <img class="aj-avatar" src="images/img-harris.png" height="auto"> -->
+                  </div>
+                  <div class="col-xs-6 trump-right text-right">
+                    <div id="aj-adt"></div>
+                    <!-- <img class="aj-avatar" src="images/img-trump.png" height="auto"> -->
+                  </div>
+                </div>
+        
+                <div class="row">
+                  <div class="linebox col-xs-12 text-center">
+                    <!-- <img class="widgetbranding" src="images/img-brandwhite.png" height="48px" width="auto"> -->
+                    <h5 class="h5 electoralvote text-center hide-below-300">81 Seats<br>to win</h5>
+                    <h5 class="h5 electoralvote text-center hide-above-300">81<br>to win</h5>
+                  </div>
+                </div>
+        
+                <div class="row">
+                  <div class="line-container">
+                    <div class="linetick"></div>
+                    <div class="line lineborder"></div>
+                    <div class="line line1">
+                      <div class="president_total_bar">
+                        <div role="img" id="hc-dem-bar" aria-label="Bar showing the number of president seats for Democrats"
+                          class="president_dem_bar"> </div>
+                        <div role="img" id="dt-rep-bar" aria-label="Bar showing the number of president seats for Republicans"
+                          class="president_rep_bar"> </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+        
+                <div class="row widgetresults">
+                  <div class="col-xs-6 text-left">
+                    <h3 class="h3 f-party"></h3>
+                    <h6 class="h6">WON</h6>
+                    <h3 class="h2 f-party-scorenumber bluecolor" style="margin-top: 0px;" id="hc-electwon">0</h3>
+                    <!-- <h4 class="h4"><span id="hc-popvote"></span> | <span id="hc-poppct"> %</span></h4> -->
+                    <!-- <h6 class="h6">VOTES</h6> -->
+                  </div>
+                  <div class="col-xs-6 text-right">
+                    <h3 class="h3 s-party"></h3>
+                    <h6 class="h6">WON</h6>
+                    <h3 class="h2 s-party-scorenumber redcolor" style="margin-top: 0px;" id="dt-electwon">0</h3>
+                    <!-- <h4 class="h4"><span id="dt-popvote"> </span> | <span id="dt-poppct">  %</span></h4> -->
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+
         <div class="svg_container pb-12 flex flex-col items-center" id="svg_container" style="width: 100%;">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:g="http://base.google.com/ns/1.0" stroke-linejoin="round"
                 stroke-linecap="round" viewBox="0 0 800 584" height="400" width="500" baseProfile="tiny" version="1.2">
@@ -628,6 +769,10 @@
         window.onload = sendHeight;
         window.onresize = sendHeight;
     </script>
+
+    <script src="/javascripts/js-jquery.min.js"></script>
+    <!-- <script src="assets/js/bootstrap.min.js"></script> -->
+    <script src="/javascripts/js-widget2024.js"></script>
 
 </body>
 
