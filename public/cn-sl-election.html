@@ -175,6 +175,7 @@
         .constituency-state {
             font-size: 14px;
             color: #666;
+            text-transform: capitalize;
         }
 
         .nav-button {
@@ -375,7 +376,7 @@
                     </div>
                     <div class="constituency-box">
                         <div class="constituency-name">${candidate.constituency[0].name}</div>
-                        <div class="constituency-state">${candidate.constituency[0].state}</div>
+                        <div class="constituency-state uppercase">${candidate.constituency[0].state}</div>
                     </div>
                 </div>
             `;
