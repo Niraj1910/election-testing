@@ -128,7 +128,7 @@ router.get('/', async (req, res) => {
     const startIndex = (pageInt - 1) * limitInt;
     const endIndex = pageInt * limitInt;
 
-    const elections = await Election.find();
+    const elections = await Election.find().sort({createdAt: -1});
     const paginatedData = elections.slice(startIndex, endIndex);
 
     if (!paginatedData) {
