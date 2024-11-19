@@ -297,7 +297,7 @@
         <div id="popover" class="popover">
 
         </div>
-        <h5 class="main_title p-[20px] text-[12px] md:text-[22px] font-bold underline"></h5>
+        <h5 class="main_title p-[20px] text-[12px] md:text-[26px] font-bold text-center"></h5>
 
         <div id="content">
             <!-- live results start -->
@@ -583,7 +583,6 @@
                     loading = false;
                     updateLoading();
                     applyColorsAndPopovers(data);
-                    console.log(data);
                     document.querySelector('.main_title').innerText = `झारखंड विधानसभा चुनाव परिणाम ${data.year} (${data.constituency.length} सीट)`;
                     getParties();
                 })
