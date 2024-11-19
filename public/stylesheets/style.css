@@ -1234,6 +1234,14 @@ video {
   line-height: 1rem;
 }
 
+.text-\[22px\] {
+  font-size: 22px;
+}
+
+.text-\[35px\] {
+  font-size: 35px;
+}
+
 .font-bold {
   font-weight: 700;
 }
