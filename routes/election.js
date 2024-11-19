@@ -119,21 +119,20 @@ router.delete('/:id',isAdmin, async (req, res) => {
   }
 });
 
-router.put('/:id',isAdmin, async (req, res) => {
+router.put('/:id', isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedElection = await Election.findByIdAndUpdate(id, req.body);
+    const updatedElection = await Election.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!updatedElection) {
       return res.status(404).json({ message: 'Election not found' });
     }
-    await redis.clearAllKeys(); // Clear Redis cache when an election is updated
 
+    await redis.clearAllKeys(); // Clear Redis cache when an election is updated
     res.status(200).json(updatedElection);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 module.exports = router;

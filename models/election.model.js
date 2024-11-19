@@ -103,6 +103,24 @@ electionSchema.statics.findByState = function(state) {
   return this.findOne({ state });
 };
 
+electionSchema.pre('save', function (next) {
+  if (this.parties) {
+    this.declaredSeats = this.parties.reduce((acc, party) => acc + party.won, 0);
+  }
+  next();
+});
+
+// Middleware to update `declaredSeats` before updating
+electionSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate();
+  if (update.parties) {
+    const declaredSeats = update.parties.reduce((acc, party) => acc + party.won, 0);
+    update.declaredSeats = declaredSeats; // Set the calculated value
+    this.setUpdate(update);
+  }
+  next();
+});
+
 // Export the model
 const Election = mongoose.model('Election', electionSchema);
 module.exports = Election;
