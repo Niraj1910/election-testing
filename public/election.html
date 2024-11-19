@@ -1989,7 +1989,7 @@ const fetchStatesData = () => {
 
                 timer = setTimeout(() => {
                     fetchStatesData();
-                }, 300000);
+                }, 30000);
                 sendHeight();
             } else {
                 console.error('Failed to retrieve states:', data.message);
