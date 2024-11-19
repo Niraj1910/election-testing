@@ -584,7 +584,7 @@
                     updateLoading();
                     applyColorsAndPopovers(data);
                     console.log(data);
-                    document.querySelector('.main_title').innerText = `झारखंड विधानसभा चुनाव परिणाम ${data.year} (${data.constituency.length} सीटें)`;
+                    document.querySelector('.main_title').innerText = `झारखंड विधानसभा चुनाव परिणाम ${data.year} (${data.constituency.length} सीट)`;
                     getParties();
                 })
                 .catch(error => console.error('Error fetching colors:', error));
