@@ -445,7 +445,7 @@
                     updateLoading();
                     applyColorsAndPopovers(data);
                     console.log(data);
-                    document.querySelector('.main_title').innerText = `Assembly Election ${data.year} (${data.constituency.length})`;
+                    document.querySelector('.main_title').innerText = `Jharkhand Assembly Election ${data.year} (${data.constituency.length} Seats)`;
                     getParties();
                 })
                 .catch(error => console.error('Error fetching colors:', error));

@@ -461,6 +461,7 @@
             color: inherit;
             align-items: center;
             text-align: left;
+            font-size: 16px;
         }
 
         .chartDt .dt-inner ul li span {
@@ -501,7 +502,7 @@
         .chartDt .dt-inner ul li.dt-head span {
             font-weight: 700;
             color: #fff;
-            font-size: 20px;
+            font-size: 17px;
         }
 
         .chartDt .dt-inner ul li span>span {
@@ -704,6 +705,13 @@
                 font-size: 11px;
                 padding: 3px 10px 0;
                 color: #9b9b9b;
+            }
+
+            .chartDt .dt-inner ul li a{
+                font-size: 12.5px;
+            }
+            .chartDt .dt-inner ul li.dt-head span{
+                font-size: 17px;
             }
         }
 
@@ -1215,7 +1223,7 @@
 
         @media (max-width: 728px) {
             .elecResults .tabArea ul#tabs li a {
-                font-size: 16px;
+                font-size: 12px;
             }
 
             .elecResults .tabArea ul#tabs li a.selected {
@@ -1714,8 +1722,9 @@ function callAjax(stateId) {
                     row += `<div id="arrow-${partyId}" style="cursor: pointer; margin-right: 5px; width: fit-content;" 
                            onclick="event.preventDefault(); toggleParty('${partyId}')">▶</div>`;
                 }
-                
-                row += `<span class="p_clr" style="background-color: ${party.partyColor || '#000'};"></span>
+
+                // <span class="p_clr" style="background-color: ${party.partyColor || '#000'};"></span>
+                row += `
                         ${party.name}
                         </a>
                     </span>`;
@@ -1761,7 +1770,7 @@ function callAjax(stateId) {
             if (showLeadingColumn) {
                 htmlContent += '<span>Leads</span>';
             }
-            htmlContent += '<span>Won</span><span>Total</span></li>';
+            htmlContent += `<span>Won</span><span>Total (${totalSeats})</span></li>`;
 
             stateData.parties.forEach(party => {
                 htmlContent += createPartyRow(party, 0);
@@ -1786,9 +1795,9 @@ function callAjax(stateId) {
                 }
                 totalWon += totalSeatsForParty;
 
-                if (party.subParties && party.subParties.length > 0) {
-                    party.subParties.forEach(processPartyForChart);
-                }
+                // if (party.subParties && party.subParties.length > 0) {
+                //     party.subParties.forEach(processPartyForChart);
+                // }
             }
 
             stateData.parties.forEach(processPartyForChart);
