@@ -134,29 +134,29 @@ router.put('/:id',isAdmin, upload.single('image'), async (req, res, next) => {
     const candidate = await Candidate.findByIdAndUpdate(req.params.id, candidateUpdates, { new: true });
 
     // Update constituencies
-    const currentConstituencyIds = existingCandidate.constituency.map(c => c.toString());
-    const newConstituencyIds = Array.isArray(req.body.constituency) ? req.body.constituency : [req.body.constituency];
+    // const currentConstituencyIds = existingCandidate.constituency.map(c => c.toString());
+    // const newConstituencyIds = Array.isArray(req.body.constituency) ? req.body.constituency : [req.body.constituency];
 
     // Remove candidate from constituencies no longer assigned
-    const constituenciesToRemove = currentConstituencyIds.filter(id => !newConstituencyIds.includes(id));
-    for (const id of constituenciesToRemove) {
-      const constituency = await Constituency.findById(id);
-      if (constituency) {
-        constituency.candidates = constituency.candidates.filter(candidateId => !candidateId.equals(candidate._id));
-        await constituency.save();
-      }
-    }
+    // const constituenciesToRemove = currentConstituencyIds.filter(id => !newConstituencyIds.includes(id));
+    // for (const id of constituenciesToRemove) {
+    //   const constituency = await Constituency.findById(id);
+    //   if (constituency) {
+    //     constituency.candidates = constituency.candidates.filter(candidateId => !candidateId.equals(candidate._id));
+    //     await constituency.save();
+    //   }
+    // }
 
     // Add candidate to new constituencies
-    for (const id of newConstituencyIds) {
-      const constituency = await Constituency.findById(id);
-      if (constituency) {
-        if (!constituency.candidates.includes(candidate._id)) {
-          constituency.candidates.push(candidate._id);
-          await constituency.save();
-        }
-      }
-    }
+    // for (const id of newConstituencyIds) {
+    //   const constituency = await Constituency.findById(id);
+    //   if (constituency) {
+    //     if (!constituency.candidates.includes(candidate._id)) {
+    //       constituency.candidates.push(candidate._id);
+    //       await constituency.save();
+    //     }
+    //   }
+    // }
 
     await redis.clearAllKeys();
 
