@@ -351,11 +351,11 @@
                     <div class="stats-grid">
                         <div class="stat-box">
                             <div class="stat-label">आगे / पीछे</div>
-                            <div class="stat-value ${(candidate.status === 'trailing' && formatNumber(candidate.totalVotes) > 0) ? "red": (candidate.status === 'leading' && formatNumber(candidate.totalVotes) > 0) ? "green" : "gray"}">${(candidate.status === 'trailing' && formatNumber(candidate.totalVotes) > 0) ? "पीछे" : (candidate.status === 'leading' && formatNumber(candidate.totalVotes) > 0) ? "आगे" : "-"}</div>
+                            <div class="stat-value ${(candidate.status === 'trailing' && Number(candidate.totalVotes) > 0) ? "red": (candidate.status === 'leading' && Number(candidate.totalVotes) > 0) ? "green" : "gray"}">${(candidate.status === 'trailing' && Number(candidate.totalVotes) > 0) ? "पीछे" : (candidate.status === 'leading' && Number(candidate.totalVotes) > 0) ? "आगे" : "-"}</div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-label">कुल वोट</div>
-                            <div class="stat-value">${formatNumber(candidate.totalVotes)}</div>
+                            <div class="stat-value">${Number(candidate.totalVotes)}</div>
                         </div>
                     </div>
                     <div class="constituency-box">
