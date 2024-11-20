@@ -21,7 +21,7 @@ const subPartySchema = new mongoose.Schema({
   partyColor: {
     type: String,
   }
-}, {_id: false});  // No need for an extra _id for each party
+}, {timestamps: true});  // No need for an extra _id for each party
 
 
 // Party Schema
@@ -46,7 +46,7 @@ const partySchema = new mongoose.Schema({
     type: String,
   },
   subParties: [subPartySchema]
-}, {_id: false});  // No need for an extra _id for each party
+}, {timestamps: true});  // No need for an extra _id for each party
 
 // Election Schema
 const electionSchema = new mongoose.Schema({

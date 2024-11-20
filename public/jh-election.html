@@ -526,13 +526,14 @@
             <div class="party_name_color flex gap-5 mt-5 ">
 
             </div>
-            <div class="loader"></div>
+            <!-- <div class="loader"></div> -->
         </div>
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script>
+        let timer;
         let currentTippy;
         let loading = false;
 
@@ -575,18 +576,20 @@
 
 
         function getData() {
-            loading = true;
-            updateLoading();
+            // loading = true;
+            // updateLoading();
             fetch('/api/assembly-elections/state/jharkhand')
                 .then(response => response.json())
                 .then(data => {
-                    loading = false;
-                    updateLoading();
+                    // loading = false;
+                    // updateLoading();
                     applyColorsAndPopovers(data);
                     document.querySelector('.main_title').innerText = `झारखंड विधानसभा चुनाव परिणाम ${data.year} (${data.constituency.length} सीट)`;
-                    getParties();
+                    // setInterval(
+                    //     getData(),
+                    // 3000)
                 })
-                .catch(error => console.error('Error fetching colors:', error));
+                .catch(error => {console.error('Error fetching colors:', error);});
         }
 
         function getParties() {

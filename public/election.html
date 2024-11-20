@@ -1756,8 +1756,8 @@ function callAjax(stateId) {
                         <a class="remove_cursor" href="#" style="color: black;">`;
                 
                 if (hasSubParties) {
-                    row += `<div id="arrow-${partyId}" style="cursor: pointer; margin-right: 5px; width: fit-content;" 
-                           onclick="event.preventDefault(); toggleParty('${partyId}')">▶</div>`;
+                    row += `<div id="arrow-${party._id}" style="cursor: pointer; margin-right: 5px; width: fit-content;" 
+                           onclick="event.preventDefault(); toggleParty('${party._id}')">▶</div>`;
                 }
 
                 // <span class="p_clr" style="background-color: ${party.partyColor || '#000'};"></span>
@@ -1775,7 +1775,7 @@ function callAjax(stateId) {
 
 
                 if (hasSubParties) {
-                    row += `<div id="subparties-${partyId}" style="display: none;">`;
+                    row += `<div id="subparties-${party._id}" style="display: none;">`;
                     party.subParties.forEach(subParty => {
                         row += createPartyRow(subParty, indent + 1);
                     });
@@ -1943,7 +1943,7 @@ function sendHeight() {
 }
 
 const fetchStatesData = () => {
-    clearTimeout(dataTimer);
+    clearTimeout(timer);
     tabsDesktop.innerHTML = ``;
     assemblyStates.innerHTML = ``;
     allContentContainer.innerHTML = ``;
