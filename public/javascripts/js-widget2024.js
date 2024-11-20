@@ -33,8 +33,8 @@ async function openPresident(){
       const data = await getData();
       
       // Get the data from the API and update the UI
-      const firstParty = data.parties[0];
-      const secondParty = data.parties[1];
+      const firstParty = data.parties[1];
+      const secondParty = data.parties[0];
       
       $('.f-party').text(firstParty.name);
       $('.s-party').text(secondParty.name);
