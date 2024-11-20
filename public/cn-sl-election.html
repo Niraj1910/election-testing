@@ -416,9 +416,9 @@
     
         function startAutoSlide() {
             stopAutoSlide(); // Ensure no duplicate intervals
-            // autoSlideInterval = setInterval(() => {
-            //     if (!userInteracted) nextSlide();
-            // }, 2000);
+            autoSlideInterval = setInterval(() => {
+                if (!userInteracted) nextSlide();
+            }, 2000);
         }
     
         function stopAutoSlide() {
@@ -430,10 +430,10 @@
             stopAutoSlide();
     
             // Reset auto-slide after 4 seconds of no interaction
-            // setTimeout(() => {
-            //     userInteracted = false;
-            //     startAutoSlide();
-            // }, 4000);
+            setTimeout(() => {
+                userInteracted = false;
+                startAutoSlide();
+            }, 4000);
         }
     
         const prevBtn = document.getElementById('prevBtn');

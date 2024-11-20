@@ -184,7 +184,7 @@
         <option value="">Loading constituencies...</option>
       </select>
     </div>
-    
+
     <table class="candidates-table">
       <thead>
         <tr>
@@ -319,7 +319,7 @@
               </div>
             </td>
             <td class="hide-mobile">${Number(candidate.totalVotes).toLocaleString()}</td>
-            <td class="${statusIconClass}">${(candidate.status === 'leading' && showLeadAndTrailing) ? "आगे" : (showLeadAndTrailing && candidate.status === 'trailing') ? "पीछे" : "-"}</td>
+            <td class="${statusIconClass} font-bold">${(candidate.status === 'leading' && showLeadAndTrailing) ? "आगे" : (showLeadAndTrailing && candidate.status === 'trailing') ? "पीछे" : "-"}</td>
           </tr>
         `;
       }
