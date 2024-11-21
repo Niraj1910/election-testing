@@ -1201,8 +1201,12 @@ video {
   line-height: 2.25rem;
 }
 
-.text-\[16px\] {
-  font-size: 16px;
+.text-\[14px\] {
+  font-size: 14px;
+}
+
+.text-\[18px\] {
+  font-size: 18px;
 }
 
 .text-\[35px\] {
@@ -1234,8 +1238,12 @@ video {
   line-height: 1rem;
 }
 
-.text-\[18px\] {
-  font-size: 18px;
+.text-\[13px\] {
+  font-size: 13px;
+}
+
+.\!text-\[13px\] {
+  font-size: 13px !important;
 }
 
 .font-bold {
@@ -1675,10 +1683,6 @@ video {
   .md\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
-  }
-
-  .md\:text-\[24px\] {
-    font-size: 24px;
   }
 
   .md\:text-\[35px\] {

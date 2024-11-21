@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Candidate Carousel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <style>
         * {
             margin: 0;
@@ -154,7 +155,7 @@
         }
 
         .stat-value {
-            font-size: 13px;
+            /* font-size: 13px; */
             font-weight: bolder;
             color: #333;
         }
@@ -363,7 +364,7 @@
                     <div class="stats-grid">
                         <div class="stat-box">
                             <div class="stat-label">आगे / पीछे</div>
-                            <div class="stat-value font-bold ${
+                            <div class="stat-value font-bold text-[14px] ${
                                 (candidate.status === 'trailing' && Number(candidate.totalVotes) > 0) ? "red" :
                                 (candidate.status === 'leading' && Number(candidate.totalVotes) > 0) ? "green" : "gray"}">${
                                 (candidate.status === 'trailing' && Number(candidate.totalVotes) > 0) ? "पीछे" : 
@@ -371,7 +372,7 @@
                         </div>
                         <div class="stat-box">
                             <div class="stat-label font-bold">कुल वोट</div>
-                            <div class="stat-value">${Number(candidate.totalVotes)}</div>
+                            <div class="stat-value !text-[13px]">${Number(candidate.totalVotes)}</div>
                         </div>
                     </div>
                     <div class="constituency-box">
