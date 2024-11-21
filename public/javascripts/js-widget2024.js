@@ -39,13 +39,14 @@ async function openPresident(){
       $('.f-party').text(firstParty.name);
       $('.s-party').text(secondParty.name);
       
-      $('.f-party-scorenumber').text(firstParty.won).css("color", firstParty.partyColor);
-      $('.s-party-scorenumber').text(secondParty.won).css("color", secondParty.partyColor);
+      $('.f-party-scorenumber').text((firstParty.won + firstParty.leading)).css("color", firstParty.partyColor);
+      $('.s-party-scorenumber').text((secondParty.won + secondParty.leading)).css("color", secondParty.partyColor);
       
       // Calculate bar widths
       const totalSeats = 41;
-      const firstPartyWidth = (firstParty.won / totalSeats) * 50; // Cap at 50%
-      const secondPartyWidth = (secondParty.won / totalSeats) * 50; // Cap at 50%
+      console.log((firstParty.won + firstParty.leading) / totalSeats)
+      const firstPartyWidth = ((firstParty.won + firstParty.leading) / totalSeats) * 50; // Cap at 50%
+      const secondPartyWidth = ((secondParty.won + secondParty.leading) / totalSeats) * 50; // Cap at 50%
       
       $('#hc-dem-bar')
         .css("width", `${firstPartyWidth}%`)
