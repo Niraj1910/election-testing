@@ -131,7 +131,7 @@ electionSchema.pre('findOneAndUpdate', async function (next) {
     });
 
     // Update declaredSeats based on the updated parties' won seats
-    update.declaredSeats = update.parties.reduce((acc, party) => acc + party.won, 0);
+    update.declaredSeats = update.parties.reduce((acc, party) => acc + (party.won + party.leading), 0);
     this.setUpdate(update);
   }
   next();
