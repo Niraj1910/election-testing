@@ -8,6 +8,7 @@ const mime = require('mime-types')
 const {getFullImagePath, cachedKeys} = require('../utils');
 const RedisManager = require('../RedisManager');
 const Candidate = require('../models/candidates');
+const { default: mongoose } = require('mongoose');
 
 const redis = RedisManager.getInstance();  // Get the Redis instance
 
@@ -38,17 +39,33 @@ const upload = multer({ storage });
 
 router.get('/top-parties', async (req, res) => {
   try {
-    // Pagination support
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    // Fetch top parties from the database with pagination
-    const topParties = await Party.find()
-      .sort({ total_votes: -1 })
-      .skip(skip)
-      .limit(limit);
-
+    const parties = [
+      "673b16b4568e8acfd1213d6f",
+      "673b16b4568e8acfd1213d73",
+      "673b16b4568e8acfd1213d86",
+      "673b16b4568e8acfd1213d83",
+      "673b16b5568e8acfd1213dac",
+      "673b16b4568e8acfd1213d77",
+    ];
+    
+    const topParties = await Party.aggregate([
+      {
+        $match: {
+          _id: { $in: parties.map(id => new mongoose.Types.ObjectId(id)) },
+        },
+      },
+      {
+        $addFields: {
+          sortIndex: {
+            $indexOfArray: [parties.map(id => new mongoose.Types.ObjectId(id)), "$_id"],
+          },
+        },
+      },
+      {
+        $sort: { sortIndex: 1 },
+      },
+    ]);
+    
     res.json(topParties);
   } catch (error) {
     console.log('top-parties error', error);
