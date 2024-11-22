@@ -344,7 +344,12 @@
             const card = document.createElement('div');
             card.className = 'card';
             const textColor = getContrastColor(candidate.party.color_code);
-    
+            const won = candidate.constituency[0].won || 'awaiting';
+
+            const badgeText = won !== 'awaiting' ? ((won === 'won' && candidate.status === 'leading' ) ? "जीत" : "हार" ) : (candidate.status === 'trailing' && Number(candidate.totalVotes) > 0) ? "पीछे" : 
+                                (candidate.status === 'leading' && Number(candidate.totalVotes) > 0) ? "आगे" : "-";
+
+
             card.innerHTML = `
                 <div class="party-header" style="background-color: ${candidate.party.color_code}">
                     <div class="profile-circle">
@@ -363,12 +368,11 @@
                     </span>
                     <div class="stats-grid">
                         <div class="stat-box">
-                            <div class="stat-label">आगे / पीछे</div>
-                            <div class="stat-value font-bold text-[14px] ${
+                            <div class="stat-label">${won === 'awaiting' ? 'आगे / पीछे' : "हार / जीत"}</div>
+                            <div class="stat-value font-bold ${
                                 (candidate.status === 'trailing' && Number(candidate.totalVotes) > 0) ? "red" :
                                 (candidate.status === 'leading' && Number(candidate.totalVotes) > 0) ? "green" : "gray"}">${
-                                (candidate.status === 'trailing' && Number(candidate.totalVotes) > 0) ? "पीछे" : 
-                                (candidate.status === 'leading' && Number(candidate.totalVotes) > 0) ? "आगे" : "-"}</div>
+                                badgeText}</div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-label font-bold">कुल वोट</div>

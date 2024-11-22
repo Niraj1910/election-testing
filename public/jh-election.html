@@ -730,8 +730,8 @@
                     const candidate = constituency.leadingCandidate;
                     const trailingCandidate = constituency.trailingCandidate;
                     path.setAttribute('data-constituency', constituency.name || '');
+                    path.setAttribute('data-won', constituency.won || 'awaiting');
                     path.setAttribute('fill', color);
-
 
                     if (candidate) {
                         path.setAttribute('data-candidate', candidate.name || 'Unknown');
@@ -751,11 +751,16 @@
             });
         }
 
+        function getText(won){
+
+        }
+
         function showPopover(event, path) {
             const candidate = path.getAttribute('data-candidate') || 'Unknown';
             const totalVotes = path.getAttribute('data-totalVotes') || '0';
             const partyName = path.getAttribute('data-partyName') || 'N/A';
             const constituency = path.getAttribute('data-constituency') || 'Unknown';
+            const won = path.getAttribute('data-won') || 'awaiting';
             const partyLogo = path.getAttribute('data-partyLogo') || 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=';
 
             const trailCandidate = path.getAttribute('data-trail-candidate') || 'Unknown';
@@ -764,11 +769,12 @@
             const trailPartyLogo = path.getAttribute('data-trail-partyLogo') || 'https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=';
 
             const showColors = Number(trailTotalVotes + totalVotes) > 0;
-            console.log(showColors);
 
             if (currentTippy) {
                 currentTippy.destroy();
             }
+
+            const badgeText = (won && won !== 'awaiting') ? ( won === 'won' ? "WON" : "LOSS") : (showColors ? "LEADING" : "AWAITING");
 
             currentTippy = tippy(event.target, {
                 content: `
@@ -782,7 +788,7 @@
             <div class="candidate-section winner" style="border-left: ${showColors ? '' : '#D3D3D3'};">
                 <div class="candidate-header">
                     <span class="candidate-name">${candidate}</span>
-                    <span class="status-badge status-won" style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${showColors ? "LEADING" : "AWAITING"}</span>
+                    <span class="status-badge status-won" style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${won !== 'awaiting' ? "WON" : (showColors ? "LEADING" : "AWAITING")}</span>
                 </div>
                 <div class="party-votes">
                     <div class="party-info">
@@ -802,7 +808,7 @@
             <div class="candidate-section trailing"  style="border-left: ${showColors ? '' : '#D3D3D3'};">
                 <div class="candidate-header">
                     <span class="candidate-name">${trailCandidate}</span>
-                    <span class="status-badge status-trailing"  style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${showColors ? "TRAILING" : "AWAITING"}</span>
+                    <span class="status-badge status-trailing"  style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${won !== 'awaiting' ? "LOSS" : (showColors ? "TRAILING" : "AWAITING")}</span>
                 </div>
                 <div class="party-votes">
                     <div class="party-info">
