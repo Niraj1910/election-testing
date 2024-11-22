@@ -68,7 +68,7 @@ router.get('/top-parties', async (req, res) => {
     topParties = [...topParties, {
       _id: new mongoose.Types.ObjectId(),
       party: 'Others',
-      color_code: '#00008B',
+      color_code: '#0606FE',
       total_votes: 0,
       total_seat: 0,
       party_logo: null,
