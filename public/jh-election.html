@@ -852,7 +852,23 @@
                     currentTippy.hide();
                 }
             });
+
+            path.addEventListener('click', (e) => {
+                if (isTouchDevice()) {
+                    showPopover(e, path);
+                }
+            });
+
+            document.body.addEventListener('click', (e) => {
+                if (currentTippy && !e.target.closest('.popover-container')) {
+                    currentTippy.hide();
+                }
+            });
         });
+
+        function isTouchDevice() {
+            return ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+        }
 
         getData();
         setInterval(getData, 30000);
