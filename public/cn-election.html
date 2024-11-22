@@ -296,7 +296,7 @@
         const statusIconClass = (isFirstCandidate && showLeadAndTrailing) ? 'status-icon--up' : (!isFirstCandidate && showLeadAndTrailing) ? 'status-icon--down' : "gray";
         const textColor = this.getContrastColor(candidate.party.color_code);
         const won = candidate.constituency[0].won || 'awaiting';
-        const badgeText = won !== 'awaiting' ? ((won === 'won' && index === 0 ) ? "जीत" : "हार") : (candidate.status === 'leading' && showLeadAndTrailing) ? "आगे" : (showLeadAndTrailing && candidate.status === 'trailing') ? "पीछे" : "-";
+        const badgeText = won !== 'awaiting' ? ((won === 'won' && index === 0 ) ? "जीते" : "हारे") : (candidate.status === 'leading' && showLeadAndTrailing) ? "आगे" : (showLeadAndTrailing && candidate.status === 'trailing') ? "पीछे" : "-";
         
         return `
           <tr>

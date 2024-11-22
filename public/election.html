@@ -1767,9 +1767,9 @@ function callAjax(stateId) {
                         </a>
                     </span>`;
 
-                if (showLeadingColumn) {
+                // if (showLeadingColumn) {
                     row += `<span>${party.leading || 0}</span>`;
-                }
+                // }
                 row += `<span>${party.won || 0}</span>
                     </li>`;
                     // <span>${(party.won || 0) + (party.leading || 0)}</span>
@@ -1806,9 +1806,9 @@ function callAjax(stateId) {
             htmlContent += '<ul>';
 
             htmlContent += '<li class="dt-head"><span><span>पार्टी</span></span>';
-            if (showLeadingColumn) {
+            // if (showLeadingColumn) {
                 htmlContent += '<span>आगे</span>';
-            }
+            // }
             htmlContent += `<span>जीते</span></li>`;
             // <span>Total (${totalSeats})</span>
 
