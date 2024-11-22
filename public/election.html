@@ -1746,7 +1746,7 @@ function callAjax(stateId) {
             let htmlContent = '';
             const showLeadingColumn = stateData.parties.some(party => party.leading > 0);
 
-            function createPartyRow(party, indent = 0) {
+            function createPartyRow(party, indent = 0, subPartyName = false) {
                 let row = '';
                 const hasSubParties = party.subParties && party.subParties.length > 0;
                 const partyId = party.name.replace(/\s+/g, '-').toLowerCase();
@@ -1762,6 +1762,7 @@ function callAjax(stateId) {
 
                 // <span class="p_clr" style="background-color: ${party.partyColor || '#000'};"></span>
                 row += `
+                        ${subPartyName ? "-" : ""}
                         ${party.name}
                         </a>
                     </span>`;
@@ -1777,7 +1778,7 @@ function callAjax(stateId) {
                 if (hasSubParties) {
                     row += `<div id="subparties-${party._id}" style="display: none;">`;
                     party.subParties.forEach(subParty => {
-                        row += createPartyRow(subParty, indent + 1);
+                        row += createPartyRow(subParty, indent + 1, true);
                     });
                     row += '</div>';
                 }

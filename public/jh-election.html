@@ -666,18 +666,12 @@
 
 
         function getData() {
-            // loading = true;
-            // updateLoading();
             fetch('/api/assembly-elections/state/jharkhand')
                 .then(response => response.json())
                 .then(data => {
-                    // loading = false;
-                    // updateLoading();
                     applyColorsAndPopovers(data);
                     document.querySelector('.main_title').innerText = `झारखंड विधानसभा चुनाव परिणाम ${data.year} (${data.constituency.length} सीट)`;
-                    // setInterval(
-                    //     getData(),
-                    // 3000)
+                    getParties();
                 })
                 .catch(error => {console.error('Error fetching colors:', error);});
         }
@@ -695,26 +689,26 @@
         function renderPartiesColorAndName(data) {
             const partyContainer = document.querySelector('.party_name_color');
             partyContainer.innerHTML = '';
-            // data.forEach(party => {
-            //     const partyElement = document.createElement('div');
-            //     partyElement.style.display = 'flex';
-            //     partyElement.style.alignItems = 'center';
-            //     partyElement.style.gap = '10px';
+            data.forEach(party => {
+                const partyElement = document.createElement('div');
+                partyElement.style.display = 'flex';
+                partyElement.style.alignItems = 'center';
+                partyElement.style.gap = '10px';
 
-            //     const partyColorElement = document.createElement('span');
-            //     partyColorElement.style.backgroundColor = party.color_code;
-            //     partyColorElement.style.height = "12px";
-            //     partyColorElement.style.width = "12px";
-            //     partyColorElement.style.borderRadius = '50%';
+                const partyColorElement = document.createElement('span');
+                partyColorElement.style.backgroundColor = party.color_code;
+                partyColorElement.style.height = "12px";
+                partyColorElement.style.width = "12px";
+                partyColorElement.style.borderRadius = '50%';
 
-            //     const partyNameElement = document.createElement('span');
-            //     partyNameElement.innerText = party.party;
+                const partyNameElement = document.createElement('span');
+                partyNameElement.innerText = party.party;
 
-            //     partyElement.appendChild(partyColorElement);
-            //     partyElement.appendChild(partyNameElement);
+                partyElement.appendChild(partyColorElement);
+                partyElement.appendChild(partyNameElement);
 
-            //     partyContainer.appendChild(partyElement);
-            // });
+                partyContainer.appendChild(partyElement);
+            });
         }
 
         function applyColorsAndPopovers(data) {

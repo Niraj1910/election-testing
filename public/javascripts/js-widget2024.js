@@ -26,29 +26,84 @@ const TOTAL_SEATS = 81;
 
     function calculateBarWidths(parties) {
       const totalSeats = TOTAL_SEATS;
+    
+      // Find alliances and other parties
+      const bjpAlliance = parties.find(p => p.name === 'BJP+');
+      const jmmAlliance = parties.find(p => p.name === 'JMM+');
+      const otherParties = parties.filter(p => p.name !== bjpAlliance.name && p.name !== jmmAlliance.name);
+    
       let widths = [];
-
-        const bjpAlliance = parties.find(p => p.name === 'BJP+');
-        const jmmAlliance = parties.find(p => p.name === 'JMM+');
-        let otheParties = parties.filter(p => p.name!== bjpAlliance.name && p.name!== jmmAlliance.name);
-        let partiesList = [jmmAlliance, ...otheParties, bjpAlliance]       
-      
-      let remainingWidth = 100;
       let currentPosition = 0;
-
-      partiesList.forEach((party, index) => {
-        const seats = getPartyTotal(party);
-        const percentageWidth = (seats / totalSeats) * 100;
-        
-        widths.push({
-          party: party,
-          width: percentageWidth,
-          position: currentPosition
-        });
-        
-        currentPosition += percentageWidth;
+    
+      // Add JMM+ bar at the start
+      const jmmWidth = (getPartyTotal(jmmAlliance) / totalSeats) * 100;
+      widths.push({
+        party: jmmAlliance,
+        width: jmmWidth,
+        position: currentPosition
       });
+      currentPosition += jmmWidth;
 
+      
+      if(getPartyTotal(jmmAlliance) > getPartyTotal(bjpAlliance)){
+        // Calculate total allocated seats
+        const totalAllocatedSeats = parties.reduce((sum, party) => sum + getPartyTotal(party), 0);
+        const blankSeats = totalSeats - totalAllocatedSeats;
+
+        // Add blank bar (if any) between "Other Parties" and BJP+
+        if (blankSeats > 0) {
+          const blankWidth = (blankSeats / totalSeats) * 100;
+          widths.push({
+            party: { name: 'Blank', partyColor: '#E0E0E0' }, // Gray for blank
+            width: blankWidth,
+            position: currentPosition
+          });
+          currentPosition += blankWidth;
+        }
+        // Add other parties in the middle
+        otherParties.forEach(party => {
+          const partyWidth = (getPartyTotal(party) / totalSeats) * 100;
+          widths.push({
+            party: party,
+            width: partyWidth,
+            position: currentPosition
+          });
+          currentPosition += partyWidth;
+        });
+      } else {
+        // Calculate total allocated seats
+        const totalAllocatedSeats = parties.reduce((sum, party) => sum + getPartyTotal(party), 0);
+        const blankSeats = totalSeats - totalAllocatedSeats;
+        // Add other parties in the middle
+        otherParties.forEach(party => {
+          const partyWidth = (getPartyTotal(party) / totalSeats) * 100;
+          widths.push({
+            party: party,
+            width: partyWidth,
+            position: currentPosition
+          });
+          currentPosition += partyWidth;
+        });
+        // Add blank bar (if any) between "Other Parties" and BJP+
+        if (blankSeats > 0) {
+          const blankWidth = (blankSeats / totalSeats) * 100;
+          widths.push({
+            party: { name: 'Blank', partyColor: '#E0E0E0' }, // Gray for blank
+            width: blankWidth,
+            position: currentPosition
+          });
+          currentPosition += blankWidth;
+        }
+      }
+  
+      // Add BJP+ bar at the end
+      const bjpWidth = (getPartyTotal(bjpAlliance) / totalSeats) * 100;
+      widths.push({
+        party: bjpAlliance,
+        width: bjpWidth,
+        position: currentPosition
+      });
+    
       return widths;
     }
 
