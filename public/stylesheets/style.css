@@ -793,6 +793,10 @@ video {
   width: 100%;
 }
 
+.w-1\/2 {
+  width: 50%;
+}
+
 .min-w-full {
   min-width: 100%;
 }
@@ -1191,6 +1195,10 @@ video {
   vertical-align: bottom;
 }
 
+.\!text-\[13px\] {
+  font-size: 13px !important;
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1201,16 +1209,8 @@ video {
   line-height: 2.25rem;
 }
 
-.text-\[14px\] {
-  font-size: 14px;
-}
-
-.text-\[18px\] {
-  font-size: 18px;
-}
-
-.text-\[35px\] {
-  font-size: 35px;
+.text-\[17px\] {
+  font-size: 17px;
 }
 
 .text-base {
@@ -1238,24 +1238,12 @@ video {
   line-height: 1rem;
 }
 
-.text-\[13px\] {
-  font-size: 13px;
-}
-
-.\!text-\[13px\] {
-  font-size: 13px !important;
-}
-
 .font-bold {
   font-weight: 700;
 }
 
 .font-medium {
   font-weight: 500;
-}
-
-.font-normal {
-  font-weight: 400;
 }
 
 .font-semibold {

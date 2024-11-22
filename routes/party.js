@@ -7,6 +7,7 @@ const multer = require('multer');
 const mime = require('mime-types')
 const {getFullImagePath, cachedKeys} = require('../utils');
 const RedisManager = require('../RedisManager');
+const Candidate = require('../models/candidates');
 
 const redis = RedisManager.getInstance();  // Get the Redis instance
 
@@ -85,6 +86,68 @@ router.get('/parties-summary', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch parties summary' });
   }
 });
+
+router.get('/party-count', async (req, res) => {
+  try {
+    const result = await Candidate.aggregate([
+      {
+        $unwind: '$constituency', // Unwind constituency array
+      },
+      {
+        $group: {
+          _id: '$constituency', // Group by constituency
+          maxVotes: { $max: '$totalVotes' }, // Find the maximum votes in each constituency
+        },
+      },
+      {
+        $lookup: {
+          from: 'candidates', // Lookup to find the candidate with the maximum votes
+          localField: '_id',
+          foreignField: 'constituency',
+          as: 'candidates',
+        },
+      },
+      {
+        $unwind: '$candidates', // Unwind the candidates array
+      },
+      {
+        $match: {
+          $expr: { $eq: ['$candidates.totalVotes', '$maxVotes'] }, // Match only the candidate with the maximum votes
+        },
+      },
+      {
+        $match: {
+          'candidates.totalVotes': { $gt: 0 }, // Only consider candidates with votes greater than 0
+        },
+      },
+      {
+        $lookup: {
+          from: 'parties', // Lookup to fetch the party of the candidate
+          localField: 'candidates.party',
+          foreignField: '_id',
+          as: 'partyDetails',
+        },
+      },
+      {
+        $unwind: '$partyDetails', // Unwind party details
+      },
+      {
+        $group: {
+          _id: '$partyDetails.party', // Group by party name
+          constituencyCount: { $sum: 1 }, // Count the number of constituencies each party leads
+        },
+      },
+      {
+        $sort: { constituencyCount: -1 }, // Sort parties by the count in descending order
+      },
+    ]);
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
 
 // POST route to create a new party
 router.post('/', upload.single('party_logo'), async (req, res) => {
