@@ -19,15 +19,15 @@ router.get('/party-summary', async (req, res) => {
     }
 
     // Filter for BJP+ and JMM+ parties
-    const filteredParties = election.parties.filter(party => 
-      party.name === 'BJP+' || party.name === 'JMM+'
-    );
+    // const filteredParties = election.parties.filter(party => 
+    //   party.name === 'BJP+' || party.name === 'JMM+'
+    // );
 
     res.status(200).json({
       state: election.state,
       totalSeats: election.totalSeats,
       declaredSeats: election.declaredSeats,
-      parties: filteredParties,
+      parties: election.parties,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

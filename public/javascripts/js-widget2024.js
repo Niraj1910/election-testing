@@ -1,90 +1,92 @@
-// var dataSource = {
-//   presidentialSummary: "https://interactive.aljazeera.com/data/mapped/uselection2024/processed/Presidential_Summary.json",
-// };
+const TOTAL_SEATS = 81;
+    const MAJORITY_MARK = 41;
 
-// console.log(dataSource);
-$(document).ready(function(){
-  jQuery.ajaxSetup({
-    async:true,
-    timeout: 10000
-  });
- refreshData();
- setInterval(refreshData,30000);
-});
-async function refreshData() {
-  openPresident();
-}
+    async function getData() {
+      try {
+        const response = await fetch('/api/elections/party-summary');
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Mock data for testing
+        return {
+          parties: [
+            { name: 'JMM+', won: 45, leading: 0, partyColor: '#00FF00' },
+            { name: 'BJP+', won: 25, leading: 0, partyColor: '#FF9933' },
+            { name: 'JLKM', won: 6, leading: 0, partyColor: '#0000FF' },
+            { name: 'Others', won: 5, leading: 0, partyColor: '#808080' }
+          ],
+          declaredSeats: 81
+        };
+      }
+    }
 
-async function getData() {
-  // http://localhost:3001/api/party/parties-summary
-  // make this api call and get the data
-  try {
-    const response = await fetch('/api/elections/party-summary');
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return null;
-  }
-}
+    function getPartyTotal(party) {
+      return party.won + party.leading;
+    }
 
-async function openPresident(){
-    // $.getJSON(dataSource.presidentialSummary, async function(races){
-      const data = await getData();
-      
-      // Get the data from the API and update the UI
-      const firstParty = data.parties[1];
-      const secondParty = data.parties[0];
-      
-      $('.f-party').text(firstParty.name);
-      $('.s-party').text(secondParty.name);
-      
-      $('.f-party-scorenumber').text((firstParty.won + firstParty.leading)).css("color", firstParty.partyColor);
-      $('.s-party-scorenumber').text((secondParty.won + secondParty.leading)).css("color", secondParty.partyColor);
-      
-      // Calculate bar widths
-      const totalSeats = 41;
-      console.log((firstParty.won + firstParty.leading) / totalSeats)
-      const firstPartyWidth = ((firstParty.won + firstParty.leading) / totalSeats) * 50; // Cap at 50%
-      const secondPartyWidth = ((secondParty.won + secondParty.leading) / totalSeats) * 50; // Cap at 50%
-      
-      $('#hc-dem-bar')
-        .css("width", `${firstPartyWidth}%`)
-        .css("background", firstParty.partyColor);
-      
-      $('#dt-rep-bar')
-        .css("width", `${secondPartyWidth}%`)
-        .css("background", secondParty.partyColor);
-      
+    function calculateBarWidths(parties) {
+      const totalSeats = TOTAL_SEATS;
+      let widths = [];
 
+        const bjpAlliance = parties.find(p => p.name === 'BJP+');
+        const jmmAlliance = parties.find(p => p.name === 'JMM+');
+        let otheParties = parties.filter(p => p.name!== bjpAlliance.name && p.name!== jmmAlliance.name);
+        let partiesList = [jmmAlliance, ...otheParties, bjpAlliance]       
+      
+      let remainingWidth = 100;
+      let currentPosition = 0;
+
+      partiesList.forEach((party, index) => {
+        const seats = getPartyTotal(party);
+        const percentageWidth = (seats / totalSeats) * 100;
         
+        widths.push({
+          party: party,
+          width: percentageWidth,
+          position: currentPosition
+        });
+        
+        currentPosition += percentageWidth;
+      });
 
-        // let [p1, p2] = races.Candidates;
-        // let totalpresident = 538;
-        // let engpct = "";
-        // let arpct = "";       
-        // let langpct = $("html").attr("lang");
-        // if(langpct!="ar"){engpct="%"}
-        // else{arpct="%"}
-        // Function to update the UI for a candidate
-        // function updateUI(candidate, partyPrefix) {
-        //   console.log(candidate, partyPrefix);
-        //     $(`#${partyPrefix}-electwon`).text(candidate.ElectWon);
-        //     $(`#${partyPrefix}-popvote`).text(candidate.PopVote.toLocaleString());
-        //     $(`#${partyPrefix}-poppct`).text(arpct + candidate.PopPct + engpct);
-        //     $(`#${partyPrefix}-dem-bar`).css("width", Math.round(candidate.ElectWon/totalpresident*100,2)+"%");
-        //     $(`#${partyPrefix}-rep-bar`).css("width", Math.round(candidate.ElectWon/totalpresident*100,2)+"%");
-        // }
+      return widths;
+    }
 
-        // Update DEM candidate
-        // if (p1.Party === "DEM") {
-        //     updateUI(p1, 'hc');
-        //     updateUI(p2, 'dt');
-        // } else {
-        //     updateUI(p1, 'dt');
-        //     updateUI(p2, 'hc');
-        // }
-    // }).error(function() {
-    //   console.log("error updating presidential data");
-    // });
-}
+    async function updateResults() {
+      const data = await getData();
+      if (!data) return;
+
+      const bjpAlliance = data.parties.find(p => p.name === 'BJP+');
+      const jmmAlliance = data.parties.find(p => p.name === 'JMM+');
+      
+      // Update party names and scores
+      document.getElementById('bjp-name').textContent = bjpAlliance.name;
+      document.getElementById('jmm-name').textContent = jmmAlliance.name;
+
+      document.getElementById('bjp-score').textContent = getPartyTotal(bjpAlliance);
+      document.getElementById('bjp-score').style.color = bjpAlliance.partyColor;
+      
+      document.getElementById('jmm-score').textContent = getPartyTotal(jmmAlliance);
+      document.getElementById('jmm-score').style.color = jmmAlliance.partyColor;
+
+      // Calculate and update bars
+      const barsContainer = document.getElementById('bars-container');
+      barsContainer.innerHTML = ''; // Clear existing bars
+      
+      const barWidths = calculateBarWidths(data.parties);
+      
+      barWidths.forEach(({ party, width, position }) => {
+        console.log(barWidths);
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.backgroundColor = party.partyColor;
+        bar.style.width = `${width}%`;
+        barsContainer.appendChild(bar);
+      });
+    }
+    
+    // Initial update
+    updateResults();
+    
+    // Update every 30 seconds
+    setInterval(updateResults, 30000);

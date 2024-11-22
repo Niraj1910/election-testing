@@ -13,7 +13,7 @@
 
     <!-- <link rel="stylesheet" href="/stylesheets/css-normalize.css"> -->
     <link href="/stylesheets/css-bootstrap.min.css" rel="stylesheet">
-    <link href="/stylesheets/css-widget.css" rel="stylesheet">
+    <!-- <link href="/stylesheets/css-widget.css" rel="stylesheet"> -->
 </head>
 
 <style>
@@ -145,7 +145,7 @@
     }
 
     .party-name {
-        color: #4b5563;
+        color: black;
     }
 
     .votes {
@@ -289,6 +289,120 @@
     #presidency-results {
       margin-top: 65px;
     }
+    
+    .container_comp {
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    .title {
+      text-align: center;
+      font-size: clamp(18px, 4vw, 24px);
+      margin-bottom: 24px;
+      font-weight: bold;
+      padding: 0 16px;
+    }
+    
+    .majority-marker {
+      text-align: center;
+      position: relative;
+      margin: 16px 0;
+    }
+    
+    .majority-number {
+      font-size: clamp(24px, 6vw, 35px);
+      font-weight: bold;
+      color: black;
+    }
+    
+    .majority-text {
+      font-size: clamp(14px, 3vw, 16px);
+      color: #666;
+    }
+    
+    .line-container {
+      position: relative;
+      height: 40px;
+      margin: 0px 16px;
+      margin-bottom: 15px;
+    }
+    
+    .line {
+      position: relative;
+      width: 100%;
+      height: 20px;
+      background: #f0f0f0;
+      overflow: hidden;
+    }
+    
+    .bars-container {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      display: flex;
+    }
+    
+    .bar {
+      height: 100%;
+      transition: all 0.5s ease;
+    }
+
+    .center-marker {
+      position: absolute;
+      left: 50%;
+      top: -10px;
+      width: 2px;
+      height: 40px;
+      background: #666;
+    }
+    
+    .results-container {
+      position: relative;
+      width: 100%;
+      height: 40px;
+      /* margin-top: 20px; */
+    }
+    
+    .party-result {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+      width: auto;
+    }
+
+    .party-result.left {
+      left: 16px;
+    }
+
+    .party-result.right {
+      right: 16px;
+    }
+    
+    .party-name-map {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    
+    .party-score {
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .results-container {
+        height: 60px;
+      }
+      .line-container {
+        margin-bottom: 0px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .container_comp {
+        max-width: 1400px;
+      }
+    }
   </style>
 
 <body>
@@ -301,57 +415,33 @@
 
         <div id="content">
             <!-- live results start -->
-            <section id="presidency-results">
-              <div class="container_comp">
-                <div class="row">
-                  <div class="col-xs-6 harris-left text-left">
-                    <div id="aj-ahc"></div>
-                    <!-- <img class="aj-avatar" src="images/img-harris.png" height="auto"> -->
-                  </div>
-                  <div class="col-xs-6 trump-right text-right">
-                    <div id="aj-adt"></div>
-                    <!-- <img class="aj-avatar" src="images/img-trump.png" height="auto"> -->
-                  </div>
+            <div class="container_comp">
+                
+                <div class="majority-marker">
+                  <div class="majority-number">41</div>
+                  <div class="majority-text">पर बहुमत</div>
                 </div>
-        
-                <div class="row">
-                  <div class="linebox col-xs-12 text-center">
-                    <!-- <img class="widgetbranding" src="images/img-brandwhite.png" height="48px" width="auto"> -->
-                    <h5 class="h5 electoralvote text-center hide-below-300"><span class="text-[35px] font-normal">41</span> <br>पर बहुमत</h5>
-                    <!-- <h5 class="h5 electoralvote text-center hide-above-300">81<br>to win</h5> -->
-                  </div>
-                </div>
-        
-                <div class="row">
-                  <div class="line-container">
-                    <div class="linetick"></div>
-                    <div class="line lineborder"></div>
-                    <div class="line line1">
-                      <div class="president_total_bar">
-                        <div role="img" id="hc-dem-bar" aria-label="Bar showing the number of president seats for Democrats"
-                          class="president_dem_bar"> </div>
-                        <div role="img" id="dt-rep-bar" aria-label="Bar showing the number of president seats for Republicans"
-                          class="president_rep_bar"> </div>
-                      </div>
+                
+                <div class="line-container">
+                  <div class="center-marker"></div>
+                  <div class="line">
+                    <div class="bars-container" id="bars-container">
+                      <!-- Bars will be dynamically added here -->
                     </div>
                   </div>
                 </div>
-        
-                <div class="row widgetresults">
-                  <div class="col-xs-6 text-left">
-                    <h3 class="h3 f-party"></h3>
-                    <h3 class="h2 f-party-scorenumber bluecolor" style="margin-top: 0px;" id="hc-electwon">0</h3>
-                    <!-- <h4 class="h4"><span id="hc-popvote"></span> | <span id="hc-poppct"> %</span></h4> -->
-                    <!-- <h6 class="h6">VOTES</h6> -->
+                
+                <div class="results-container">
+                  <div class="party-result left">
+                    <div id="jmm-name" class="party-name-map"></div>
+                    <div id="jmm-score" class="party-score"></div>
                   </div>
-                  <div class="col-xs-6 text-right">
-                    <h3 class="h3 s-party"></h3>
-                    <h3 class="h2 s-party-scorenumber redcolor" style="margin-top: 0px;" id="dt-electwon">0</h3>
-                    <!-- <h4 class="h4"><span id="dt-popvote"> </span> | <span id="dt-poppct">  %</span></h4> -->
+                  <div class="party-result right">
+                    <div id="bjp-name" class="party-name-map"></div>
+                    <div id="bjp-score" class="party-score"></div>
                   </div>
                 </div>
               </div>
-            </section>
           </div>
 
 
