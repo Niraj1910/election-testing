@@ -44,11 +44,10 @@ router.get('/top-parties', async (req, res) => {
       "673b16b4568e8acfd1213d73",
       "673b16b4568e8acfd1213d86",
       "673b16b4568e8acfd1213d83",
-      "673b16b5568e8acfd1213dac",
       "673b16b4568e8acfd1213d77",
     ];
     
-    const topParties = await Party.aggregate([
+    let topParties = await Party.aggregate([
       {
         $match: {
           _id: { $in: parties.map(id => new mongoose.Types.ObjectId(id)) },
@@ -65,6 +64,16 @@ router.get('/top-parties', async (req, res) => {
         $sort: { sortIndex: 1 },
       },
     ]);
+
+    topParties = [...topParties, {
+      _id: new mongoose.Types.ObjectId(),
+      party: 'Others',
+      color_code: '#FFFFFF',
+      total_votes: 0,
+      total_seat: 0,
+      party_logo: null,
+      votes_percentage: 0
+    }]
     
     res.json(topParties);
   } catch (error) {

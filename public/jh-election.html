@@ -768,7 +768,7 @@
                 currentTippy.destroy();
             }
 
-            const badgeText = (won && won !== 'awaiting') ? ( won === 'won' ? "WON" : "LOSS") : (showColors ? "LEADING" : "AWAITING");
+            const badgeText = (won && won !== 'awaiting') ? ( won === 'won' ? "जीते" : "हारे") : (showColors ? "LEADING" : "AWAITING");
 
             currentTippy = tippy(event.target, {
                 content: `
@@ -782,7 +782,7 @@
             <div class="candidate-section winner" style="border-left: ${showColors ? '' : '#D3D3D3'};">
                 <div class="candidate-header">
                     <span class="candidate-name">${candidate}</span>
-                    <span class="status-badge status-won" style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${won !== 'awaiting' ? "WON" : (showColors ? "LEADING" : "AWAITING")}</span>
+                    <span class="status-badge status-won" style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${won !== 'awaiting' ? "जीते" : (showColors ? "आगे" : "कुछ देर में")}</span>
                 </div>
                 <div class="party-votes">
                     <div class="party-info">
@@ -793,7 +793,7 @@
                     </div>
                 </div>
                 <div class="margin-info">
-                    <span class="margin-label">आगे</span>
+                    <span class="margin-label">${showColors ? "आगे" : ""}</span>
                     <span class="margin-value-won" style="color: ${showColors ? '' : 'gray'}">${totalVotes} votes</span>
                 </div>
             </div>
@@ -802,7 +802,7 @@
             <div class="candidate-section trailing"  style="border-left: ${showColors ? '' : '#D3D3D3'};">
                 <div class="candidate-header">
                     <span class="candidate-name">${trailCandidate}</span>
-                    <span class="status-badge status-trailing"  style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${won !== 'awaiting' ? "LOSS" : (showColors ? "TRAILING" : "AWAITING")}</span>
+                    <span class="status-badge status-trailing"  style="background-color: ${showColors ? '' : '#9ca3af'}; color: ${showColors ? '' : 'white'}">${won !== 'awaiting' ? "हारे" : (showColors ? "पीछे" : "कुछ देर में")}</span>
                 </div>
                 <div class="party-votes">
                     <div class="party-info">
@@ -813,7 +813,7 @@
                     </div>
                 </div>
                 <div class="margin-info">
-                    <span class="margin-label">पीछे</span>
+                    <span class="margin-label">${showColors ? "पीछे" : ""}</span>
                     <span class="margin-value-trailing" style="color: ${showColors ? '' : 'gray'}">${trailTotalVotes} votes</span>
                 </div>
             </div>
