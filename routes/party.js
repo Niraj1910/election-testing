@@ -115,65 +115,105 @@ router.get('/parties-summary', async (req, res) => {
 
 router.get('/party-count', async (req, res) => {
   try {
-    const result = await Candidate.aggregate([
-      {
-        $unwind: '$constituency', // Unwind constituency array
-      },
+    const debugTies = await Candidate.aggregate([
+      { $unwind: '$constituency' },
       {
         $group: {
-          _id: '$constituency', // Group by constituency
-          maxVotes: { $max: '$totalVotes' }, // Find the maximum votes in each constituency
+          _id: '$constituency',
+          maxVotes: { $max: '$totalVotes' },
         },
       },
       {
         $lookup: {
-          from: 'candidates', // Lookup to find the candidate with the maximum votes
+          from: 'candidates',
           localField: '_id',
           foreignField: 'constituency',
           as: 'candidates',
         },
       },
-      {
-        $unwind: '$candidates', // Unwind the candidates array
-      },
+      { $unwind: '$candidates' },
       {
         $match: {
-          $expr: { $eq: ['$candidates.totalVotes', '$maxVotes'] }, // Match only the candidate with the maximum votes
-        },
-      },
-      {
-        $match: {
-          'candidates.totalVotes': { $gt: 0 }, // Only consider candidates with votes greater than 0
+          $expr: { $eq: ['$candidates.totalVotes', '$maxVotes'] },
         },
       },
       {
         $lookup: {
-          from: 'parties', // Lookup to fetch the party of the candidate
+          from: 'parties',
           localField: 'candidates.party',
           foreignField: '_id',
           as: 'partyDetails',
         },
       },
-      {
-        $unwind: '$partyDetails', // Unwind party details
-      },
+      { $unwind: '$partyDetails' },
       {
         $group: {
-          _id: '$partyDetails.party', // Group by party name
-          constituencyCount: { $sum: 1 }, // Count the number of constituencies each party leads
+          _id: '$partyDetails.party',
+          constituenciesWon: { $addToSet: '$_id' }, // Collect unique constituencies for each party
         },
       },
       {
-        $sort: { constituencyCount: -1 }, // Sort parties by the count in descending order
+        $project: {
+          party: '$_id',
+          constituencyCount: { $size: '$constituenciesWon' }, // Count unique constituencies
+        },
       },
+      { $sort: { constituencyCount: -1 } }, // Sort parties by the number of constituencies
     ]);
+    
+    
+    // const result = await Candidate.aggregate([
+    //   { $unwind: '$constituency' },
+    //   {
+    //     $group: {
+    //       _id: '$constituency',
+    //       maxVotes: { $max: '$totalVotes' },
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: 'candidates',
+    //       localField: '_id',
+    //       foreignField: 'constituency',
+    //       as: 'candidates',
+    //     },
+    //   },
+    //   { $unwind: '$candidates' },
+    //   {
+    //     $match: {
+    //       $expr: { $eq: ['$candidates.totalVotes', '$maxVotes'] },
+    //     },
+    //   },
+    //   {
+    //     $group: {
+    //       _id: '$_id',
+    //       candidate: { $first: '$candidates' }, // Ensure only one candidate per constituency
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: 'parties',
+    //       localField: 'candidate.party',
+    //       foreignField: '_id',
+    //       as: 'partyDetails',
+    //     },
+    //   },
+    //   { $unwind: '$partyDetails' },
+    //   {
+    //     $group: {
+    //       _id: '$partyDetails.party',
+    //       constituencyCount: { $sum: 1 },
+    //     },
+    //   },
+    //   { $sort: { constituencyCount: -1 } },
+    // ]);
 
-    res.json(result);
+    res.json(debugTies);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-})
+});
 
 // POST route to create a new party
 router.post('/', upload.single('party_logo'), async (req, res) => {

@@ -289,18 +289,13 @@
 
         const tbody = document.createElement('tbody');
 
-        // Create table headers
-        thead.innerHTML = `
-          <tr>
-            <th class="py-2 px-4 border-b text-left">Party</th>
-            <th class="py-2 px-4 border-b text-left">Constituency Count</th>
-          </tr>
-        `;
+        let totalCount = 0;
 
         // Populate table rows
         data.forEach(party => {
           const row = document.createElement('tr');
           row.className = 'hover:bg-gray-100';
+          totalCount += party.constituencyCount;
 
           row.innerHTML = `
             <td class="py-2 px-4 border-b">${party._id}</td>
@@ -308,6 +303,14 @@
           `;
           tbody.appendChild(row);
         });
+
+        // Create table headers
+        thead.innerHTML = `
+          <tr>
+            <th class="py-2 px-4 border-b text-left">Party</th>
+            <th class="py-2 px-4 border-b text-left">Constituency Count (${totalCount})</th>
+          </tr>
+        `;
 
         table.appendChild(thead);
         table.appendChild(tbody);
