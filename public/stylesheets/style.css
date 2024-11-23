@@ -777,6 +777,10 @@ video {
   min-height: 100vh;
 }
 
+.w-1\/2 {
+  width: 50%;
+}
+
 .w-10 {
   width: 2.5rem;
 }
@@ -791,10 +795,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-1\/2 {
-  width: 50%;
 }
 
 .min-w-full {
@@ -901,6 +901,10 @@ video {
 
 .gap-5 {
   gap: 1.25rem;
+}
+
+.gap-\[5px\] {
+  gap: 5px;
 }
 
 .space-x-2 > :not([hidden]) ~ :not([hidden]) {
@@ -1209,8 +1213,8 @@ video {
   line-height: 2.25rem;
 }
 
-.text-\[17px\] {
-  font-size: 17px;
+.text-\[16px\] {
+  font-size: 16px;
 }
 
 .text-base {
