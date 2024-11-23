@@ -20,6 +20,7 @@ const constituencySchema = Joi.object({
     totalVotes: Joi.number().required().messages({
         'number.base': 'Total votes must be a number',
     }),
+    won: Joi.string().optional(),
     candidates: Joi.array().optional(),
 });
 
@@ -86,6 +87,7 @@ router.get('/:id', async (req, res, next) => {
     try {
         const constituency = await Constituency.findById(req.params.id).populate('candidates');
         if (!constituency) return res.status(404).send('Constituency not found');
+        console.log(constituency);
         res.json(constituency);
     } catch (error) {
         next(error);
@@ -106,21 +108,21 @@ router.put('/:id',isAdmin, async (req, res, next) => {
         if (!existingConstituency) return res.status(404).send('Constituency not found');
 
         const newCandidateIds = req.body.candidates || [];
-        const removedCandidates = existingConstituency.candidates.filter(
-            (candidate) => !newCandidateIds.includes(String(candidate._id))
-        );
+        // const removedCandidates = existingConstituency.candidates.filter(
+        //     (candidate) => !newCandidateIds.includes(String(candidate._id))
+        // );
 
-        const updatePromises = removedCandidates.map((candidate) =>
-            Candidate.findByIdAndUpdate(candidate._id, { constituency: null })
-        );
-        await Promise.all(updatePromises);
+        // const updatePromises = removedCandidates.map((candidate) =>
+        //     Candidate.findByIdAndUpdate(candidate._id, { constituency: null })
+        // );
+        // await Promise.all(updatePromises);
 
         const updatedConstituency = await Constituency.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
         await redis.clearAllKeys();
         res.json(updatedConstituency);
     } catch (error) {
-        console.error(error);
+        console.error(error, "updated");
         req.flash('error', error.message);
         res.redirect(`/edit-constituency/${req.params.id}`);
     }

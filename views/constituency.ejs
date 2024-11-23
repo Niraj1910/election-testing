@@ -26,6 +26,7 @@
                     <th class="py-2 px-4 border-b">Name</th>
                     <th class="py-2 px-4 border-b">State</th>
                     <th class="py-2 px-4 border-b">Total Votes</th>
+                    <th class="py-2 px-4 border-b">Result</th>
                     <th class="py-2 px-4 border-b">Actions</th>
                 </tr>
             </thead>
@@ -42,6 +43,7 @@
                         </td>
                         <td class="py-2 px-4 border-b"><%= constituency.state %></td>
                         <td class="py-2 px-4 border-b"><%= constituency.totalVotes %></td>
+                        <td class="py-2 px-4 border-b"><%= constituency.won %></td>
                         <td class="py-2 px-4 border-b">
                             <div class="flex justify-center space-x-4">
                                 <a href="/edit-constituency/<%= constituency._id %>" class="text-blue-500 hover:text-blue-700">
