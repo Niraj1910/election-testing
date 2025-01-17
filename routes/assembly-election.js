@@ -1,10 +1,10 @@
-const express = require('express');
-const Joi = require('joi');
-const AssemblyElection = require('../models/assembly-election.model');
-const Candidate = require('../models/candidates');
-const RedisManager = require('../RedisManager');
-const { cachedKeys } = require('../utils');
-const isAdmin = require('../middleware/admin');
+const express = require("express");
+const Joi = require("joi");
+const AssemblyElection = require("../models/assembly-election.model");
+const Candidate = require("../models/candidates");
+const RedisManager = require("../RedisManager");
+const { cachedKeys } = require("../utils");
+const isAdmin = require("../middleware/admin");
 const router = express.Router();
 
 const redis = RedisManager.getInstance();
@@ -19,7 +19,7 @@ const electionSchema = Joi.object({
 });
 
 // Create a new AssemblyElection
-router.post('/',isAdmin, async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   try {
     const { error } = electionSchema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -28,134 +28,158 @@ router.post('/',isAdmin, async (req, res) => {
     await election.save();
 
     await redis.clearAllKeys();
-    
-    return res.status(201).redirect('/assembly-election');
+
+    return res.status(201).redirect("/assembly-election");
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 
 // Get all AssemblyElections
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     // Fetch from cache if available
     const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION);
-    if(cachedData){
+    if (cachedData) {
       return res.json(cachedData);
     }
 
     // Clear cache after 5 minutes
     // Fetch from DB if no cache
-    const elections = await AssemblyElection.find().populate('constituencies');
+    const elections = await AssemblyElection.find().populate("constituencies");
     await redis.setWithTTL(cachedKeys.ASSEMBLY_ELECTION, elections, 3600); // Cache for 5 minutes
 
     res.json(elections);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 
 // Get an AssemblyElection by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION + ':' + req.params.id);
-    if(cachedData){
+    const cachedData = await redis.get(
+      cachedKeys.ASSEMBLY_ELECTION + ":" + req.params.id
+    );
+    if (cachedData) {
       return res.json(cachedData);
     }
 
-    const election = await AssemblyElection.findById(req.params.id).populate('constituencies');
-    if (!election) return res.status(404).send('Election not found');
-    await redis.setWithTTL(cachedKeys.ASSEMBLY_ELECTION + ':' + req.params.id, election, 3600); // Cache the result
+    const election = await AssemblyElection.findById(req.params.id).populate(
+      "constituencies"
+    );
+    if (!election) return res.status(404).send("Election not found");
+    await redis.setWithTTL(
+      cachedKeys.ASSEMBLY_ELECTION + ":" + req.params.id,
+      election,
+      3600
+    ); // Cache the result
     res.json(election);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 
 // Update an AssemblyElection by ID
-router.put('/:id', isAdmin,async (req, res) => {
+router.put("/:id", isAdmin, async (req, res) => {
   try {
     const { error } = electionSchema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    const election = await AssemblyElection.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!election) return res.status(404).send('Election not found');
+    const election = await AssemblyElection.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!election) return res.status(404).send("Election not found");
 
     await redis.clearAllKeys();
     res.json(election);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 
 // Delete an AssemblyElection by ID
-router.delete('/:id',isAdmin, async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
   try {
     const election = await AssemblyElection.findByIdAndDelete(req.params.id);
-    if (!election) return res.status(404).send('Election not found');
+    if (!election) return res.status(404).send("Election not found");
 
     await redis.clearAllKeys();
-        
-    res.json({ message: 'Election deleted successfully' });
+
+    res.json({ message: "Election deleted successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 
-// route with /state/:id 
-router.get('/state/:name', async (req, res) => {
+// route with /state/:id
+router.get("/state/:name", async (req, res) => {
   try {
+    const stateName = req.params.name;
 
-    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION + `:${req.params.name}`);
+    const cachedData = await redis.get(
+      cachedKeys.ASSEMBLY_ELECTION + `:${stateName}`
+    );
 
-    if(cachedData){
+    if (cachedData) {
       return res.json(cachedData);
     }
 
     // Fetch the elections with full population of nested documents
-    const elections = await AssemblyElection.findOne({ state: req.params.name })
-      .populate({
-        path: 'constituencies',
+    const elections = await AssemblyElection.findOne({
+      state: stateName,
+    }).populate({
+      path: "constituencies",
+      populate: {
+        path: "candidates",
+        model: "Candidate",
         populate: {
-          path: 'candidates',
-          model: 'Candidate',
-          populate: {
-            path: 'party',
-            model: 'Party',
-          },
+          path: "party",
+          model: "Party",
         },
-      });
+      },
+    });
 
-    if (!elections) return res.status(404).send('No elections found in this state');
+    if (!elections)
+      return res.status(404).send("No elections found in this state");
 
     // Process each constituency to determine leading and trailing candidates
     const constituencies = await Promise.all(
       elections.constituencies.map(async (constituency) => {
         // Fetch sorted candidates for the constituency
         const cands = await Candidate.find({ constituency: constituency._id })
-          .sort({ totalVotes: -1 })  // Sort by total votes in descending order
-          .populate('party');
+          .sort({ totalVotes: -1 }) // Sort by total votes in descending order
+          .populate("party");
 
         const highestVoteCandidate = cands[0]; // Leading candidate (highest votes)
         const lowestVoteCandidate = cands[1]; // Trailing candidate (lowest votes)
 
-        const leadingPartyColor = highestVoteCandidate ? highestVoteCandidate.party.color_code : null;
-        const trailingPartyColor = lowestVoteCandidate ? lowestVoteCandidate.party.color_code : null;
+        const leadingPartyColor = highestVoteCandidate
+          ? highestVoteCandidate.party.color_code
+          : null;
+        const trailingPartyColor = lowestVoteCandidate
+          ? lowestVoteCandidate.party.color_code
+          : null;
 
         // Construct the constituency object with leading and trailing candidates
         return {
           _id: constituency._id,
           name: constituency.name,
           state: constituency.state,
-          won: constituency.won || "awaiting", 
+          won: constituency.won || "awaiting",
           totalVotes: constituency.totalVotes,
-          color: highestVoteCandidate && highestVoteCandidate.totalVotes > 0 ? leadingPartyColor : "#C0C0C0",
+          color:
+            highestVoteCandidate && highestVoteCandidate.totalVotes > 0
+              ? leadingPartyColor
+              : "#C0C0C0",
           leadingCandidate: highestVoteCandidate
             ? {
                 _id: highestVoteCandidate._id,
@@ -188,14 +212,18 @@ router.get('/state/:name', async (req, res) => {
 
     // Send the response with structured data
 
-    await redis.setWithTTL(cachedKeys.ASSEMBLY_ELECTION + `:${req.params.name}`, {
-      state: elections.state,
-      year: elections.year,
-      total_seat: elections.total_seat,
-      total_votes: elections.total_votes,
-      total_candidate: elections.total_candidate,
-      constituency: constituencies,
-    }, 3600);
+    await redis.setWithTTL(
+      cachedKeys.ASSEMBLY_ELECTION + `:${stateName}`,
+      {
+        state: elections.state,
+        year: elections.year,
+        total_seat: elections.total_seat,
+        total_votes: elections.total_votes,
+        total_candidate: elections.total_candidate,
+        constituency: constituencies,
+      },
+      3600
+    );
 
     res.json({
       state: elections.state,
@@ -207,7 +235,7 @@ router.get('/state/:name', async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server Error');
+    res.status(500).send("Server Error");
   }
 });
 

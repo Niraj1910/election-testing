@@ -1,0 +1,562 @@
+[
+  {
+    "name": "Nerela",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Burari",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Timarpur",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Adarsh Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Badli",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Rithala",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Bawana",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Mundka",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Kirari",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Sultanpur Majra",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Nangloi Jat",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Mangol Puri",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Rohini",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Shalimar Bagh",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Shakur Basti",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Tri Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Wazirpur",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Model Town",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Sadar Bazar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Chandni Chowk",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Matia Mahal",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Ballimaran",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Karol Bagh",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Patel Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Moti Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Madipur",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Rajouri Garden",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Hari Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Tilak Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Janakpuri",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Vikaspuri",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Uttam Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Dwarka",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Matiala",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Najafgarh",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Bijwasan",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Palam",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "delhi Cantt",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Rajinder Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "New delhi",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Jangpura",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Kasturba Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Malviya Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "R K Puram",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Mehrauli",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Chhatarpur",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Deoli",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Ambedkar Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Sangam Vihar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Greater Kailash",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Kalkaji",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Tughlakabad",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Badarpur",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Okhla",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Trilokpuri",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Kondli",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Patparganj",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Laxmi Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Vishwas Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Krishna Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Gandhi Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Shahdara",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Seema Puri",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Rohtas Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Seelampur",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Ghonda",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Babarpur",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Gokalpur",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Mustafabad",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  },
+  {
+    "name": "Karawal Nagar",
+    "state": "delhi",
+    "totalVotes": 0,
+    "candidates": ["673b172943ad5c35142192be"],
+    "won": "awaiting",
+    "__v": 0
+  }
+]
