@@ -2218,16 +2218,15 @@
       //   path4045: "cns-karawal nagar",
       // };
 
-      document
-        .getElementById("svg_container")
-        .addEventListener("mouseover", function (event) {
-          const path = event.target;
-          if (path.tagName === "path") {
-            console.log("Hovered over path ->", path.id);
-            // path.setAttribute("data-id", pathToConstituency[path.id]);
-            // path.setAttribute("stroke", "#000");
-          }
-        });
+      // document.getElementById("svg_container")
+      //   .addEventListener("mouseover", function (event) {
+      //     const path = event.target;
+      //     if (path.tagName === "path") {
+      //       console.log("Hovered over path ->", path.id);
+      //       path.setAttribute("data-id", pathToConstituency[path.id]);
+      //       path.setAttribute("stroke", "#000");
+      //     }
+      //   });
 
       function updateLoading() {
         const svg = document.querySelector(".svg_container");
