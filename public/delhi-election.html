@@ -438,12 +438,12 @@
 
           <div class="results-container">
             <div class="party-result left">
-              <div id="jmm-name" class="party-name-map"></div>
-              <div id="jmm-score" class="party-score"></div>
+              <div id="contender1-name" class="party-name-map"></div>
+              <div id="contender1-score" class="party-score"></div>
             </div>
             <div class="party-result right">
-              <div id="bjp-name" class="party-name-map"></div>
-              <div id="bjp-score" class="party-score"></div>
+              <div id="contender2-name" class="party-name-map"></div>
+              <div id="contender2-score" class="party-score"></div>
             </div>
           </div>
         </div>
@@ -455,49 +455,13 @@
         style="width: 100%"
       >
         <svg
-          version="1.1"
-          id="svg2985"
-          xmlns:dc="http://purl.org/dc/elements/1.1/"
-          xmlns:cc="http://creativecommons.org/ns#"
-          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-          xmlns:svg="http://www.w3.org/2000/svg"
-          xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-          xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-          sodipodi:docname="test.svg"
-          inkscape:version="0.48.4 r9939"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
           x="0px"
           y="0px"
           width="648.43"
           height="398.03"
           viewBox="0 0 648.43 700.03"
           enable-background="new 0 0 700 702"
-          xml:space="preserve"
         >
-          <sodipodi:namedview
-            inkscape:pageshadow="2"
-            inkscape:pageopacity="0"
-            id="namedview2987"
-            inkscape:current-layer="svg2985"
-            inkscape:window-maximized="1"
-            inkscape:window-y="-8"
-            inkscape:window-x="-8"
-            inkscape:window-height="706"
-            inkscape:window-width="1366"
-            inkscape:cy="365.48397"
-            inkscape:cx="355.14368"
-            inkscape:zoom="0.83870819"
-            showgrid="false"
-            guidetolerance="10"
-            gridtolerance="10"
-            objecttolerance="10"
-            bordercolor="#666666"
-            pagecolor="#ffffff"
-            borderopacity="1"
-          >
-          </sodipodi:namedview>
-
           <path
             id="path3995"
             inkscape:connector-curvature="0"
@@ -2218,16 +2182,15 @@
       //   path4045: "cns-karawal nagar",
       // };
 
-      document
-        .getElementById("svg_container")
-        .addEventListener("mouseover", function (event) {
-          const path = event.target;
-          if (path.tagName === "path") {
-            console.log("Hovered over path ->", path.id);
-            // path.setAttribute("data-id", pathToConstituency[path.id]);
-            // path.setAttribute("stroke", "#000");
-          }
-        });
+      // document.getElementById("svg_container")
+      //   .addEventListener("mouseover", function (event) {
+      //     const path = event.target;
+      //     if (path.tagName === "path") {
+      //       console.log("Hovered over path ->", path.id);
+      //       path.setAttribute("data-id", pathToConstituency[path.id]);
+      //       path.setAttribute("stroke", "#000");
+      //     }
+      //   });
 
       function updateLoading() {
         const svg = document.querySelector(".svg_container");
@@ -2269,11 +2232,12 @@
         fetch("/api/assembly-elections/state/delhi")
           .then((response) => response.json())
           .then((data) => {
-            applyColorsAndPopovers(data);
             document.querySelector(
               ".main_title"
             ).innerText = `दिल्ली विधानसभा चुनाव परिणाम ${data.year} (${data.constituency.length} सीट)`;
+
             getParties();
+            applyColorsAndPopovers(data);
           })
           .catch((error) => {
             console.error("Error fetching colors:", error);
@@ -2316,6 +2280,7 @@
       }
 
       function applyColorsAndPopovers(data) {
+        console.log("data -> ", data);
         const svgContainer = document.getElementById("svg_container");
         const popover = document.getElementById("popover");
 
@@ -2326,6 +2291,8 @@
           );
 
           if (path) {
+            // console.log("inside the path", path);
+
             const color = constituency.color;
             const candidate = constituency.leadingCandidate;
             const trailingCandidate = constituency.trailingCandidate;
@@ -2334,6 +2301,7 @@
             path.setAttribute("fill", color);
 
             if (candidate) {
+              // console.log("inside candidate", candidate);
               path.setAttribute("data-candidate", candidate.name || "Unknown");
               path.setAttribute("data-totalVotes", candidate.totalVotes || "0");
               path.setAttribute(
@@ -2344,23 +2312,29 @@
                 "data-partyLogo",
                 candidate.party.party_logo || ""
               );
-
-              path.setAttribute(
-                "data-trail-partyLogo",
-                trailingCandidate.party.party_logo || ""
-              );
-              path.setAttribute(
-                "data-trail-candidate",
-                trailingCandidate.name || ""
-              );
-              path.setAttribute(
-                "data-trail-totalVotes",
-                trailingCandidate.totalVotes || ""
-              );
-              path.setAttribute(
-                "data-trail-partyName",
-                trailingCandidate.party.party || ""
-              );
+              if (trailingCandidate) {
+                path.setAttribute(
+                  "data-trail-partyLogo",
+                  trailingCandidate.party.party_logo || ""
+                );
+                path.setAttribute(
+                  "data-trail-candidate",
+                  trailingCandidate.name || ""
+                );
+                path.setAttribute(
+                  "data-trail-totalVotes",
+                  trailingCandidate.totalVotes || ""
+                );
+                path.setAttribute(
+                  "data-trail-partyName",
+                  trailingCandidate.party.party || ""
+                );
+                // console.log(path);
+              } else {
+                console.warn(`trailing candidate not found`);
+              }
+            } else {
+              console.warn(`leading candidate not found`);
             }
           } else {
             console.warn(

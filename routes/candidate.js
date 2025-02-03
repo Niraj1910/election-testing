@@ -1,66 +1,69 @@
-
-const express = require('express');
-const Candidate = require('../models/candidates');
-const multer = require('multer');
-const router  = express.Router();
-const mime = require('mime-types');
-const { getFullImagePath, cachedKeys } = require('../utils');
-const Constituency = require('../models/constituency');
-const RedisManager = require('../RedisManager');
-const isAdmin = require('../middleware/admin');
+const express = require("express");
+const Candidate = require("../models/candidates");
+const multer = require("multer");
+const router = express.Router();
+const mime = require("mime-types");
+const { getFullImagePath, cachedKeys } = require("../utils");
+const Constituency = require("../models/constituency");
+const RedisManager = require("../RedisManager");
+const isAdmin = require("../middleware/admin");
 
 const redis = RedisManager.getInstance();
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'public/uploads/candidates');
-    },
-    filename: (req, file, cb) => {
-        const ext = mime.extension(file.mimetype);
-        cb(null, Date.now() + '.' + ext);
-    },
-  });
-  
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads/candidates");
+  },
+  filename: (req, file, cb) => {
+    const ext = mime.extension(file.mimetype);
+    cb(null, Date.now() + "." + ext);
+  },
+});
+
 const upload = multer({ storage });
 
-
-router.get('/hot-candidates', async (req, res, next) => {
+router.get("/hot-candidates", async (req, res, next) => {
   try {
-
     const cachedData = await redis.get(cachedKeys.HOT_CANDIDATES);
 
-    if(cachedData){
+    if (cachedData) {
       return res.json(cachedData);
     }
 
     // If not in cache, query the database
     const candidates = await Candidate.find({ hotCandidate: true })
-      .populate('party constituency')
+      .populate("party constituency")
       .sort({ totalVotes: -1 });
 
-    const hotCandidates = await Promise.all(candidates.map(async candidate => {
-      const constituencyId = candidate.constituency[0]?._id;
-      
-      if (constituencyId) {
-        // Get all candidates in the same constituency, sorted by total votes
-        const candidatesInConstituency = await Candidate.find({ constituency: { $eq: constituencyId } })
-          .populate('constituency')
-          .sort({ totalVotes: -1 });
+    const hotCandidates = await Promise.all(
+      candidates.map(async (candidate) => {
+        const constituencyId = candidate.constituency[0]?._id;
 
-        // Check if the current candidate is leading or trailing
-        const isLeading = candidatesInConstituency[0]._id.equals(candidate._id);
+        if (constituencyId) {
+          // Get all candidates in the same constituency, sorted by total votes
+          const candidatesInConstituency = await Candidate.find({
+            constituency: { $eq: constituencyId },
+          })
+            .populate("constituency")
+            .sort({ totalVotes: -1 });
 
-        return {
-          ...candidate.toObject(),
-          status: isLeading ? 'leading' : 'trailing'
-        };
-      } else {
-        return {
-          ...candidate.toObject(),
-          status: 'no constituency' // Handle missing constituency
-        };
-      }
-    }));
+          // Check if the current candidate is leading or trailing
+          const isLeading = candidatesInConstituency[0]._id.equals(
+            candidate._id
+          );
+
+          return {
+            ...candidate.toObject(),
+            status: isLeading ? "leading" : "trailing",
+          };
+        } else {
+          return {
+            ...candidate.toObject(),
+            status: "no constituency", // Handle missing constituency
+          };
+        }
+      })
+    );
 
     // Cache the result for 1 hour
     await redis.setWithTTL(cachedKeys.HOT_CANDIDATES, hotCandidates, 3600);
@@ -71,16 +74,20 @@ router.get('/hot-candidates', async (req, res, next) => {
   }
 });
 
-router.get('/cn-list', async (req, res, next) => {
+router.get("/cn-list", async (req, res, next) => {
   try {
     const constituencyId = req.query.constituency;
 
-    const cachedData = await redis.get(`${cachedKeys.CN_LIST}:${constituencyId}`);
-    if(cachedData){
+    const cachedData = await redis.get(
+      `${cachedKeys.CN_LIST}:${constituencyId}`
+    );
+    if (cachedData) {
       return res.json(cachedData);
     }
 
-    const candidates = await Candidate.find().populate('constituency party').sort({ totalVotes: -1 });
+    const candidates = await Candidate.find()
+      .populate("constituency party")
+      .sort({ totalVotes: -1 });
     let sortedCandidates = [];
     let candidates_sorted = [];
 
@@ -98,25 +105,28 @@ router.get('/cn-list', async (req, res, next) => {
     });
 
     sortedCandidates.forEach((cand, index) => {
-      if(index === 0){
-        candidates_sorted.push({...cand._doc, status: 'leading' });
-      }else {
-        candidates_sorted.push({...cand._doc, status: 'trailing' });
+      if (index === 0) {
+        candidates_sorted.push({ ...cand._doc, status: "leading" });
+      } else {
+        candidates_sorted.push({ ...cand._doc, status: "trailing" });
       }
     });
 
-    await redis.setWithTTL(`${cachedKeys.CN_LIST}:${constituencyId}`, candidates_sorted, 3600);
+    await redis.setWithTTL(
+      `${cachedKeys.CN_LIST}:${constituencyId}`,
+      candidates_sorted,
+      3600
+    );
     res.json(candidates_sorted);
-
   } catch (error) {
     next(error);
   }
 });
 
-router.put('/:id',isAdmin, upload.single('image'), async (req, res, next) => {
+router.put("/:id", isAdmin, upload.single("image"), async (req, res, next) => {
   try {
     const existingCandidate = await Candidate.findById(req.params.id);
-    if (!existingCandidate) return res.status(404).send('Candidate not found');
+    if (!existingCandidate) return res.status(404).send("Candidate not found");
 
     // Prepare candidate updates
     const candidateUpdates = {
@@ -124,14 +134,21 @@ router.put('/:id',isAdmin, upload.single('image'), async (req, res, next) => {
       party: req.body.party,
       age: req.body.age,
       gender: req.body.gender,
-      hotCandidate: req.body.hotCandidate || existingCandidate.hotCandidate || false, // Assuming this is a boolean value
+      hotCandidate:
+        req.body.hotCandidate || existingCandidate.hotCandidate || false, // Assuming this is a boolean value
       totalVotes: req.body.totalVotes,
       constituency: req.body.constituency || existingCandidate.constituency, // Assuming this comes as an array of constituency IDs
-      image: req.file ? getFullImagePath(req, 'candidates') : req.body.image || existingCandidate.image,
+      image: req.file
+        ? getFullImagePath(req, "candidates")
+        : req.body.image || existingCandidate.image,
     };
 
     // Update the candidate
-    const candidate = await Candidate.findByIdAndUpdate(req.params.id, candidateUpdates, { new: true });
+    const candidate = await Candidate.findByIdAndUpdate(
+      req.params.id,
+      candidateUpdates,
+      { new: true }
+    );
 
     // Update constituencies
     // const currentConstituencyIds = existingCandidate.constituency.map(c => c.toString());
@@ -167,10 +184,10 @@ router.put('/:id',isAdmin, upload.single('image'), async (req, res, next) => {
 });
 
 // Get single candidate by ID with error handling enabled
-router.get('/:id', async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const candidate = await Candidate.findById(req.params.id);
-    if (!candidate) return res.status(404).send('Candidate not found');
+    if (!candidate) return res.status(404).send("Candidate not found");
     res.json(candidate);
   } catch (error) {
     next(error);
@@ -178,15 +195,17 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // Add a new candidate with error handling enabled
-router.post('/',isAdmin, upload.single('image'), async (req, res, next) => {
+router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
   try {
     // Convert the hotCandidate value to a boolean
-    const hotCandidate = req.body.hotCandidate === 'true';
-    console.log(req.body, hotCandidate)
+    const hotCandidate = req.body.hotCandidate === "true";
+    console.log(req.body, hotCandidate);
 
-    let constituencyIds = Array.isArray(req.body.constituency) 
-      ? req.body.constituency 
-      : req.body.constituency ? [req.body.constituency] : [];
+    let constituencyIds = Array.isArray(req.body.constituency)
+      ? req.body.constituency
+      : req.body.constituency
+      ? [req.body.constituency]
+      : [];
 
     const candidateData = {
       name: req.body.name,
@@ -195,7 +214,7 @@ router.post('/',isAdmin, upload.single('image'), async (req, res, next) => {
       age: req.body.age,
       hotCandidate: hotCandidate, // Now it is a boolean
       gender: req.body.gender,
-      image: req.file ? getFullImagePath(req, 'candidates') : null,
+      image: req.file ? getFullImagePath(req, "candidates") : null,
       constituency: constituencyIds, // Now it's already an array
     };
 
@@ -237,7 +256,6 @@ router.post('/',isAdmin, upload.single('image'), async (req, res, next) => {
     next(error);
   }
 });
-
 
 // // Update a candidate by ID with error handling enabled
 // router.put('/:id', upload.single('image'), async (req, res, next) => {
@@ -293,7 +311,6 @@ router.post('/',isAdmin, upload.single('image'), async (req, res, next) => {
 
 //     await redis.clearAllKeys()
 
-
 //     res.json(candidate);
 //   } catch (error) {
 //     next(error);
@@ -301,21 +318,21 @@ router.post('/',isAdmin, upload.single('image'), async (req, res, next) => {
 // });
 
 // Delete a candidate by ID with error handling enabled
-router.delete('/:id',isAdmin, async (req, res, next) => {
+router.delete("/:id", isAdmin, async (req, res, next) => {
   try {
     const candidate = await Candidate.findByIdAndDelete(req.params.id);
-    if (!candidate) return res.status(404).send('Candidate not found');
+    if (!candidate) return res.status(404).send("Candidate not found");
 
     await redis.clearAllKeys();
 
-    res.json({ message: 'Candidate deleted successfully' });
+    res.json({ message: "Candidate deleted successfully" });
   } catch (error) {
     next(error);
   }
 });
 
 // Get all candidates with error handling enabled
-router.get('/', async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     // Extract the constituency query parameter
     const { constituency } = req.query;
@@ -323,24 +340,28 @@ router.get('/', async (req, res, next) => {
     if (constituency) {
       // Check if the constituency list is cached
 
-      const cachedData = await redis.get(`${cachedKeys.CANDIDATES}:${constituency}`);
+      const cachedData = await redis.get(
+        `${cachedKeys.CANDIDATES}:${constituency}`
+      );
       if (cachedData) {
         return res.json(cachedData);
       }
 
       // If not cached, fetch from DB
-      const constituencies = await Constituency.find({ name: { "$regex": constituency, "$options": "i" } }) // Added case-insensitive search
+      const constituencies = await Constituency.find({
+        name: { $regex: constituency, $options: "i" },
+      }) // Added case-insensitive search
         .populate({
-          path: 'candidates',
-          model: 'Candidate',
+          path: "candidates",
+          model: "Candidate",
           populate: [
             {
-              path: 'party',  // Populate party for each candidate
-              model: 'Party',
+              path: "party", // Populate party for each candidate
+              model: "Party",
             },
             {
-              path: 'constituency',  // Populate constituency for each candidate
-              model: 'Constituency',
+              path: "constituency", // Populate constituency for each candidate
+              model: "Constituency",
             },
           ],
         });
@@ -351,14 +372,16 @@ router.get('/', async (req, res, next) => {
       }
 
       // Sort candidates by totalVotes in descending order
-      const sortedCandidates = constituencies[0].candidates.sort((a, b) => b.totalVotes - a.totalVotes); // Sort in descending order
+      const sortedCandidates = constituencies[0].candidates.sort(
+        (a, b) => b.totalVotes - a.totalVotes
+      ); // Sort in descending order
 
       return res.json(sortedCandidates);
     }
 
     // If not cached, fetch from DB
     const candidates = await Candidate.find()
-      .populate('party constituency')
+      .populate("party constituency")
       .sort({ totalVotes: -1 }); // Sort by totalVotes in descending order
 
     res.json(candidates);

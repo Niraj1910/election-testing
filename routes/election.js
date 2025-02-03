@@ -1,25 +1,34 @@
-const express = require('express');
-const { z } = require('zod'); // Import Zod for validation
-const Election = require('../models/election.model');
-const isAdmin = require('../middleware/admin');
-const RedisManager = require('../RedisManager');
-const { cachedKeys } = require('../utils');
+const express = require("express");
+const { z } = require("zod"); // Import Zod for validation
+const Election = require("../models/election.model");
+const isAdmin = require("../middleware/admin");
+const RedisManager = require("../RedisManager");
+const { cachedKeys } = require("../utils");
 
 const redis = RedisManager.getInstance();
 
 const router = express.Router();
 
+router.get("/party-summary", async (req, res) => {
+  const fullUrl = req.get("Referer");
+  console.log("fullUrl -> ", fullUrl);
 
-router.get('/party-summary', async (req, res) => {
+  const stateName = { delhi: "दिल्ली 2025", jharkhand: "झारखंड 2024" };
+
+  const state = fullUrl.includes("delhi")
+    ? stateName["delhi"]
+    : stateName["jharkhand"];
   try {
-    const election = await Election.findOne({ state: 'झारखंड 2024' });
+    const election = await Election.findOne({
+      state: state,
+    });
 
     if (!election) {
-      return res.status(404).json({ error: 'Election not found' });
+      return res.status(404).json({ error: "Election not found" });
     }
 
     // Filter for BJP+ and JMM+ parties
-    // const filteredParties = election.parties.filter(party => 
+    // const filteredParties = election.parties.filter(party =>
     //   party.name === 'BJP+' || party.name === 'JMM+'
     // );
 
@@ -34,15 +43,17 @@ router.get('/party-summary', async (req, res) => {
   }
 });
 
-router.post('/',isAdmin, async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   try {
     const { state, totalSeats, declaredSeats, halfWayMark, parties } = req.body;
-    const stateSlug = state.toLowerCase().replace(/ /g, '_');
+    const stateSlug = state.toLowerCase().replace(/ /g, "_");
 
     // Check if an election for the given state already exists
     const existingElection = await Election.findOne({ stateSlug });
     if (existingElection) {
-      return res.status(409).json({ error: 'Election for this state already exists' });
+      return res
+        .status(409)
+        .json({ error: "Election for this state already exists" });
     }
 
     const election = new Election({
@@ -51,7 +62,7 @@ router.post('/',isAdmin, async (req, res) => {
       totalSeats,
       declaredSeats,
       halfWayMark,
-      parties
+      parties,
     });
 
     const savedElection = await election.save();
@@ -62,27 +73,30 @@ router.post('/',isAdmin, async (req, res) => {
   }
 });
 
-router.get('/states', async (req, res) => {
+router.get("/states", async (req, res) => {
   try {
-    const states = await Election.find({}).sort({createdAt: -1});
-    const statesWithSlugs = states.map(state => ({
+    const states = await Election.find({}).sort({ createdAt: -1 });
+    const statesWithSlugs = states.map((state) => ({
       name: state.state,
       slug: state.stateSlug,
-      id: state._id
+      id: state._id,
     }));
-    return res.status(200).json({ message: 'States, their slugs, and ids retrieved successfully', data: statesWithSlugs });
+    return res.status(200).json({
+      message: "States, their slugs, and ids retrieved successfully",
+      data: statesWithSlugs,
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 });
 
 // Get API to retrieve election data by state
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
     // Check if data exists in Redis cache
-    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION + ':' + id);
+    const cachedData = await redis.get(cachedKeys.ASSEMBLY_ELECTION + ":" + id);
     if (cachedData) {
       return res.json(cachedData); // Ensure cached data is parsed back to JSON
     }
@@ -91,7 +105,7 @@ router.get('/:id', async (req, res) => {
     const election = await Election.findById(id);
 
     if (!election) {
-      return res.status(404).json({ message: 'Election data not found' });
+      return res.status(404).json({ message: "Election data not found" });
     }
 
     // Sort parties and their subParties by 'won' in descending order
@@ -107,7 +121,7 @@ router.get('/:id', async (req, res) => {
 
     // Cache the sorted data for 10 minutes (600 seconds)
     await redis.setWithTTL(
-      cachedKeys.ASSEMBLY_ELECTION + ':' + id,
+      cachedKeys.ASSEMBLY_ELECTION + ":" + id,
       election,
       3600
     );
@@ -118,9 +132,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-
-
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { page, limit } = req.query;
     const pageInt = parseInt(page) || 1;
@@ -128,51 +140,52 @@ router.get('/', async (req, res) => {
     const startIndex = (pageInt - 1) * limitInt;
     const endIndex = pageInt * limitInt;
 
-    const elections = await Election.find().sort({createdAt: -1});
+    const elections = await Election.find().sort({ createdAt: -1 });
     const paginatedData = elections.slice(startIndex, endIndex);
 
     if (!paginatedData) {
-      return res.status(404).json({ message: 'No elections found' });
+      return res.status(404).json({ message: "No elections found" });
     }
 
     const result = {
       currentPage: pageInt,
       totalPages: Math.ceil(elections.length / limitInt),
       totalItems: elections.length,
-      data: paginatedData
+      data: paginatedData,
     };
 
     return res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({message: error.message});
+    res.status(500).json({ message: error.message });
   }
 });
 
-
-router.delete('/:id',isAdmin, async (req, res) => {
+router.delete("/:id", isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const election = await Election.findByIdAndDelete(id);
 
     if (!election) {
-      return res.status(404).json({ message: 'Election not found' });
+      return res.status(404).json({ message: "Election not found" });
     }
 
     await redis.clearAllKeys(); // Clear Redis cache when an election is deleted
 
-    res.status(200).json({ message: 'Election successfully deleted' });
+    res.status(200).json({ message: "Election successfully deleted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-router.put('/:id', isAdmin, async (req, res) => {
+router.put("/:id", isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedElection = await Election.findByIdAndUpdate(id, req.body, { new: true });
+    const updatedElection = await Election.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
 
     if (!updatedElection) {
-      return res.status(404).json({ message: 'Election not found' });
+      return res.status(404).json({ message: "Election not found" });
     }
 
     await redis.clearAllKeys(); // Clear Redis cache when an election is updated
@@ -181,6 +194,5 @@ router.put('/:id', isAdmin, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 module.exports = router;

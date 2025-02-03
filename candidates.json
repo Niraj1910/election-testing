@@ -1,0 +1,2522 @@
+[
+  {
+    "name": "राज कुमार भाटिया",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7ff"
+    ]
+  },
+  {
+    "name": "शिवांक सिंघल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7ff"
+    ]
+  },
+  {
+    "name": "मुकेश गोयल",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7ff"
+    ]
+  },
+  {
+    "name": "शैलेश कुमार (JDU)",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fd"
+    ]
+  },
+  {
+    "name": "मंगेश त्यागी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fd"
+    ]
+  },
+  {
+    "name": "संजीव झा",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fd"
+    ]
+  },
+  {
+    "name": "सूर्य प्रकाश खात्री",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fe"
+    ]
+  },
+  {
+    "name": "लोकेंद्र चौधरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fe"
+    ]
+  },
+  {
+    "name": "सुरेंद्र पाल सिंह बिट्टू",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fe"
+    ]
+  },
+  {
+    "name": "दीपक चौधरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b800"
+    ]
+  },
+  {
+    "name": "देवेंद्र यादव",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b800"
+    ]
+  },
+  {
+    "name": "अजेय यादव",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b800"
+    ]
+  },
+  {
+    "name": "राज करन खत्री",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fc"
+    ]
+  },
+  {
+    "name": "अरुणा कुमारी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fc"
+    ]
+  },
+  {
+    "name": "शरद चौहान",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b7fc"
+    ]
+  },
+  {
+    "name": "रवींद्र कुमार",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b802"
+    ]
+  },
+  {
+    "name": "सुरेंद्र कुमार",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b802"
+    ]
+  },
+  {
+    "name": "जय भगवान",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b802"
+    ]
+  },
+  {
+    "name": "राजेंद्र दराल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b803"
+    ]
+  },
+  {
+    "name": "धर्मपाल लकड़ा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b803"
+    ]
+  },
+  {
+    "name": "जसबीर कराला",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b803"
+    ]
+  },
+  {
+    "name": "बजरंग शुक्ल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b804"
+    ]
+  },
+  {
+    "name": "राजेश गुप्ता",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b804"
+    ]
+  },
+  {
+    "name": "अनिल झा",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b804"
+    ]
+  },
+  {
+    "name": "कर्म सिंह करमा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b805"
+    ]
+  },
+  {
+    "name": "जय किशन",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b805"
+    ]
+  },
+  {
+    "name": "मुकेश कुमार अहलावत",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b805"
+    ]
+  },
+  {
+    "name": "मनोज शौकीन",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b806"
+    ]
+  },
+  {
+    "name": "शौकीन रोहित चौधरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b806"
+    ]
+  },
+  {
+    "name": "रघुविंदर शौकीन",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b806"
+    ]
+  },
+  {
+    "name": "राजकुमार चौहान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b807"
+    ]
+  },
+  {
+    "name": "हनुमान चौहान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b807"
+    ]
+  },
+  {
+    "name": "राकेश जाटव",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b807"
+    ]
+  },
+  {
+    "name": "विजेंद्र गुप्ता",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b808"
+    ]
+  },
+  {
+    "name": "सोमेश गुप्ता",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b808"
+    ]
+  },
+  {
+    "name": "प्रदीप मित्तल",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b808"
+    ]
+  },
+  {
+    "name": "रेखा गुप्ता",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b809"
+    ]
+  },
+  {
+    "name": "प्रवीण जैन",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b809"
+    ]
+  },
+  {
+    "name": "बंदना कुमारी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b809"
+    ]
+  },
+  {
+    "name": "करनैल सिंह",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80a"
+    ]
+  },
+  {
+    "name": "सतीश लूथरा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80a"
+    ]
+  },
+  {
+    "name": "सत्येंद्र जैन",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80a"
+    ]
+  },
+  {
+    "name": "तिलक राम गुप्ता",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80b"
+    ]
+  },
+  {
+    "name": "सतेंद्र शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80b"
+    ]
+  },
+  {
+    "name": "प्रीति तोमर",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80b"
+    ]
+  },
+  {
+    "name": "पूनम शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80c"
+    ]
+  },
+  {
+    "name": "रागिनी नायक",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80c"
+    ]
+  },
+  {
+    "name": "राजेश गुप्ता",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80c"
+    ]
+  },
+  {
+    "name": "अशोक गोयल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80d"
+    ]
+  },
+  {
+    "name": "कुंवर करण सिंह",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80d"
+    ]
+  },
+  {
+    "name": "अखिलेश पति त्रिपाठी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80d"
+    ]
+  },
+  {
+    "name": "मनोज कुमार जिंदल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80e"
+    ]
+  },
+  {
+    "name": "अनिल भारद्वाज",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80e"
+    ]
+  },
+  {
+    "name": "सोमदत्त",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80e"
+    ]
+  },
+  {
+    "name": "सतीश जैन",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80f"
+    ]
+  },
+  {
+    "name": "मुदित अग्रवाल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80f"
+    ]
+  },
+  {
+    "name": "पुनर्दीप सिंह साहनी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b80f"
+    ]
+  },
+  {
+    "name": "दीप्ति इंदौरा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b810"
+    ]
+  },
+  {
+    "name": "असीम अहमद खान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b810"
+    ]
+  },
+  {
+    "name": "शोएब इकबाल",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b810"
+    ]
+  },
+  {
+    "name": "कमल बागड़ी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b811"
+    ]
+  },
+  {
+    "name": "हारून यूसुफ",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b811"
+    ]
+  },
+  {
+    "name": "इमरान हुसैन",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b811"
+    ]
+  },
+  {
+    "name": "दुष्यंत कुमार गौतम",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b812"
+    ]
+  },
+  {
+    "name": "राहुल धानक",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b812"
+    ]
+  },
+  {
+    "name": "विशेष रवि",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b812"
+    ]
+  },
+  {
+    "name": "राज कुमार आनंद",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b813"
+    ]
+  },
+  {
+    "name": "श्रीमती कृष्णा तीरथ",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b813"
+    ]
+  },
+  {
+    "name": "परवेश रतन",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b813"
+    ]
+  },
+  {
+    "name": "हरीश खुराना",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b814"
+    ]
+  },
+  {
+    "name": "राजेंद्र नामधारी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b814"
+    ]
+  },
+  {
+    "name": "शिव चरण गोयल",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b814"
+    ]
+  },
+  {
+    "name": "उर्मिला गंगवाल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b815"
+    ]
+  },
+  {
+    "name": "जे.पी. पंवार",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b815"
+    ]
+  },
+  {
+    "name": "राखी बिडलान",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b815"
+    ]
+  },
+  {
+    "name": "मनजिंदर सिंह सिरसा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b816"
+    ]
+  },
+  {
+    "name": "धर्मपाल चंदेला",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b816"
+    ]
+  },
+  {
+    "name": "धनवती चंदेला",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b816"
+    ]
+  },
+  {
+    "name": "श्याम शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b817"
+    ]
+  },
+  {
+    "name": "प्रेम शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b817"
+    ]
+  },
+  {
+    "name": "सुरिंदर सेतिया",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b817"
+    ]
+  },
+  {
+    "name": "श्वेत सैनी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b818"
+    ]
+  },
+  {
+    "name": "पीएस बावा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b818"
+    ]
+  },
+  {
+    "name": "जरनैल सिंह",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b818"
+    ]
+  },
+  {
+    "name": "आशीष सूद",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b819"
+    ]
+  },
+  {
+    "name": "श्रीमती हरबानी कौर",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b819"
+    ]
+  },
+  {
+    "name": "प्रवीण कुमार",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b819"
+    ]
+  },
+  {
+    "name": "जितेन्द्र सोलंकी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81a"
+    ]
+  },
+  {
+    "name": "एडवोकेट जितेन्द्र सोलंकी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81a"
+    ]
+  },
+  {
+    "name": "महिंदर यादव",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81a"
+    ]
+  },
+  {
+    "name": "पवन शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81b"
+    ]
+  },
+  {
+    "name": "मुकेश शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81b"
+    ]
+  },
+  {
+    "name": "पोश बलीयन (पूजा नरेश बलीयन)",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81b"
+    ]
+  },
+  {
+    "name": "प्रदयुमं राजपूत",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81c"
+    ]
+  },
+  {
+    "name": "आदर्श शास्त्री",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81c"
+    ]
+  },
+  {
+    "name": "विनय मिश्रा",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81c"
+    ]
+  },
+  {
+    "name": "संदीप सहरावत",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81d"
+    ]
+  },
+  {
+    "name": "रघुविंदर शौकीन",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81d"
+    ]
+  },
+  {
+    "name": "सुमेश शौकीन",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81d"
+    ]
+  },
+  {
+    "name": "नीलम पहलवान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81e"
+    ]
+  },
+  {
+    "name": "सुषमा यादव",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81e"
+    ]
+  },
+  {
+    "name": "तरुण यादव",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81e"
+    ]
+  },
+  {
+    "name": "कैलाश गहलोत",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81f"
+    ]
+  },
+  {
+    "name": "देवेंद्र सहरावत",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81f"
+    ]
+  },
+  {
+    "name": "सुरेंद्र भारद्वाज",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b81f"
+    ]
+  },
+  {
+    "name": "कुलदीप सोलंकी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b820"
+    ]
+  },
+  {
+    "name": "मांगे राम",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b820"
+    ]
+  },
+  {
+    "name": "जोगिंदर सोलंकी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b820"
+    ]
+  },
+  {
+    "name": "भुवन तंवर",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b821"
+    ]
+  },
+  {
+    "name": "प्रदीप कुमार उपमन्यु",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b821"
+    ]
+  },
+  {
+    "name": "वीरेंद्र सिंह कादयान",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b821"
+    ]
+  },
+  {
+    "name": "उमंग बजाज",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b822"
+    ]
+  },
+  {
+    "name": "विनीता यादव",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b822"
+    ]
+  },
+  {
+    "name": "दुर्गेश पाठक",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b822"
+    ]
+  },
+  {
+    "name": "प्रवेश साहिब सिंह वर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b823"
+    ]
+  },
+  {
+    "name": "संदीप दीक्षित",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b823"
+    ]
+  },
+  {
+    "name": "अरविंद केजरीवाल",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b823"
+    ]
+  },
+  {
+    "name": "गजेंद्र यादव",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b828"
+    ]
+  },
+  {
+    "name": "पुष्पा सिंह",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b828"
+    ]
+  },
+  {
+    "name": "महेंद्र चौधरी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b828"
+    ]
+  },
+  {
+    "name": "सरदार तरविंदर सिंह मारवाह",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b824"
+    ]
+  },
+  {
+    "name": "फरहान सूरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b824"
+    ]
+  },
+  {
+    "name": "मनीष सिसोदिया",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b824"
+    ]
+  },
+  {
+    "name": "नीरज बसोया",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b825"
+    ]
+  },
+  {
+    "name": "अभिषेक दत्त",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b825"
+    ]
+  },
+  {
+    "name": "रमेश पहलवान",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b825"
+    ]
+  },
+  {
+    "name": "सतीश उपाध्याय",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b826"
+    ]
+  },
+  {
+    "name": "जितेंद्र कुमार कोचर",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b826"
+    ]
+  },
+  {
+    "name": "सोमनाथ भारती",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b826"
+    ]
+  },
+  {
+    "name": "अनिल शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b827"
+    ]
+  },
+  {
+    "name": "विशेष टोकस",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b827"
+    ]
+  },
+  {
+    "name": "प्रमिला टोकस",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b827"
+    ]
+  },
+  {
+    "name": "करतार सिंह तंवर",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82a"
+    ]
+  },
+  {
+    "name": "राजेंद्र तंवर",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82a"
+    ]
+  },
+  {
+    "name": "ब्रह्म सिंह तंवर",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82a"
+    ]
+  },
+  {
+    "name": "दीपक तंवर",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82b"
+    ]
+  },
+  {
+    "name": "राजेश चौहान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82b"
+    ]
+  },
+  {
+    "name": "प्रेम कुमार चौहान",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82b"
+    ]
+  },
+  {
+    "name": "खुशीराम चुनार",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82c"
+    ]
+  },
+  {
+    "name": "जय प्रकाश",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82c"
+    ]
+  },
+  {
+    "name": "अजय दत्त",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82c"
+    ]
+  },
+  {
+    "name": "चंदन चौधरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82d"
+    ]
+  },
+  {
+    "name": "हर्ष चौधरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82d"
+    ]
+  },
+  {
+    "name": "दिनेश मोहनिया",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82d"
+    ]
+  },
+  {
+    "name": "शिखा राय",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82e"
+    ]
+  },
+  {
+    "name": "गर्वित सिंघवी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82e"
+    ]
+  },
+  {
+    "name": "सौरभ भारद्वाज",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82e"
+    ]
+  },
+  {
+    "name": "रमेश विधूड़ी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82f"
+    ]
+  },
+  {
+    "name": "अलका लांबा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82f"
+    ]
+  },
+  {
+    "name": "आतिशी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b82f"
+    ]
+  },
+  {
+    "name": "रोहतास विधूड़ी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b830"
+    ]
+  },
+  {
+    "name": "वीरेंद्र बिधूड़ी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b830"
+    ]
+  },
+  {
+    "name": "साही राम",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b830"
+    ]
+  },
+  {
+    "name": "नारायण शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b831"
+    ]
+  },
+  {
+    "name": "राम सिंह नेटा जी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b831"
+    ]
+  },
+  {
+    "name": "राम सिंह नेटा जी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b831"
+    ]
+  },
+  {
+    "name": "मनीष चौधरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b832"
+    ]
+  },
+  {
+    "name": "अरीबा खान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b832"
+    ]
+  },
+  {
+    "name": "अमानतुल्लाह खान(हॉट सीट)",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b832"
+    ]
+  },
+  {
+    "name": "रविकांत उज्जैन",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b833"
+    ]
+  },
+  {
+    "name": "अमरदीप",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b833"
+    ]
+  },
+  {
+    "name": "अंजना पारचा",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b833"
+    ]
+  },
+  {
+    "name": "प्रियंका गौतम",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b834"
+    ]
+  },
+  {
+    "name": "अक्षय कुमार",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b834"
+    ]
+  },
+  {
+    "name": "कुलदीप कुमार",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b834"
+    ]
+  },
+  {
+    "name": "रवींद्र सिंह नेगी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b835"
+    ]
+  },
+  {
+    "name": "चौधरी अनिल कुमार",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b835"
+    ]
+  },
+  {
+    "name": "अवध ओझा",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b835"
+    ]
+  },
+  {
+    "name": "अभय वर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b836"
+    ]
+  },
+  {
+    "name": "सुमित शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b836"
+    ]
+  },
+  {
+    "name": "बीबी त्यागी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b836"
+    ]
+  },
+  {
+    "name": "ओम प्रकाश शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b837"
+    ]
+  },
+  {
+    "name": "राजीव चौधरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b837"
+    ]
+  },
+  {
+    "name": "दीपक सिंगला",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b837"
+    ]
+  },
+  {
+    "name": "डॉ. अनिल गोयल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b838"
+    ]
+  },
+  {
+    "name": "गुरचरण सिंह राजू",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b838"
+    ]
+  },
+  {
+    "name": "विकास बग्गा",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b838"
+    ]
+  },
+  {
+    "name": "सरदार अरविंदर सिंह लवली",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b839"
+    ]
+  },
+  {
+    "name": "कमल अरोड़ा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b839"
+    ]
+  },
+  {
+    "name": "नवीन चौधरी (दीपू)",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b839"
+    ]
+  },
+  {
+    "name": "संजय गोयल",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83a"
+    ]
+  },
+  {
+    "name": "जगत सिंह",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83a"
+    ]
+  },
+  {
+    "name": "पद्मश्री जितेंद्र सिंह शंटी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83a"
+    ]
+  },
+  {
+    "name": "सुष्री कुमारी रिंकू",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83b"
+    ]
+  },
+  {
+    "name": "राजेश लिलोठिया",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83b"
+    ]
+  },
+  {
+    "name": "वीर सिंह ढींगन",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83b"
+    ]
+  },
+  {
+    "name": "जितेंद्र महाजन",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83c"
+    ]
+  },
+  {
+    "name": "सुरेश वाटी चौहान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83c"
+    ]
+  },
+  {
+    "name": "सरिता सिंह",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83c"
+    ]
+  },
+  {
+    "name": "अनिल गौड़",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83d"
+    ]
+  },
+  {
+    "name": "अब्दुल रहमान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83d"
+    ]
+  },
+  {
+    "name": "चौधरी जुबैर अहमद",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83d"
+    ]
+  },
+  {
+    "name": "अजय महावर",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83e"
+    ]
+  },
+  {
+    "name": "भीष्म शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83e"
+    ]
+  },
+  {
+    "name": "गौरव शर्मा",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83e"
+    ]
+  },
+  {
+    "name": "अनिल वशिष्ट",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83f"
+    ]
+  },
+  {
+    "name": "हाजी मोहम्मद इस्हाक खान",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83f"
+    ]
+  },
+  {
+    "name": "गोपाल राय",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b83f"
+    ]
+  },
+  {
+    "name": "प्रवीण निमेष",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b840"
+    ]
+  },
+  {
+    "name": "ईश्वर बागरी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b840"
+    ]
+  },
+  {
+    "name": "सुरेंद्र कुमार",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b840"
+    ]
+  },
+  {
+    "name": "मोहन सिंह बिष्ट",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b841"
+    ]
+  },
+  {
+    "name": "अनिल महंदी",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b841"
+    ]
+  },
+  {
+    "name": "अदिल अहमद खान",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b841"
+    ]
+  },
+  {
+    "name": "कपिल मिश्रा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": true,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b842"
+    ]
+  },
+  {
+    "name": "पीके मिश्रा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b842"
+    ]
+  },
+  {
+    "name": "मनोज त्यागी",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b842"
+    ]
+  },
+  {
+    "name": "कुलवंत राणा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d6f",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b801"
+    ]
+  },
+  {
+    "name": "सुशांत मिश्रा",
+    "age": null,
+    "gender": "Male",
+    "party": "673b16b4568e8acfd1213d86",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b801"
+    ]
+  },
+  {
+    "name": "महेंद्र गोयल",
+    "age": null,
+    "gender": "Male",
+    "party": "6793b3bc7effd8395522c976",
+    "totalVotes": 0,
+    "hotCandidate": false,
+    "image": null,
+    "constituency": [
+      "678a03efff11b6f64583b801"
+    ]
+  }
+]
