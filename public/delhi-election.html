@@ -46,9 +46,8 @@
     }
 
     .path:hover {
-      fill: #5a4a08;
-      stroke: #34495e;
-      stroke-width: 2px;
+      /* stroke-width: 2px; */
+      color: #000;
       cursor: pointer;
     }
 
@@ -1241,10 +1240,8 @@
             data-id="cns-new delhi"
             stroke="#000"
             style="opacity: 1"
-            data-constituency="New delhi"
-            data-won="awaiting"
           ></path>
-          <path
+          <!-- <path
             id="path4077"
             inkscape:connector-curvature="0"
             fill="#C0C0C0"
@@ -1258,7 +1255,7 @@
             style="opacity: 1"
             data-constituency="New delhi"
             data-won="awaiting"
-          ></path>
+          ></path> -->
           <path
             id="path4079"
             inkscape:connector-curvature="0"
@@ -1987,7 +1984,7 @@
             data-constituency="Matiala"
             data-won="awaiting"
           ></path>
-          <path
+          <!-- <path
             id="path3185"
             inkscape:connector-curvature="0"
             fill="#AA8800"
@@ -1999,8 +1996,8 @@
             data-id="undefined"
             stroke="#000"
             style="opacity: 1"
-          ></path>
-          <path
+          ></path> -->
+          <!-- <path
             id="path3187"
             inkscape:connector-curvature="0"
             fill="#FF9933"
@@ -2014,8 +2011,8 @@
             data-id="undefined"
             stroke="#000"
             style="opacity: 1"
-          ></path>
-          <path
+          ></path> -->
+          <!-- <path
             id="path3189"
             inkscape:connector-curvature="0"
             fill="#AA8800"
@@ -2028,7 +2025,7 @@
             d="M388.934,261.631c-1.148-0.326-2.586-1.04-3.195-1.585
  c-1.063-0.951-1.013-1.02,1.192-1.646c2.229-0.633,2.343-0.592,3.642,1.31C392.549,262.602,392.51,262.648,388.934,261.631
  L388.934,261.631z"
-          ></path>
+          ></path> -->
           <path
             id="path3197"
             inkscape:connector-curvature="0"
@@ -2063,7 +2060,7 @@
             data-constituency="Mundka"
             data-won="awaiting"
           ></path>
-          <path
+          <!-- <path
             id="path3199"
             inkscape:connector-curvature="0"
             fill="#AA8800"
@@ -2096,7 +2093,7 @@
  c2.781-0.05,2.479,0.001-0.933,0.157c-3.458,0.159-5.884,0.455-6.275,0.767c-0.199,0.158,0.229,0.636,1.098,1.225
  c0.185,0.125,0.854,0.521,1.49,0.879c1.029,0.581,2.161,1.291,2.161,1.356C579.678,282.228,579.561,282.192,578.439,281.809
  L578.439,281.809z"
-          ></path>
+          ></path> -->
         </svg>
 
         <div class="party_name_color flex gap-[5px] mt-5 text-md"></div>
@@ -2299,6 +2296,7 @@
             path.setAttribute("data-constituency", constituency.name || "");
             path.setAttribute("data-won", constituency.won || "awaiting");
             path.setAttribute("fill", color);
+            path.setAttribute("data-color", color);
 
             if (candidate) {
               // console.log("inside candidate", candidate);
@@ -2350,6 +2348,7 @@
         const candidate = path.getAttribute("data-candidate") || "Unknown";
         const totalVotes = path.getAttribute("data-totalVotes") || "0";
         const partyName = path.getAttribute("data-partyName") || "N/A";
+        const color = path.getAttribute("data-color") || "#000";
         const constituency =
           path.getAttribute("data-constituency") || "Unknown";
         const won = path.getAttribute("data-won") || "awaiting";
@@ -2460,10 +2459,10 @@
           delay: [0, 0],
           showOnInit: false,
           onShow(instance) {
-            path.style.opacity = "0.6";
+            path.setAttribute("fill", "#cccccc");
           },
           onHide(instance) {
-            path.style.opacity = "1";
+            path.setAttribute("fill", color);
           },
         });
 

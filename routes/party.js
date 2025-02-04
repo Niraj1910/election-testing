@@ -42,9 +42,10 @@ router.get("/top-parties", async (req, res) => {
   const fullUrl = req.get("Referer");
   const AllStateParties = {
     delhi: [
-      "673b16b4568e8acfd1213d6f", // BJP
-      "673b16b4568e8acfd1213d86", // INC
-      "6793b3bc7effd8395522c976", // AAP
+      "67a217ceaede35a3487141b8",
+      "67a217e1aede35a3487141bc",
+      "67a217f2aede35a3487141c0",
+      "67a21803aede35a3487141c6"
     ],
     jharkhand: [
       "673b16b4568e8acfd1213d6f",
