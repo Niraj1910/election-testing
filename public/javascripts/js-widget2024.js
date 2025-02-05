@@ -1,5 +1,5 @@
-let TOTAL_SEATS = 81;
-const MAJORITY_MARK = 41;
+let TOTAL_SEATS = 70;
+const MAJORITY_MARK = 36;
 
 async function getData() {
   try {
