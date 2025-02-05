@@ -2459,10 +2459,12 @@
           delay: [0, 0],
           showOnInit: false,
           onShow(instance) {
-            path.setAttribute("fill", "#cccccc");
+            // path.setAttribute("fill", "#cccccc");
+            path.style.opacity = "0.6";
           },
           onHide(instance) {
-            path.setAttribute("fill", color);
+            path.style.opacity = "1";
+            // path.setAttribute("fill", color);
           },
         });
 
