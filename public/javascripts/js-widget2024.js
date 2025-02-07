@@ -1,11 +1,17 @@
-let TOTAL_SEATS = 70;
-const MAJORITY_MARK = 36;
+let TOTAL_SEATS = 81;
+const MAJORITY_MARK = 41;
 
 async function getData() {
   try {
     const response = await fetch("/api/elections/party-summary");
     const result = await response.json();
     TOTAL_SEATS = result.totalSeats;
+    result.parties = result.parties.filter((party) => {
+      return (
+        party.name === "AAP" || party.name === "BJP" || party.name === "BJP+"
+      );
+    });
+
     return result;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -99,7 +105,12 @@ async function updateResults() {
 
   console.log("data -> ", data);
 
-  const { contender1, contender2 } = getContenders(data.parties);
+  let { contender1, contender2 } = getContenders(data.parties);
+  if (contender2.name === "AAP") {
+    let temp = contender2;
+    contender2 = contender1;
+    contender1 = temp;
+  }
 
   // Update party names and scores
   document.getElementById("contender1-name").textContent = contender1.name;
