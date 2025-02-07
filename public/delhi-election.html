@@ -2195,7 +2195,6 @@
       }
 
       function applyColorsAndPopovers(data) {
-        console.log("data -> ", data);
         const svgContainer = document.getElementById("svg_container");
         const popover = document.getElementById("popover");
 
@@ -2385,31 +2384,41 @@
         });
 
         currentTippy.show();
+
       }
 
-      document.querySelectorAll("path").forEach((path) => {
-        path.addEventListener("mouseenter", (e) => {
-          showPopover(e, path);
-        });
+      console.log("object")
 
-        path.addEventListener("mouseleave", () => {
-          if (currentTippy) {
-            currentTippy.hide();
-          }
-        });
-
-        path.addEventListener("click", (e) => {
-          if (isTouchDevice()) {
+      const path = document.querySelectorAll("path");
+      console.log(path);
+      if(path){
+          path.forEach((path) => {
+          console.log(path);
+          path.addEventListener("mouseenter", (e) => {
             showPopover(e, path);
-          }
-        });
+          });
 
-        document.body.addEventListener("click", (e) => {
-          if (currentTippy && !e.target.closest(".popover-container")) {
-            currentTippy.hide();
-          }
+          path.addEventListener("mouseleave", () => {
+            if (currentTippy) {
+              currentTippy.hide();
+            }
+          });
+
+          path.addEventListener("click", (e) => {
+            if (isTouchDevice()) {
+              showPopover(e, path);
+            }
+          });
+
+          // document.body.addEventListener("click", (e) => {
+          //   if (currentTippy && !e.target.closest(".popover-container")) {
+          //     currentTippy.hide();
+          //   }
+          // });
         });
-      });
+      }      
+      
+      
 
       function isTouchDevice() {
         return "ontouchstart" in window || navigator.maxTouchPoints > 0;
