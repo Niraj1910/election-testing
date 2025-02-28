@@ -16,6 +16,10 @@ var authRouter = require("./routes/auth");
 const connectDB = require("./db");
 const electionRouter = require("./routes/election");
 const assemblyElectionRouter = require("./routes/assembly-election");
+<<<<<<< HEAD
+=======
+const alliancesRouter = require("./routes/alliance");
+>>>>>>> 53faf34b2dc0e3702ece2efdef762acab367c7e1
 const partyRouter = require("./routes/party");
 const candidateRouter = require("./routes/candidate");
 const constituenciesRouter = require("./routes/constituency");
@@ -43,7 +47,11 @@ app.use(
       httpOnly: false,
       sameSite: "lax",
     },
+<<<<<<< HEAD
   })
+=======
+  }),
+>>>>>>> 53faf34b2dc0e3702ece2efdef762acab367c7e1
 );
 app.use(flash());
 
@@ -56,6 +64,10 @@ app.use("/api/assembly-elections", assemblyElectionRouter);
 app.use("/api/party", partyRouter);
 app.use("/api/candidate", candidateRouter);
 app.use("/api/constituency", constituenciesRouter);
+<<<<<<< HEAD
+=======
+app.use("/api/alliance", alliancesRouter);
+>>>>>>> 53faf34b2dc0e3702ece2efdef762acab367c7e1
 
 // MongoDB connection
 connectDB();
@@ -80,6 +92,9 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
+<<<<<<< HEAD
 // helloo
 
+=======
+>>>>>>> 53faf34b2dc0e3702ece2efdef762acab367c7e1
 module.exports = { app };
