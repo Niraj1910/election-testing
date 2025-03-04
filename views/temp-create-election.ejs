@@ -266,7 +266,7 @@
 				})
 					.then(response => response.json())
 					.then(data => {
-						if (data.success) window.location.href = '/dashboard';
+						if (data) window.location.href = '/temp-election-list';
 						else alert('Error: ' + data.message);
 					})
 					.catch(error => console.error('Error:', error));
@@ -274,4 +274,3 @@
 		</script>
 </body>
 
-</html>

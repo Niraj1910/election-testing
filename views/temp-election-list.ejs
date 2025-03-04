@@ -39,34 +39,6 @@
 						<!-- Table will be populated by JavaScript -->
 					</div>
 
-					<!-- Pagination Controls -->
-					<div class="flex justify-center items-center mt-6 mx-auto">
-						<button id="prevBtn"
-							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 gap-2 rounded mr-4 flex items-center"
-							onclick="prevPage()">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none"
-								viewBox="0 0 24 24" stroke-width="1.5"
-								stroke="currentColor" class="size-6">
-								<path stroke-linecap="round" stroke-linejoin="round"
-									d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-							</svg>
-							<span>Previous</span>
-						</button>
-						<span class="text-gray-700">Page <span id="currentPage"></span> of <span
-								id="totalPages"></span> (<span id="totalEntries"></span>
-							entries)</span>
-						<button id="nextBtn"
-							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 gap-2 rounded ml-4 flex items-center"
-							onclick="nextPage()">
-							<span>Next</span>
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none"
-								viewBox="0 0 24 24" stroke-width="1.5"
-								stroke="currentColor" class="size-6">
-								<path stroke-linecap="round" stroke-linejoin="round"
-									d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-							</svg>
-						</button>
-					</div>
 		</div>
 
 		<!-- Delete Confirmation Dialog -->
@@ -107,23 +79,11 @@
 			</div>
 		</div>
 
-		<h2 class="text-2xl font-bold mb-4 text-center mt-8">Party Statistics</h2>
-		<div class="flex justify-center items-center w-full">
-			<div id="party-stats-container"
-				class="overflow-x-auto bg-white shadow-md rounded-lg p-4 w-1/2 flex justify-center items-center">
-				<!-- Party statistics will be injected here -->
-			</div>
-		</div>
-
 		<% } %>
 
 			<script>
-				let currentPage = 1;
-				const limit = 10;
-				let totalPages = 1;
-				let totalEntries = 0;
-				let electionToDelete = null;
 				let elections = <%- JSON.stringify(elections || []) %>;
+				let electionToDelete = null;
 
 				// Render the elections table
 				function renderTable(elections) {
@@ -205,7 +165,11 @@
                                 ${election.electionInfo.candidates
 							.filter(c => c.party._id === party._id)
 							.map(candidate => `
-                                    <li class="text-sm py-1">${candidate.name}</li>
+                                    <li class="text-sm py-1">
+                                      <a href="/edit-candidate/${candidate._id}" class="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
+                                        ${candidate.name}
+                                      </a>
+                                    </li>
                                   `).join('') || '<li class="text-sm py-1 text-gray-500">No candidates found</li>'}
                               </ul>
                             </div>
@@ -220,26 +184,6 @@
           </tbody>
         </table>
       `;
-					// Update pagination info
-					document.getElementById('currentPage').textContent = currentPage;
-					document.getElementById('totalPages').textContent = totalPages;
-					document.getElementById('totalEntries').textContent = totalEntries;
-
-					// Handle pagination button visibility
-					const prevBtn = document.getElementById('prevBtn');
-					const nextBtn = document.getElementById('nextBtn');
-
-					if (currentPage === 1) {
-						prevBtn.style.display = 'none';
-					} else {
-						prevBtn.style.display = 'flex';
-					}
-
-					if (currentPage === totalPages || totalEntries <= currentPage * limit) {
-						nextBtn.style.display = 'none';
-					} else {
-						nextBtn.style.display = 'flex';
-					}
 				}
 
 				// Function to toggle visibility of party details
@@ -283,14 +227,13 @@
 				// Function to delete an election
 				async function deleteElection(electionId) {
 					try {
-						const response = await fetch(`/api/elections/${electionId}`, {
+						const response = await fetch(`/api/elections/temp-election-delete/${electionId}`, {
 							method: 'DELETE'
 						});
 						const data = await response.json();
 
-						if (data.success) {
-							// Refresh the current page
-							fetchElections(currentPage);
+						if (data.message === 'Election successfully deleted') {
+							window.location.reload()
 						} else {
 							alert('Error: ' + (data.message || 'Failed to delete election'));
 						}
@@ -300,107 +243,27 @@
 					}
 				}
 
-				// Pagination functions
-				function prevPage() {
-					if (currentPage > 1) {
-						currentPage--;
-						fetchElections(currentPage);
-					}
-				}
-
-				function nextPage() {
-					if (currentPage < totalPages) {
-						currentPage++;
-						fetchElections(currentPage);
-					}
-				}
-
-				// Function to fetch elections with pagination
-				async function fetchElections(page = 1) {
+				// Function to fetch elections
+				async function fetchElections() {
 					try {
-						const response = await fetch(`/api/elections?page=${page}&limit=${limit}`);
+						const response = await fetch('/api/elections');
 						if (!response.ok) {
 							throw new Error('Failed to fetch elections');
 						}
 
 						const data = await response.json();
-
 						elections = data.data;
-						totalPages = data.totalPages || 1;
-						totalEntries = data.totalItems || 0;
-
 						renderTable(elections);
 					} catch (error) {
 						console.error('Error fetching elections:', error);
 					}
 				}
-
-				// Generate party statistics
-				async function generatePartyStats() {
-					try {
-						// Get all unique parties across all elections
-						const partyMap = new Map();
-
-						// Count candidates per party
-						elections.forEach(election => {
-							election.electionInfo.partyIds.forEach(party => {
-								const candidateCount = election.electionInfo.candidates.filter(c => c.party._id === party._id).length;
-
-								if (partyMap.has(party.party)) {
-									partyMap.set(party.party, partyMap.get(party.party) + candidateCount);
-								} else {
-									partyMap.set(party.party, candidateCount);
-								}
-							});
-						});
-
-						// Convert map to array and sort by count (descending)
-						const partyStats = Array.from(partyMap.entries())
-							.map(([name, count]) => ({name, count}))
-							.sort((a, b) => b.count - a.count);
-
-						// Render party statistics table
-						const container = document.getElementById('party-stats-container');
-
-						if (partyStats.length === 0) {
-							container.innerHTML = '<p class="text-gray-500">No party statistics available</p>';
-							return;
-						}
-
-						const totalCandidates = partyStats.reduce((sum, party) => sum + party.count, 0);
-
-						container.innerHTML = `
-          <table class="min-w-full bg-white border border-gray-300">
-            <thead class="bg-gray-200 text-gray-700 uppercase text-sm">
-              <tr>
-                <th class="py-2 px-4 border-b text-left">Party</th>
-                <th class="py-2 px-4 border-b text-left">Candidate Count (${totalCandidates})</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${partyStats.map(party => `
-                <tr class="hover:bg-gray-100">
-                  <td class="py-2 px-4 border-b">${party.name}</td>
-                  <td class="py-2 px-4 border-b">${party.count}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
-					} catch (error) {
-						console.error('Error generating party statistics:', error);
-						document.getElementById('party-stats-container').innerHTML =
-							'<p class="text-red-500">Error loading party statistics</p>';
-					}
-				}
-
 				// Initial page load
 				function initPage() {
 					if (elections && elections.length > 0) {
 						renderTable(elections);
-						generatePartyStats();
 					} else {
-						fetchElections(currentPage);
+						fetchElections();
 					}
 				}
 

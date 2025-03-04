@@ -95,24 +95,26 @@ router.get("/temp-create-election", async (req, res) => {
 	res.render("temp-create-election.ejs", { parties, candidates });
 });
 
-router.get(
-	"/temp-edit-election/:id",
-	async function(req, res, next) {
-		try {
-			console.log("Edit election");
-			const electionId = req.params.id;
-			console.log(electionId);
-			const election = await TempElection.findById(electionId);
-			console.log(election);
-			if (!election) {
-				return res.status(404).send("Election not found");
-			}
-			res.render("edit-election.ejs", { election, user: req.session.user });
-		} catch (error) {
-			next(error);
+router.get("/temp-edit-election/:id", async function(req, res, next) {
+	try {
+		console.log("Edit election");
+		const electionId = req.params.id;
+		console.log(electionId);
+		const election = await TempElection.findById(electionId)
+			.populate("electionInfo.partyIds")
+			.populate({
+				path: "electionInfo.candidates",
+				populate: [{ path: "party" }, { path: "constituency" }],
+			});
+		console.log(election.electionInfo.candidates[0]);
+		if (!election) {
+			return res.status(404).send("Election not found");
 		}
-	},
-);
+		res.render("temp-edit-election.ejs", { election, user: req.session.user });
+	} catch (error) {
+		next(error);
+	}
+});
 
 router.get("/temp-election-list", async (req, res) => {
 	try {

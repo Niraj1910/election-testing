@@ -208,6 +208,21 @@ router.delete("/:id", isAdmin, async (req, res) => {
 	}
 });
 
+router.delete("/temp-election-delete/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const election = await TempElection.findByIdAndDelete(id);
+
+		if (!election) {
+			return res.status(404).json({ message: "Election not found" });
+		}
+
+		res.status(200).json({ message: "Election successfully deleted" });
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 router.put("/:id", isAdmin, async (req, res) => {
 	try {
 		const { id } = req.params;
