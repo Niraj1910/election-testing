@@ -1,387 +1,395 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Election Data</title>
-    <link rel="stylesheet" href="/stylesheets/style.css">
-    <link rel="stylesheet" href="/stylesheets/tailwind.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Edit Election Data</title>
+	<link rel="stylesheet" href="/stylesheets/style.css">
+	<link rel="stylesheet" href="/stylesheets/tailwind.css">
 </head>
+
 <body class="bg-gray-50">
-    <%- include('navbar.ejs') %>
+	<%- include('navbar.ejs') %>
 
-    <div class="container mx-auto px-4 py-8">
-        <div class="mb-6 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">Edit Election: <%= election.state %> <%= election.year %></h1>
-            <a href="/elections/<%= election.electionSlug %>" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Back to View</a>
-        </div>
+		<div class="container mx-auto px-4 py-8">
+			<div class="mb-6 flex justify-between items-center">
+				<h1 class="text-2xl font-bold text-gray-800">Edit Election: <%= election.state %>
+						<%= election.year %>
+				</h1>
+				<a href="/elections/<%= election.electionSlug %>"
+					class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Back to
+					View</a>
+			</div>
 
-        <form id="electionForm" class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-            <!-- Hidden fields -->
-            <input type="hidden" name="_id" value="<%= election._id %>">
-            <input type="hidden" id="currentUserId" value="<%= user._id %>">
-            
-            <!-- Main State Info -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 border-b pb-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">State</label>
-                    <input type="text" name="state" value="<%= election.state %>" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Total Seats</label>
-                    <input type="number" name="totalSeats" value="<%= election.totalSeats %>" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Half Way Mark</label>
-                    <input type="number" name="halfWayMark" value="<%= election.halfWayMark %>" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Year</label>
-                    <input type="number" name="year" value="<%= election.year %>" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Election Slug</label>
-                    <input type="text" name="electionSlug" value="<%= election.electionSlug %>" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                </div>
-            </div>
+			<form id="electionForm" class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
+				<!-- Hidden fields -->
+				<input type="hidden" name="_id" value="<%= election._id %>">
+				<input type="hidden" id="currentUserId" value="<%= user._id %>">
 
-            <!-- Parties Section -->
-            <div class="mb-8 border-b pb-4">
-            <!--     <div class="flex justify-between items-center mb-4"> -->
-            <!--         <h2 class="text-lg font-semibold text-gray-800">Parties</h2> -->
-            <!--         <button type="button" id="addPartyBtn" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Party</button> -->
-            <!--     </div> -->
-                
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <!-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Party ID</th> -->
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Party Name</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seats Won</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Color</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="partiesTableBody" class="bg-white divide-y divide-gray-200">
-                            <% if (election.electionInfo && election.electionInfo.partyIds) { %>
-                                <% election.electionInfo.partyIds.forEach((party, index) => { %>
-                                    <tr id="party-row-<%= index %>">
-                                        <!-- <td class="px-6 py-4"> -->
-                                        <!--     <input type="text" name="parties[<%= index %>][_id]" value="<%= party._id || party %>" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"> -->
-                                        <!-- </td> -->
-                                        <td class="px-6 py-4">
-                                            <input type="text" name="parties[<%= index %>][party]" value="<%= party.party || '' %>" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <input type="number" name="parties[<%= index %>][votes]" value="<%= party.won || 0 %>" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <input type="color" name="parties[<%= index %>][partyColor]" value="<%= party.partyColor || '#000000' %>" class="block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <button type="button" onclick="removeParty('<%= index %>')" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Remove</button>
-                                        </td>
-                                    </tr>
-                                <% }); %>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+				<!-- Main State Info -->
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 border-b pb-4">
+					<div>
+						<label class="block text-sm font-medium text-gray-700">State</label>
+						<input type="text" name="state" value="<%= election.state %>"
+							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+							required>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700">Total
+							Seats</label>
+						<input type="number" name="totalSeats"
+							value="<%= election.totalSeats %>"
+							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+							required>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700">Half Way
+							Mark</label>
+						<input type="number" name="halfWayMark"
+							value="<%= election.halfWayMark %>"
+							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+							required>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700">Year</label>
+						<input type="number" name="year" value="<%= election.year %>"
+							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+							required>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-700">Election
+							Slug</label>
+						<input type="text" name="electionSlug"
+							value="<%= election.electionSlug %>"
+							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+							required>
+					</div>
+				</div>
 
-            <!-- Candidates Section -->
-            <div class="mb-8 border-b pb-4">
-                <!-- <div class="flex justify-between items-center mb-4"> -->
-                <!--     <h2 class="text-lg font-semibold text-gray-800">Candidates</h2> -->
-                <!--     <button type="button" id="addCandidateBtn" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Add Candidate</button> -->
-                <!-- </div> -->
-                
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Party ID</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Constituency</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="candidatesTableBody" class="bg-white divide-y divide-gray-200">
-                            <% if (election.electionInfo && election.electionInfo.candidates) { %>
-                                <% election.electionInfo.candidates.forEach((candidate, index) => { %>
-                                    <tr id="candidate-row-<%= index %>">
-                                        <td class="px-6 py-4">
-                                            <input type="text" name="candidates[<%= index %>][name]" value="<%= candidate.name || '' %>" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <input type="text" name="candidates[<%= index %>][party]" value="<%= candidate.party.party || '' %>" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <input type="text" name="candidates[<%= index %>][constituency]" value="<%= candidate.constituency[0].name || '' %>" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <select name="candidates[<%= index %>][status]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                                <option value="won" <%= candidate.status === 'won' ? 'selected' : '' %>>Won</option>
-                                                <option value="leading" <%= candidate.status === 'leading' ? 'selected' : '' %>>Leading</option>
-                                                <option value="trailing" <%= candidate.status === 'trailing' ? 'selected' : '' %>>Trailing</option>
-                                                <option value="pending" <%= candidate.status === 'pending' ? 'selected' : '' %>>Pending</option>
-                                            </select>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <button type="button" onclick="removeCandidate('<%= index %>')" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Remove</button>
-                                        </td>
-                                    </tr>
-                                <% }); %>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+				<!-- Parties Section -->
+				<div class="mb-8 border-b pb-4">
+					<div class="overflow-x-auto">
+						<table class="min-w-full divide-y divide-gray-200">
+							<thead class="bg-gray-50">
+								<tr>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Party Name</th>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Seats Won</th>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Color</th>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Actions</th>
+								</tr>
+							</thead>
+							<tbody id="partiesTableBody"
+								class="bg-white divide-y divide-gray-200">
+								<% if (election.electionInfo &&
+									election.electionInfo.partyIds) { %>
+									<% election.electionInfo.partyIds.forEach((party,
+										index)=> { %>
+										<tr id="party-row-<%= index %>">
+											<td class="px-6 py-4">
+												<input type="text"
+													name="parties[<%= index %>][party]"
+													value="<%= party.party || '' %>"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+											</td>
+											<td class="px-6 py-4">
+												<input type="number"
+													name="parties[<%= index %>][votes]"
+													value="<%= party.won || 0 %>"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+											</td>
+											<td class="px-6 py-4">
+												<input type="color"
+													name="parties[<%= index %>][partyColor]"
+													value="<%= party.partyColor || '#000000' %>"
+													class="block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+											</td>
+											<td class="px-6 py-4">
+												<button type="button"
+													onclick="editParty('<%= party._id %>')"
+													class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Edit
+													Party
+													Details</button>
+											</td>
+										</tr>
+										<% }); %>
+											<% } %>
+							</tbody>
+						</table>
+					</div>
+				</div>
 
-            <div class="mt-8 flex justify-between">
-                <button type="button" onclick="window.history.back()" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
-                    Cancel
-                </button>
-                <button type="submit" class="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
-                    Update Election Data
-                </button>
-            </div>
-        </form>
-    </div>
+				<!-- Candidates Section -->
+				<div class="mb-8 border-b pb-4">
+					<div class="overflow-x-auto">
+						<table class="min-w-full divide-y divide-gray-200">
+							<thead class="bg-gray-50">
+								<tr>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Name</th>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Party ID</th>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Constituency</th>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Status</th>
+									<th scope="col"
+										class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+										Actions</th>
+								</tr>
+							</thead>
+							<tbody id="candidatesTableBody"
+								class="bg-white divide-y divide-gray-200">
+								<% if (election.electionInfo &&
+									election.electionInfo.candidates) { %>
+									<% election.electionInfo.candidates.forEach((candidate,
+										index)=> { %>
+										<tr id="candidate-row-<%= index %>">
+											<td class="px-6 py-4">
+												<input type="text"
+													name="candidates[<%= index %>][name]"
+													value="<%= candidate.name || '' %>"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+											</td>
+											<td class="px-6 py-4">
+												<input type="text"
+													name="candidates[<%= index %>][party]"
+													value="<%= candidate.party.party || '' %>"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+											</td>
+											<td class="px-6 py-4">
+												<input type="text"
+													name="candidates[<%= index %>][constituency]"
+													value="<%= candidate.constituency[0].name || '' %>"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+											</td>
+											<td class="px-6 py-4">
+												<select name="candidates[<%= index %>][status]"
+													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+													<option value="won"
+														<%=candidate.status==='won'
+														? 'selected'
+														: '' %>
+														>Won
+													</option>
+													<option value="leading"
+														<%=candidate.status==='leading'
+														? 'selected'
+														: '' %>
+														>Leading
+													</option>
+													<option value="trailing"
+														<%=candidate.status==='trailing'
+														? 'selected'
+														: '' %>
+														>Trailing
+													</option>
+													<option value="pending"
+														<%=candidate.status==='pending'
+														? 'selected'
+														: '' %>
+														>Pending
+													</option>
+												</select>
+											</td>
+											<td class="px-6 py-4">
+												<button type="button"
+													onclick="editCandidate('<%= candidate._id %>')"
+													class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Edit
+													Candidate
+													Details</button>
+											</td>
+										</tr>
+										<% }); %>
+											<% } %>
+							</tbody>
+						</table>
+					</div>
+				</div>
 
-    <script>
-        // Admin IDs list
-        const adminIds = ['671001c39c1da4fb1e16d48b', '673c2689d9ec4b86f6b11974', '673c2673d9ec4b86f6b11972', '673c25d0d9ec4b86f6b11962', '673c25b4d9ec4b86f6b11960', '673c3a56509816ac0d2b9e10', '673ef26add6de67520b364f3', "67a21755aede35a3487141a6"]; // Add your admin IDs here
-        const currentUserId = document.getElementById('currentUserId').value;
-        const isAdmin = adminIds.includes(currentUserId);
-        
-        // Initialize the form with access controls
-        function initializeForm() {
-            // Show/hide admin controls
-            if (!isAdmin) {
-                document.getElementById('addPartyBtn').classList.add('hidden');
-                document.getElementById('addCandidateBtn').classList.add('hidden');
-                
-                // Disable all remove buttons
-                const removeButtons = document.querySelectorAll('button[onclick^="remove"]');
-                removeButtons.forEach(button => {
-                    button.classList.add('hidden');
-                });
-            }
-        }
-// Function to add a new party row
-function addParty() {
-    if (!isAdmin) return;
-    
-    const tbody = document.getElementById('partiesTableBody');
-    const rowCount = tbody.children.length;
-    
-    const newRow = document.createElement('tr');
-    newRow.id = `party-row-${rowCount}`;
-    newRow.innerHTML = `
-        <td class="px-6 py-4">
-            <input type="text" name="parties[${rowCount}][_id]" value="" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-        </td>
-        <td class="px-6 py-4">
-            <input type="text" name="parties[${rowCount}][name]" value="" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-        </td>
-        <td class="px-6 py-4">
-            <input type="number" name="parties[${rowCount}][won]" value="0" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-        </td>
-        <td class="px-6 py-4">
-            <input type="number" name="parties[${rowCount}][leading]" value="0" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-        </td>
-        <td class="px-6 py-4">
-            <input type="color" name="parties[${rowCount}][partyColor]" value="#000000" class="block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-        </td>
-        <td class="px-6 py-4">
-            <button type="button" onclick="removeParty('${rowCount}')" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Remove</button>
-        </td>
-    `;
-    tbody.appendChild(newRow);
-}
+				<div class="mt-8 flex justify-between">
+					<button type="button" onclick="window.history.back()"
+						class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
+						Cancel
+					</button>
+					<button type="submit"
+						class="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+						Update Election Data
+					</button>
+				</div>
+			</form>
+		</div>
 
-// Function to remove a party row
-function removeParty(index) {
-    if (!isAdmin) return;
-    if (confirm('Are you sure you want to remove this party?')) {
-        const row = document.getElementById(`party-row-${index}`);
-        if (row) {
-            row.remove();
-        }
-    }
-}
+		<script>
+			// Admin IDs list
+			const adminIds = ['671001c39c1da4fb1e16d48b', '673c2689d9ec4b86f6b11974', '673c2673d9ec4b86f6b11972', '673c25d0d9ec4b86f6b11962', '673c25b4d9ec4b86f6b11960', '673c3a56509816ac0d2b9e10', '673ef26add6de67520b364f3', "67a21755aede35a3487141a6"];
+			const currentUserId = document.getElementById('currentUserId').value;
+			const isAdmin = adminIds.includes(currentUserId);
 
-// Function to add a new candidate row
-function addCandidate() {
-    if (!isAdmin) return;
-    
-    const tbody = document.getElementById('candidatesTableBody');
-    const rowCount = tbody.children.length;
-    
-    const newRow = document.createElement('tr');
-    newRow.id = `candidate-row-${rowCount}`;
-    newRow.innerHTML = `
-        <td class="px-6 py-4">
-            <input type="text" name="candidates[${rowCount}][name]" value="" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-        </td>
-        <td class="px-6 py-4">
-            <input type="text" name="candidates[${rowCount}][partyId]" value="" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-        </td>
-        <td class="px-6 py-4">
-            <input type="text" name="candidates[${rowCount}][constituency]" value="" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-        </td>
-        <td class="px-6 py-4">
-            <select name="candidates[${rowCount}][status]" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                <option value="won">Won</option>
-                <option value="leading">Leading</option>
-                <option value="trailing">Trailing</option>
-                <option value="pending" selected>Pending</option>
-            </select>
-        </td>
-        <td class="px-6 py-4">
-            <button type="button" onclick="removeCandidate('${rowCount}')" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Remove</button>
-        </td>
-    `;
-    tbody.appendChild(newRow);
-}
+			// Initialize the form with access controls
+			function initializeForm() {
+				// Show/hide admin controls
+				if (!isAdmin) {
+					// Disable all remove buttons
+					const removeButtons = document.querySelectorAll('button[onclick^="remove"]');
+					removeButtons.forEach(button => {
+						button.classList.add('hidden');
+					});
+				}
+			}
 
-// Function to remove a candidate row
-function removeCandidate(index) {
-    if (!isAdmin) return;
-    if (confirm('Are you sure you want to remove this candidate?')) {
-        const row = document.getElementById(`candidate-row-${index}`);
-        if (row) {
-            row.remove();
-        }
-    }
-}
+			// Function to edit party details
 
-// Function to generate a slug from state and year
-function generateSlug(state, year) {
-    return `${state.toLowerCase().replace(/\s+/g, '-')}_${year}`;
-}
+			function editParty(partyId) {
+				if (!isAdmin) {
+					alert('You do not have permission to edit party details.');
+					return;
+				}
+				window.location.href = `/edit-party/${partyId}`;
+			}
 
-// Add event listeners once DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initializeForm();
-    
-    // Add button event listeners
-    document.getElementById('addPartyBtn').addEventListener('click', addParty);
-    document.getElementById('addCandidateBtn').addEventListener('click', addCandidate);
-    
-    // Auto-generate slug when state or year changes
-    const stateInput = document.querySelector('input[name="state"]');
-    const yearInput = document.querySelector('input[name="year"]');
-    const slugInput = document.querySelector('input[name="electionSlug"]');
-    
-    function updateSlug() {
-        const state = stateInput.value;
-        const year = yearInput.value;
-        if (state && year) {
-            slugInput.value = generateSlug(state, year);
-        }
-    }
-    
-    stateInput.addEventListener('change', updateSlug);
-    yearInput.addEventListener('change', updateSlug);
-    
-    // Handle form submission
-    document.getElementById('electionForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const electionId = formData.get('_id');
-        
-        // Create structured data object
-        const finalData = {
-            _id: electionId,
-            state: formData.get('state'),
-            totalSeats: Number(formData.get('totalSeats')),
-            halfWayMark: Number(formData.get('halfWayMark')),
-            year: Number(formData.get('year')),
-            electionSlug: formData.get('electionSlug')
-        };
-        
-        // Process parties
-        const parties = [];
-        const candidates = [];
-        const partyMap = new Map();
-        const candidateMap = new Map();
-        
-        // Collect form data
-        formData.forEach((value, key) => {
-            // Party data processing
-            const partyMatch = key.match(/parties\[(\d+)\]\[(\w+)\]/);
-            if (partyMatch) {
-                const [_, index, field] = partyMatch;
-                if (!partyMap.has(index)) {
-                    partyMap.set(index, {});
-                }
-                const party = partyMap.get(index);
-                
-                if (field === 'won' || field === 'leading') {
-                    party[field] = Number(value);
-                } else {
-                    party[field] = value;
-                }
-            }
-            
-            // Candidate data processing
-            const candidateMatch = key.match(/candidates\[(\d+)\]\[(\w+)\]/);
-            if (candidateMatch) {
-                const [_, index, field] = candidateMatch;
-                if (!candidateMap.has(index)) {
-                    candidateMap.set(index, {});
-                }
-                const candidate = candidateMap.get(index);
-                candidate[field] = value;
-            }
-        });
-        
-        // Convert maps to arrays
-        partyMap.forEach(party => {
-            if (party.name) { // Only add parties with a name
-                parties.push(party);
-            }
-        });
-        
-        candidateMap.forEach(candidate => {
-            if (candidate.name) { // Only add candidates with a name
-                candidates.push(candidate);
-            }
-        });
-        
-        // Structure election info
-        finalData.electionInfo = {
-            partyIds: parties.map(p => p._id || p),
-            candidates: candidates
-        };
-        
-        // Send data to server
-        fetch(`/api/elections/${electionId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(finalData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to update election data');
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert('Election data updated successfully!');
-            window.location.href = `/elections/${data.electionSlug || finalData.electionSlug}`;
-        })
-        .catch(error => {
-            console.error('Error updating election data:', error);
-            alert('Failed to update election data. Please try again.');
-        });
-    });
-});
+			function editCandidate(candidateId) {
+				if (!isAdmin) {
+					alert('You do not have permission to edit candidate details.');
+					return;
+				}
+				window.location.href = `/edit-candidate/${candidateId}`;
+			}
+
+
+			// Function to generate a slug from state and year
+			function generateSlug(state, year) {
+				return `${state.toLowerCase().replace(/\s+/g, '-')}_${year}`;
+			}
+
+			// Add event listeners once DOM is loaded
+			document.addEventListener('DOMContentLoaded', function () {
+				initializeForm();
+
+				// Auto-generate slug when state or year changes
+				const stateInput = document.querySelector('input[name="state"]');
+				const yearInput = document.querySelector('input[name="year"]');
+				const slugInput = document.querySelector('input[name="electionSlug"]');
+
+				function updateSlug() {
+					const state = stateInput.value;
+					const year = yearInput.value;
+					if (state && year) {
+						slugInput.value = generateSlug(state, year);
+					}
+				}
+				stateInput.addEventListener('change', updateSlug);
+				yearInput.addEventListener('change', updateSlug);
+
+				// Handle form submission
+				document.getElementById('electionForm').addEventListener('submit', function (e) {
+					e.preventDefault();
+
+					const formData = new FormData(this);
+					const electionId = formData.get('_id');
+
+					// Create structured data object
+					const finalData = {
+						_id: electionId,
+						state: formData.get('state'),
+						totalSeats: Number(formData.get('totalSeats')),
+						halfWayMark: Number(formData.get('halfWayMark')),
+						year: Number(formData.get('year')),
+						electionSlug: formData.get('electionSlug')
+					};
+
+					// Process parties
+					const parties = [];
+					const candidates = [];
+					const partyMap = new Map();
+					const candidateMap = new Map();
+
+					// Collect form data
+					formData.forEach((value, key) => {
+						// Party data processing
+						const partyMatch = key.match(/parties\[(\d+)\]\[(\w+)\]/);
+						if (partyMatch) {
+							const [_, index, field] = partyMatch;
+							if (!partyMap.has(index)) {
+								partyMap.set(index, {});
+							}
+							const party = partyMap.get(index);
+
+							if (field === 'won' || field === 'leading') {
+								party[field] = Number(value);
+							} else {
+								party[field] = value;
+							}
+						}
+
+						// Candidate data processing
+						const candidateMatch = key.match(/candidates\[(\d+)\]\[(\w+)\]/);
+						if (candidateMatch) {
+							const [_, index, field] = candidateMatch;
+							if (!candidateMap.has(index)) {
+								candidateMap.set(index, {});
+							}
+							const candidate = candidateMap.get(index);
+							candidate[field] = value;
+						}
+					});
+
+					// Convert maps to arrays
+					partyMap.forEach(party => {
+						if (party.name) { // Only add parties with a name
+							parties.push(party);
+						}
+					});
+
+					candidateMap.forEach(candidate => {
+						if (candidate.name) { // Only add candidates with a name
+							candidates.push(candidate);
+						}
+					});
+
+					// Structure election info
+					finalData.electionInfo = {
+						partyIds: parties.map(p => p._id || p),
+						candidates: candidates
+					};
+
+					// Send data to server
+					fetch(`/api/elections/${electionId}`, {
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(finalData)
+					})
+						.then(response => {
+							if (!response.ok) {
+								throw new Error('Failed to update election data');
+							}
+							return response.json();
+						})
+						.then(data => {
+							alert('Election data updated successfully!');
+							window.location.href = `/elections/${data.electionSlug || finalData.electionSlug}`;
+						})
+						.catch(error => {
+							console.error('Error updating election data:', error);
+							alert('Failed to update election data. Please try again.');
+						});
+				});
+			})
+		</script>
+</body>
+
+</html>
