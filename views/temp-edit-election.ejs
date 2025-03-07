@@ -17,7 +17,7 @@
 				<h1 class="text-2xl font-bold text-gray-800">Edit Election: <%= election.state %>
 						<%= election.year %>
 				</h1>
-				<a href="/elections/<%= election.electionSlug %>"
+				<a href="/temp-election-list/"
 					class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Back to
 					View</a>
 			</div>
@@ -89,35 +89,40 @@
 							</thead>
 							<tbody id="partiesTableBody"
 								class="bg-white divide-y divide-gray-200">
-								<% if (election.electionInfo &&
-									election.electionInfo.partyIds) { %>
-									<% election.electionInfo.partyIds.forEach((party,
+								<% if (partyElectionDetails.length > 0) { %>
+									<% partyElectionDetails.forEach((party,
 										index)=> { %>
 										<tr id="party-row-<%= index %>">
 											<td class="px-6 py-4">
 												<input type="text"
 													name="parties[<%= index %>][party]"
-													value="<%= party.party || '' %>"
+													value="<%= party.party.party || '' %>"
 													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
 											</td>
 											<td class="px-6 py-4">
 												<input type="number"
 													name="parties[<%= index %>][votes]"
-													value="<%= party.won || 0 %>"
+													value="<%= party.seatsWon || 0 %>"
 													class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
 											</td>
 											<td class="px-6 py-4">
 												<input type="color"
 													name="parties[<%= index %>][partyColor]"
-													value="<%= party.partyColor || '#000000' %>"
+													value="<%= party.color_code || '#000000' %>"
 													class="block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
 											</td>
 											<td class="px-6 py-4">
 												<button type="button"
-													onclick="editParty('<%= party._id %>')"
+													onclick="editParty('<%= party.party._id %>')"
 													class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Edit
 													Party
 													Details</button>
+
+												<button type="button"
+													onclick="updatePartyVotes('<%= party.party._id %>')"
+													class="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600">
+													Update
+												</button>
 											</td>
 										</tr>
 										<% }); %>
@@ -208,8 +213,12 @@
 												<button type="button"
 													onclick="editCandidate('<%= candidate._id %>')"
 													class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Edit
-													Candidate
-													Details</button>
+												</button>
+
+												<button type="button"
+													onclick="updateCandidateVotes('<%= candidate._id %>')"
+													class="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600">Update
+												</button>
 											</td>
 										</tr>
 										<% }); %>
@@ -258,6 +267,57 @@
 					return;
 				}
 				window.location.href = `/edit-party/${partyId}`;
+			}
+
+
+			function updatePartyVotes(partyId) {
+				// Find the row containing this party
+				const rowElement = document.querySelector(`tr[id^="party-row-"]:has(button[onclick*="${partyId}"])`);
+				if (!rowElement) {
+					alert('Party not found in the table.');
+					return;
+				}
+
+				// Get the party name and votes from the row
+				const partyNameInput = rowElement.querySelector('input[name^="parties"][name$="[party]"]');
+				const votesInput = rowElement.querySelector('input[name^="parties"][name$="[votes]"]');
+				const colorInput = rowElement.querySelector('input[name^="parties"][name$="[partyColor]"]');
+
+				const partyName = partyNameInput ? partyNameInput.value : '';
+				const votes = votesInput ? parseInt(votesInput.value, 10) : 0;
+				const color = colorInput ? colorInput.value : '#000000';
+
+				// Get election ID from the hidden field
+				const electionId = document.querySelector('input[name="_id"]').value;
+
+				// Create the data to send
+				const updateData = {
+					election: electionId,
+					party: partyId,
+					seatsWon: votes,
+				};
+
+				// Send the update request
+				fetch('/api/elections/temp-election/party/update', {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(updateData)
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Failed to update party data');
+						}
+						return response.json();
+					})
+					.then(data => {
+						alert('Party data updated successfully!');
+					})
+					.catch(error => {
+						console.error('Error updating party data:', error);
+						alert('Failed to update party data. Please try again.');
+					});
 			}
 
 			function editCandidate(candidateId) {
