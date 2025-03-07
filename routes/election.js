@@ -6,6 +6,7 @@ const PartyElectionModel = require("../models/party-election-model");
 const isAdmin = require("../middleware/admin");
 const RedisManager = require("../RedisManager");
 const { cachedKeys } = require("../utils");
+const CandidateElectioModel = require("../models/candidate-election-model");
 
 const redis = RedisManager.getInstance();
 
@@ -78,6 +79,18 @@ router.post("/temp-elections", async (req, res) => {
             party: partyId,
           });
           await electionParty.save();
+        }
+      }
+
+      const candidates = electionInfo.candidates;
+
+      if (candidates.length > 0) {
+        for (const candId of candidates) {
+          const cand = new CandidateElectioModel({
+            election: savedElection._id,
+            candidate: candId,
+          });
+          await cand.save();
         }
       }
     }
@@ -167,7 +180,7 @@ router.get("/:id", async (req, res) => {
     await redis.setWithTTL(
       cachedKeys.ASSEMBLY_ELECTION + ":" + id,
       election,
-      3600,
+      3600
     );
 
     res.status(200).json(election);
@@ -221,6 +234,34 @@ router.delete("/:id", isAdmin, async (req, res) => {
   }
 });
 
+router.put("/temp-election/candidate/update", async (req, res) => {
+  try {
+    console.log(req.body);
+
+    const { election, candidate, votesReceived } = req.body;
+
+    const query = {
+      election: election,
+      candidate: candidate,
+    };
+
+    const updatedDocument = await CandidateElectioModel.findOneAndUpdate(
+      query,
+      { $set: { votesReceived } },
+      { new: true }
+    );
+    if (!updatedDocument) {
+      return res.status(200).json({ message: "Update failed" });
+    }
+    console.log(updatedDocument);
+
+    return res.status(200).json(updatedDocument);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 router.put("/temp-election/party/update", async (req, res) => {
   try {
     const { election, party, seatsWon } = req.body;
@@ -233,7 +274,7 @@ router.put("/temp-election/party/update", async (req, res) => {
     const updatedDocument = await PartyElectionModel.findOneAndUpdate(
       query,
       { $set: { seatsWon } },
-      { new: true },
+      { new: true }
     );
     if (!updatedDocument) {
       return res.status(200).json({ message: "Update failed" });
