@@ -70,31 +70,28 @@ router.post("/temp-elections", async (req, res) => {
     });
 
     const savedElection = await election.save();
-    if (savedElection) {
-      const parties = electionInfo.partyIds;
-      if (parties.length > 0) {
-        for (const partyId of parties) {
-          const electionParty = new PartyElectionModel({
-            election: savedElection._id,
-            party: partyId,
-          });
-          await electionParty.save();
-        }
-      }
-
-      const candidates = electionInfo.candidates;
-
-      if (candidates.length > 0) {
-        for (const candId of candidates) {
-          const cand = new CandidateElectioModel({
-            election: savedElection._id,
-            candidate: candId,
-          });
-          await cand.save();
-        }
-      }
+    if (!savedElection) {
+      return res.status(400).json({ message: "Bad request" });
     }
-    res.status(201).json(savedElection);
+    const parties = electionInfo.partyIds.map(
+      (partyId) =>
+        new PartyElectionModel({
+          election: savedElection._id,
+          party: partyId,
+        }),
+    );
+    await PartyElectionModel.bulkSave(parties);
+
+    const candidates = electionInfo.candidates.map(
+      (canId) =>
+        new CandidateElectioModel({
+          election: savedElection._id,
+          candidate: canId,
+        }),
+    );
+
+    await CandidateElectioModel.bulkSave(candidates);
+    return res.status(200).json(savedElection);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -180,7 +177,7 @@ router.get("/:id", async (req, res) => {
     await redis.setWithTTL(
       cachedKeys.ASSEMBLY_ELECTION + ":" + id,
       election,
-      3600
+      3600,
     );
 
     res.status(200).json(election);
@@ -248,7 +245,7 @@ router.put("/temp-election/candidate/update", async (req, res) => {
     const updatedDocument = await CandidateElectioModel.findOneAndUpdate(
       query,
       { $set: { votesReceived } },
-      { new: true }
+      { new: true },
     );
     if (!updatedDocument) {
       return res.status(200).json({ message: "Update failed" });
@@ -274,7 +271,7 @@ router.put("/temp-election/party/update", async (req, res) => {
     const updatedDocument = await PartyElectionModel.findOneAndUpdate(
       query,
       { $set: { seatsWon } },
-      { new: true }
+      { new: true },
     );
     if (!updatedDocument) {
       return res.status(200).json({ message: "Update failed" });
