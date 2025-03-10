@@ -175,6 +175,8 @@ router.get("/temp-election-list", async (req, res) => {
         populate: { path: "party" }, // Nested populate for candidate's party
       });
 
+    console.log("elections -->>> ", elections);
+
     // Render the template with the elections data
     res.render("temp-election-list.ejs", { elections });
   } catch (error) {

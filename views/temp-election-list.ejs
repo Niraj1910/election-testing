@@ -1,275 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elections List</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/tailwind.css" />
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Elections List</title>
-	<link rel="stylesheet" href="/stylesheets/style.css">
-	<link rel="stylesheet" href="/stylesheets/tailwind.css">
-</head>
+  <style>
+    .hidden {
+      display: none;
+    }
 
-<body class="bg-gray-100">
-	<%- include('navbar.ejs') %>
-		<div class="container mx-auto w-full">
+    .visible {
+      display: flex;
+    }
 
-			<% if (typeof error !=='undefined' && error) { %>
-				<div class="text-center mx-auto mt-10">
-					<h1 class="text-2xl font-bold text-red-500">
-						<%= error %>
-					</h1>
-				</div>
-				<% } else { %>
+    #candidatesModal {
+      transition: opacity 0.3s ease;
+    }
 
-					<div class="flex justify-between items-center mt-5 mb-4">
-						<h1 class="text-2xl font-bold text-gray-800">Elections List</h1>
-						<button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
-							onclick="window.location.href='/temp-create-election'">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none"
-								viewBox="0 0 24 24" stroke-width="1.5"
-								stroke="currentColor" class="size-6">
-								<path stroke-linecap="round" stroke-linejoin="round"
-									d="M12 4.5v15m7.5-7.5h-15" />
-							</svg>
-							<span>Create New Election</span>
-						</button>
-					</div>
+    #candidatesModal.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-					<div id="election-table" class="overflow-x-auto w-full mt-5">
-						<!-- Table will be populated by JavaScript -->
-					</div>
+    #candidatesModal.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
 
-		</div>
+  <body class="bg-gray-100">
+    <%- include('navbar.ejs') %>
+    <div class="container mx-auto w-full">
+      <% if (typeof error !=='undefined' && error) { %>
+      <div class="text-center mx-auto mt-10">
+        <h1 class="text-2xl font-bold text-red-500"><%= error %></h1>
+      </div>
+      <% } else { %>
 
-		<!-- Delete Confirmation Dialog -->
-		<div id="deleteConfirmation" class="fixed z-10 inset-0 overflow-y-auto" style="display: none;">
-			<div
-				class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-				<div class="fixed inset-0 transition-opacity" aria-hidden="true">
-					<div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-				</div>
-				<span class="hidden sm:inline-block sm:align-middle sm:h-screen"
-					aria-hidden="true">&#8203;</span>
-				<div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-					role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-					<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-						<h3 class="text-lg leading-6 font-medium text-gray-900"
-							id="modal-headline">
-							Delete Confirmation
-						</h3>
-						<div class="mt-2">
-							<p class="text-sm text-gray-500">
-								Are you sure you want to delete this Election?
-							</p>
-						</div>
-					</div>
-					<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-						<button id="confirmDelete" type="button"
-							class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-							onclick="deleteElectionConfirmed()">
-							Delete
-						</button>
-						<button id="cancelDelete" type="button"
-							class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-							onclick="cancelDelete()">
-							Cancel
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
+      <div class="flex justify-between items-center mt-5 mb-4">
+        <h1 class="text-2xl font-bold text-gray-800">Elections List</h1>
+        <button
+          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
+          onclick="window.location.href='/temp-create-election'"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4.5v15m7.5-7.5h-15"
+            />
+          </svg>
+          <span>Create New Election</span>
+        </button>
+      </div>
 
-		<% } %>
+      <div id="election-table" class="overflow-x-auto w-full mt-5">
+        <!-- Table will be populated by JavaScript -->
+      </div>
+    </div>
 
-			<script>
-				let elections = <%- JSON.stringify(elections || []) %>;
-				let electionToDelete = null;
+    <!-- Delete Confirmation Dialog -->
+    <div
+      id="deleteConfirmation"
+      class="fixed z-10 inset-0 overflow-y-auto"
+      style="display: none"
+    >
+      <div
+        class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <span
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+          >&#8203;</span
+        >
+        <div
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-headline"
+        >
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <h3
+              class="text-lg leading-6 font-medium text-gray-900"
+              id="modal-headline"
+            >
+              Delete Confirmation
+            </h3>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">
+                Are you sure you want to delete this Election?
+              </p>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              id="confirmDelete"
+              type="button"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+              onclick="deleteElectionConfirmed()"
+            >
+              Delete
+            </button>
+            <button
+              id="cancelDelete"
+              type="button"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+              onclick="cancelDelete()"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-				// Render the elections table
-				function renderTable(elections) {
-					const tableDiv = document.getElementById('election-table');
-					tableDiv.innerHTML = `
-        <table class="table-auto mx-auto w-full max-w-4xl bg-white shadow-md rounded-lg mb-8">
-          <thead class="bg-gray-200">
-            <tr>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">State</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Year</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Total Seats</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Halfway Mark</th>
-              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white">
-            ${elections.map((election, index) => `
-              <tr class="border-t border-gray-300">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.state}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.year}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.totalSeats}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.halfWayMark}</td>
-                <td class="px-6 py-4 whitespace-nowrap flex items-center">
-                  <button
-                    class="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-                    onclick="toggleDetails('${election._id}')">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                    </svg>
-                  </button>
-                  <button
-                    class="bg-green-500 text-white px-4 py-2 rounded mr-2"
-                    onclick="editElection('${election._id}')">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-                    </svg>
-                  </button>
-                  <button
-                    class="bg-red-500 text-white px-4 py-2 rounded"
-                    onclick="showDeleteConfirmation('${election._id}')">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-              <!-- Collapsible Section for Party Details -->
-              <tr id="details-${election._id}" class="hidden">
-                <td colspan="5" class="bg-gray-100 px-6 py-2">
-                  <table class="table-auto w-full">
-                    <thead class="bg-gray-200">
-                      <tr>
-                        <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Party</th>
-                        <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Candidates</th>
-                        <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white">
-                      ${election.electionInfo.partyIds.map(party => `
-                        <tr class="border-t border-gray-300">
-                          <td class="px-6 py-4 text-sm text-gray-900">${party.party}</td>
-                          <td class="px-6 py-4 text-sm text-gray-900">
-                            ${election.electionInfo.candidates.filter(c => c.party._id === party._id).length}
-                          </td>
-                          <td class="px-6 py-4 text-sm text-gray-900">
-                            <button
-                              class="bg-blue-500 text-white px-3 py-1 rounded text-xs"
-                              onclick="viewCandidates('${election._id}', '${party._id}')">
-                              View Candidates
-                            </button>
-                          </td>
-                        </tr>
-                        <!-- Candidates List (Initially Hidden) -->
-                        <tr id="candidates-${election._id}-${party._id}" class="hidden">
-                          <td colspan="3" class="bg-gray-50 pl-12 pr-6 py-2">
-                            <div class="border rounded bg-white p-2">
-                              <h4 class="font-medium mb-2">Candidates</h4>
-                              <ul class="list-disc pl-5">
-                                ${election.electionInfo.candidates
-							.filter(c => c.party._id === party._id)
-							.map(candidate => `
-                                    <li class="text-sm py-1">
-                                      <a href="/edit-candidate/${candidate._id}" class="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
-                                        ${candidate.name}
-                                      </a>
-                                    </li>
-                                  `).join('') || '<li class="text-sm py-1 text-gray-500">No candidates found</li>'}
-                              </ul>
-                            </div>
-                          </td>
-                        </tr>
-                      `).join('')}
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
-				}
+    <!-- show candidates modal -->
+    <div
+      id="candidatesModal"
+      class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden"
+    >
+      <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6">
+        <div class="relative flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold">Candidates</h3>
+          <button
+            onclick="closeModal()"
+            style="top: -16px; right: -16px"
+            class="text-gray-500 absolute hover:text-gray-700 focus:outline-none"
+          >
+            x
+          </button>
+        </div>
+        <div id="candidatesList" class="max-h-64 overflow-y-auto">
+          <!-- Candidates will be dynamically inserted here -->
+        </div>
+      </div>
+    </div>
 
-				// Function to toggle visibility of party details
-				function toggleDetails(electionId) {
-					const detailsRow = document.getElementById(`details-${electionId}`);
-					detailsRow.classList.toggle('hidden');
-				}
+    <% } %>
 
-				// Function to view candidates for a specific party in an election
-				function viewCandidates(electionId, partyId) {
-					const candidatesRow = document.getElementById(`candidates-${electionId}-${partyId}`);
-					candidatesRow.classList.toggle('hidden');
-				}
+    <script>
+      let elections = <%- JSON.stringify(elections || []) %>;
+        let electionToDelete = null;
 
-				// Function to edit an election
-				function editElection(electionId) {
-					window.location.href = `/temp-edit-election/${electionId}`;
-				}
+        // Render the elections table
+        function renderTable(elections) {
+          const tableDiv = document.getElementById('election-table');
+          tableDiv.innerHTML = `
+            <table class="table-auto mx-auto w-full max-w-4xl bg-white shadow-md rounded-lg mb-8">
+              <thead class="bg-gray-200">
+                <tr>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">State</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Year</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Total Seats</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Halfway Mark</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white">
+                ${elections.map((election, index) => `
+                  <tr class="border-t border-gray-300">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.state}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.year}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.totalSeats}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.halfWayMark}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${election.status}</td>
+                    <td class="px-6 py-4 whitespace-nowrap flex items-center">
+                      <button
+                        class="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                        onclick="toggleDetails('${election._id}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                      </button>
+                      <button
+                        class="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                        onclick="editElection('${election._id}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                        </svg>
+                      </button>
+                      <button
+                        class="bg-red-500 text-white px-4 py-2 rounded"
+                        onclick="showDeleteConfirmation('${election._id}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <!-- Collapsible Section for Party Details -->
+                  <tr id="details-${election._id}" class="hidden">
+                    <td colspan="5" class="bg-gray-100 px-6 py-2">
+                      <table class="table-auto w-full">
+                        <thead class="bg-gray-200">
+                          <tr>
+                            <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Party</th>
+                            <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Logo</th>
+                            <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Seats Won</th>
+                            <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Votes</th>
+                            <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Color</th>
+                            <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Candidates</th>
+                            <th class="px-6 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                          ${election.electionInfo.partyIds.map(party => `
+                            <tr class="border-t border-gray-300">
+                              <td class="px-6 py-4 text-sm text-gray-900">${party.party}</td>
+                              <td class="px-6 py-4 text-sm text-gray-900">
+                                <img src="${party.party_logo}" alt="${party.party} Logo" class="h-8 w-8 object-contain">
+                              </td>
+                              <td class="px-6 py-4 text-sm text-gray-900">${party.seatsWon || 0}</td>
+                              <td class="px-6 py-4 text-sm text-gray-900">${party.votes || 0}</td>
+                              <td class="px-6 py-4">
+                                <div class="w-8 h-8 rounded-md" style="background-color: ${party.color_code || '#0000000'};"></div>
+                              </td>
+                              <td class="px-6 py-4 text-sm text-gray-900">
+                                ${election.electionInfo.candidates.filter(c => c.party._id === party._id).length}
+                              </td>
+                              <td class="px-6 py-4 text-sm text-gray-900">
+                                <button
+                                  class="bg-blue-500 text-white px-3 py-1 rounded text-xs"
+                                  onclick="viewCandidates('${election._id}', '${party._id}')">
+                                  View Candidates
+                                </button>
+                              </td>
+                            </tr>
+                          `).join('')}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
 
-				// Function to show delete confirmation dialog
-				function showDeleteConfirmation(electionId) {
-					electionToDelete = electionId;
-					document.getElementById('deleteConfirmation').style.display = 'block';
-				}
+        // Function to toggle visibility of party details
+        function toggleDetails(electionId) {
+          const detailsRow = document.getElementById(`details-${electionId}`);
+          detailsRow.classList.toggle('hidden');
+        }
 
-				// Function to confirm delete
-				function deleteElectionConfirmed() {
-					if (electionToDelete) {
-						deleteElection(electionToDelete);
-						electionToDelete = null;
-						document.getElementById('deleteConfirmation').style.display = 'none';
-					}
-				}
+      // Function to view candidates for a specific party in an election
+      function viewCandidates(electionId, partyId) {
+        const election = elections.find(e => e._id === electionId);
+        if (!election) return;
 
-				// Function to cancel delete
-				function cancelDelete() {
-					electionToDelete = null;
-					document.getElementById('deleteConfirmation').style.display = 'none';
-				}
+        const party = election.electionInfo.partyIds.find(p => p._id === partyId);
+        if (!party) return;
 
-				// Function to delete an election
-				async function deleteElection(electionId) {
-					try {
-						const response = await fetch(`/api/elections/temp-election-delete/${electionId}`, {
-							method: 'DELETE'
-						});
-						const data = await response.json();
+        const candidates = election.electionInfo.candidates.filter(c => c.party._id === partyId);
 
-						if (data.message === 'Election successfully deleted') {
-							window.location.reload()
-						} else {
-							alert('Error: ' + (data.message || 'Failed to delete election'));
-						}
-					} catch (error) {
-						console.error('Error deleting election:', error);
-						alert('Error: Failed to delete election');
-					}
-				}
+        // Populate the modal with candidates
+        const candidatesList = document.getElementById('candidatesList');
+        candidatesList.innerHTML = candidates.map(candidate => `
+          <div class="border-b border-gray-200 py-2">
+            <a href="/edit-candidate/${candidate._id}" class="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
+              ${candidate.name}(${candidate.party.party})
+            </a>
+          </div>
+        `).join('') || '<div class="text-gray-500">No candidates found</div>';
 
-				// Function to fetch elections
-				async function fetchElections() {
-					try {
-						const response = await fetch('/api/elections');
-						if (!response.ok) {
-							throw new Error('Failed to fetch elections');
-						}
+        // Show the modal
+        const modal = document.getElementById('candidatesModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('visible');
+      }
 
-						const data = await response.json();
-						elections = data.data;
-						renderTable(elections);
-					} catch (error) {
-						console.error('Error fetching elections:', error);
-					}
-				}
-				// Initial page load
-				function initPage() {
-					if (elections && elections.length > 0) {
-						renderTable(elections);
-					} else {
-						fetchElections();
-					}
-				}
 
-				// Initialize the page
-				initPage();
-			</script>
-</body>
+         // Function to close the modal
+         function closeModal() {
+           const modal = document.getElementById('candidatesModal');
+           modal.classList.add('hidden');
+           modal.classList.remove('visible');
+           }
 
+            // Function to edit an election
+            function editElection(electionId) {
+            	window.location.href = `/temp-edit-election/${electionId}`;
+            }
+
+            // Function to show delete confirmation dialog
+            function showDeleteConfirmation(electionId) {
+            	electionToDelete = electionId;
+            	document.getElementById('deleteConfirmation').style.display = 'block';
+            }
+
+            // Function to confirm delete
+            function deleteElectionConfirmed() {
+            	if (electionToDelete) {
+            		deleteElection(electionToDelete);
+            		electionToDelete = null;
+            		document.getElementById('deleteConfirmation').style.display = 'none';
+            	}
+            }
+
+            // Function to cancel delete
+            function cancelDelete() {
+            	electionToDelete = null;
+            	document.getElementById('deleteConfirmation').style.display = 'none';
+            }
+
+            // Function to delete an election
+            async function deleteElection(electionId) {
+            	try {
+            		const response = await fetch(`/api/elections/temp-election-delete/${electionId}`, {
+            			method: 'DELETE'
+            		});
+            		const data = await response.json();
+
+            		if (data.message === 'Election successfully deleted') {
+            			window.location.reload()
+            		} else {
+            			alert('Error: ' + (data.message || 'Failed to delete election'));
+            		}
+            	} catch (error) {
+            		console.error('Error deleting election:', error);
+            		alert('Error: Failed to delete election');
+            	}
+            }
+
+            // Function to fetch elections
+            async function fetchElections() {
+            	try {
+            		const response = await fetch('/api/elections');
+            		if (!response.ok) {
+            			throw new Error('Failed to fetch elections');
+            		}
+
+            		const data = await response.json();
+            		elections = data.data;
+            		renderTable(elections);
+            	} catch (error) {
+            		console.error('Error fetching elections:', error);
+            	}
+            }
+            // Initial page load
+            function initPage() {
+            	if (elections && elections.length > 0) {
+            		renderTable(elections);
+            	} else {
+            		fetchElections();
+            	}
+            }
+
+            // Initialize the page
+            initPage();
+    </script>
+  </body>
 </html>
