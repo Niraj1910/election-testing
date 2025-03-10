@@ -84,7 +84,6 @@
                   <label class="flex items-center w-full cursor-pointer">
                     <input
                       type="checkbox"
-                      required
                       name="parties[]"
                       value="<%= party._id %>"
                       class="party-checkbox form-checkbox h-4 w-4 text-blue-600"
@@ -97,6 +96,13 @@
               </div>
             </div>
           </div>
+          <!-- Hidden validation field -->
+          <input
+            type="hidden"
+            id="partiesValidation"
+            name="partiesValidation"
+            required
+          />
         </div>
         <div class="mb-5">
           <label
@@ -173,6 +179,7 @@
           "selectedPartiesText"
         );
         const leaderPartySelect = document.getElementById("leaderParty");
+        const validationField = document.getElementById("partiesValidation");
 
         // Get selected parties
         const selectedParties = Array.from(partyCheckboxes).map((checkbox) => ({
@@ -183,10 +190,16 @@
         // Update the dropdown text
         if (selectedParties.length === 0) {
           selectedPartiesText.textContent = "Select parties";
+          validationField.value = "";
+          validationField.setCustomValidity("Please select at least one party");
         } else if (selectedParties.length === 1) {
           selectedPartiesText.textContent = selectedParties[0].text;
+          validationField.value = "valid";
+          validationField.setCustomValidity("");
         } else {
           selectedPartiesText.textContent = `${selectedParties.length} parties selected`;
+          validationField.value = "valid";
+          validationField.setCustomValidity("");
         }
 
         // Clear existing options in leader party dropdown

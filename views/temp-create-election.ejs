@@ -258,7 +258,7 @@
             								class="candidate-checkbox form-checkbox h-4 w-4 text-blue-600"
             								onchange="updateSelectedCandidates()"
             							/>
-            							<span class="ml-2 text-sm">${c.name} (${parties.find(p => p._id.toString() === c.party._id.toString())?.party || 'Unknown'})</span>
+            							<span class="ml-2 text-sm">${c.name} (${parties.find(p => p._id.toString() === c.party._id.toString())?.party || 'Unknown'} - ${c.constituency[0].name})</span>
             						</label>
             					</div>
             				`).join('');
