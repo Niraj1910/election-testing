@@ -202,7 +202,6 @@ router.get("/temp-election-list", async (req, res) => {
           as: "candidates",
         },
       },
-      // Move the constituencies lookup BEFORE the $addFields stage
       {
         $lookup: {
           from: "constituencies",
@@ -240,6 +239,46 @@ router.get("/temp-election-list", async (req, res) => {
                           },
                         },
                         in: "$$result.seatsWon",
+                      },
+                    },
+                    votes: {
+                      $sum: {
+                        $map: {
+                          input: {
+                            $filter: {
+                              input: "$candidates",
+                              as: "candidate",
+                              cond: {
+                                $eq: ["$$candidate.party", "$$party._id"],
+                              },
+                            },
+                          },
+                          as: "candidate",
+                          in: {
+                            $let: {
+                              vars: {
+                                result: {
+                                  $arrayElemAt: [
+                                    {
+                                      $filter: {
+                                        input: "$candidateResults",
+                                        as: "result",
+                                        cond: {
+                                          $eq: [
+                                            "$$result.candidate",
+                                            "$$candidate._id",
+                                          ],
+                                        },
+                                      },
+                                    },
+                                    0,
+                                  ],
+                                },
+                              },
+                              in: "$$result.votesReceived",
+                            },
+                          },
+                        },
                       },
                     },
                   },
@@ -293,9 +332,7 @@ router.get("/temp-election-list", async (req, res) => {
                         0,
                       ],
                     },
-                    // Populate the single constituency
                     constituency: [
-                      // Keep it as an array with a single element
                       {
                         $arrayElemAt: [
                           {
