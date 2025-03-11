@@ -337,8 +337,6 @@ router.get("/temp-election-list", async (req, res) => {
       },
     ]);
 
-    console.log(elections[0].electionInfo);
-
     // Render the template with the elections data
     res.render("temp-election-list.ejs", { elections });
   } catch (error) {
