@@ -45,8 +45,10 @@
 								onchange="toggleConstituencyField()"
 								class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5">
 								<option value="user">User</option>
-								<option value="admin">Admin</option>
+								<% if (userRole === 'superadmin') { %>
 								<option value="superadmin">Super Admin</option>
+								<% } %>
+								<option value="admin">Admin</option>
 							</select>
 						</div>
 						<div id="constituencyContainer" style="display: none;" class="relative">

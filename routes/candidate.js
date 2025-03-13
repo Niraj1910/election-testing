@@ -6,7 +6,7 @@ const mime = require("mime-types");
 const { getFullImagePath, cachedKeys } = require("../utils");
 const Constituency = require("../models/constituency");
 const RedisManager = require("../RedisManager");
-const isAdmin = require("../middleware/admin");
+const { isAdmin } = require("../middleware/admin");
 
 const redis = RedisManager.getInstance();
 

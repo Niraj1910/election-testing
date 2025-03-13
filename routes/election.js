@@ -3,7 +3,7 @@ const { z } = require("zod"); // Import Zod for validation
 const Election = require("../models/election.model");
 const TempElection = require("../models/temp-election.model");
 const PartyElectionModel = require("../models/party-election-model");
-const isAdmin = require("../middleware/admin");
+const { isAdmin } = require("../middleware/admin");
 const RedisManager = require("../RedisManager");
 const { cachedKeys } = require("../utils");
 const CandidateElectionModel = require("../models/candidate-election-model");
@@ -277,7 +277,6 @@ router.patch("/temp-election/candidate/add", async (req, res) => {
   }
 });
 
-
 router.delete(
   "/temp-election/party/delete/:partyId/:electionId",
   async (req, res) => {
@@ -329,13 +328,49 @@ router.delete(
           { new: true },
         );
       } else {
-
         await TempElection.findByIdAndUpdate(
           electionId,
           { $pull: { "electionInfo.partyIds": partyId } },
           { new: true },
         );
       }
+
+      return res.status(200).send({ success: true });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+router.delete(
+  "/temp-election/candidate/delete/:candidateId/:electionId",
+
+  async (req, res) => {
+    try {
+      const { electionId, candidateId } = req.params;
+
+      if (!candidateId || !electionId) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+
+      const deletedPartyCandidate =
+        await CandidateElectionModel.findOneAndDelete({
+          election: electionId,
+
+          candidate: candidateId,
+        });
+
+      if (!deletedPartyCandidate) {
+        return res.status(400).json({ message: "Party election not found" });
+      }
+
+      await TempElection.findByIdAndUpdate(
+        electionId,
+
+        { $pull: { "electionInfo.candidates": candidateId } },
+
+        { new: true },
+      );
 
       return res.status(200).send({ success: true });
     } catch (error) {

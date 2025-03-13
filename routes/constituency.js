@@ -5,7 +5,7 @@ const Joi = require("joi");
 const Candidate = require("../models/candidates");
 const RedisManager = require("../RedisManager"); // Make sure RedisManager is imported
 const { cachedKeys } = require("../utils");
-const isAdmin = require("../middleware/admin");
+const { isAdmin } = require("../middleware/admin");
 
 const router = express.Router();
 const redis = RedisManager.getInstance();
