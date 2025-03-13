@@ -11,6 +11,7 @@ const RedisManager = require("../RedisManager");
 const PartyElectionModel = require("../models/party-election-model");
 const isLoggedIn = require("../middleware/login");
 const CandidateElectioModel = require("../models/candidate-election-model");
+const UserModel = require("./../models/user.model");
 const router = express.Router();
 
 const redis = RedisManager.getInstance();
@@ -45,8 +46,13 @@ router.get(
 
 router.get("/accounts-list", async (req, res) => {
   try {
-    const users = await User.find({}).populate("allowedConstituencies", "name");
+    const users = await UserModel.find({}).populate(
+      "allowedConstituencies",
+      "name"
+    );
     const constituencies = await Constituency.find({}, "_id name");
+
+    console.log(users);
 
     res.render("accounts-list.ejs", {
       users,
