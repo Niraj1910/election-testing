@@ -1,5 +1,5 @@
 require("dotenv").config({
-	path: __dirname + "/.env",
+  path: __dirname + "/.env",
 });
 var createError = require("http-errors");
 var express = require("express");
@@ -20,6 +20,7 @@ const alliancesRouter = require("./routes/alliance");
 const partyRouter = require("./routes/party");
 const candidateRouter = require("./routes/candidate");
 const constituenciesRouter = require("./routes/constituency");
+const userRouter = require("./routes/users");
 const { isAdmin } = require("./middleware/admin");
 
 var app = express();
@@ -35,16 +36,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
-	session({
-		secret: "sdfksdhvfklufhvylksduyvfsdfff",
-		resave: false,
-		saveUninitialized: false,
-		cookie: {
-			secure: false,
-			httpOnly: false,
-			sameSite: "lax",
-		},
-	}),
+  session({
+    secret: "sdfksdhvfklufhvylksduyvfsdfff",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      httpOnly: false,
+      sameSite: "lax",
+    },
+  })
 );
 app.use(flash());
 
@@ -58,28 +59,29 @@ app.use("/api/party", partyRouter);
 app.use("/api/candidate", candidateRouter);
 app.use("/api/constituency", constituenciesRouter);
 app.use("/api/alliance", alliancesRouter);
+app.use("/api/user", userRouter);
 
 // MongoDB connection
 connectDB();
 
 app.use((req, res, next) => {
-	res.locals.error = req.flash("error");
-	res.locals.success = req.flash("success");
-	next();
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
+  next();
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-	next(createError(404));
+app.use(function (req, res, next) {
+  next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-	res.locals.message = err.message;
-	res.locals.error = req.app.get("env") === "development" ? err : {};
+app.use(function (err, req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
 
-	console.log(err);
-	res.render("error");
+  console.log(err);
+  res.render("error");
 });
 
 module.exports = { app };
