@@ -247,6 +247,20 @@
 																		</li>
 																		<% }
 																			%>
+																	<% if (userRole==='admin'
+																		||
+																		userRole==='superadmin'
+																		)
+																		{
+																		%>
+																		<li>
+																			<a
+																				href="/accounts-list"><i
+																					class="fas fa-plus"></i>
+																				Accounts List</a>
+																		</li>
+																		<% }
+																			%>
 				</ul>
 			</div>
 		</div>

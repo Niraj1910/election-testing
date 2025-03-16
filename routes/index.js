@@ -21,7 +21,7 @@ router.get("/", function (req, res, next) {
   if (!req.session.user) {
     return res.redirect("/login");
   }
-  res.redirect("/dashboard");
+  res.redirect("/temp-election-list");
 });
 
 router.get(
@@ -41,30 +41,23 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
-router.get("/accounts-list", async (req, res) => {
-  try {
-    const users = await UserModel.find({}).populate(
-      "allowedConstituencies",
-      "name"
-    );
-    const constituencies = await Constituency.find({}, "_id name");
+router.get("/accounts-list", isLoggedIn, isAdmin, async (req, res) => {
+  const users = await UserModel.find({}).populate(
+    "allowedConstituencies",
+    "name",
+  );
+  const constituencies = await Constituency.find({}, "_id name");
 
-    console.log(users);
+  console.log(users);
 
-    res.render("accounts-list.ejs", {
-      users,
-      availableConstituencies: constituencies,
-    });
-  } catch (error) {
-    res.status(500).render("users", {
-      users: [],
-      constituencies: [],
-      messages: { error: "Failed to load users" },
-    });
-  }
+  res.render("accounts-list.ejs", {
+    users,
+    availableConstituencies: constituencies,
+    userRole: req.userRole,
+  });
 });
 
 router.get("/create-account", isLoggedIn, isAdmin, async (req, res) => {
@@ -78,7 +71,7 @@ router.get("/create-election", isLoggedIn, isAdmin, function (req, res, next) {
 
 router.get("/login", function (req, res, next) {
   if (req.session.user) {
-    return res.redirect("/dashboard");
+    return res.redirect("/temp-election-list");
   }
   res.render("login.ejs");
 });
@@ -119,7 +112,6 @@ router.get("/create-alliance", isLoggedIn, isAdmin, async (req, res) => {
 });
 
 router.get("/temp-create-election", isLoggedIn, isAdmin, async (req, res) => {
-  console.log("This is logged in user -> ", req.session.user);
   const parties = await Party.find({}, "_id party");
   const candidates = await Candidate.find()
     .populate("party", "party")
@@ -149,35 +141,53 @@ router.get(
       if (!election) {
         return res.status(404).send("Election not found");
       }
-      const partyElectionDetails = await PartyElectionModel.find({
-        election: electionId,
-      }).populate("party");
+      let partyElectionDetails;
+      let candidateElectionDetails;
+      if (req.userRole === "user") {
+        candidateElectionDetails = await CandidateElectioModel.find({
+          election: electionId,
+        }).populate({
+          path: "candidate",
+          match: { "constituency.0": { $in: req.allowedConst } },
+          populate: [{ path: "party" }, { path: "constituency" }],
+        });
 
-      const candidateElectionDetails = await CandidateElectioModel.find({
-        election: electionId,
-      }).populate({
-        path: "candidate",
-        populate: [
-          {
-            path: "party",
-          },
-          {
-            path: "constituency",
-          },
-        ],
-      });
+        candidateElectionDetails = candidateElectionDetails.filter(
+          (doc) => doc.candidate !== null,
+        );
+
+        const allowedParties = candidateElectionDetails.map(
+          (candidate) => candidate.candidate.party._id,
+        );
+
+        partyElectionDetails = await PartyElectionModel.find({
+          party: { $in: allowedParties },
+          election: electionId,
+        }).populate("party");
+      } else {
+        partyElectionDetails = await PartyElectionModel.find({
+          election: electionId,
+        }).populate("party");
+
+        candidateElectionDetails = await CandidateElectioModel.find({
+          election: electionId,
+        }).populate({
+          path: "candidate",
+          populate: [{ path: "party" }, { path: "constituency" }],
+        });
+      }
 
       const partyIdsInElection = partyElectionDetails.map((partyElection) =>
-        partyElection.party._id.toString()
+        partyElection.party._id.toString(),
       );
 
       const candidatesInElection = candidateElectionDetails.map(
-        (candidateElection) => candidateElection.candidate._id.toString()
+        (candidateElection) => candidateElection.candidate._id.toString(),
       );
 
       const allPartiesList = await Party.find(
         { _id: { $nin: partyIdsInElection } },
-        "party"
+        "party",
       );
 
       const candidatesQuery = {
@@ -201,7 +211,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 router.get("/temp-election-list", isLoggedIn, isUser, async (req, res) => {
@@ -453,7 +463,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // create constituency route
@@ -482,7 +492,7 @@ router.get(
       console.log(error);
       res.status(500).send("Error fetching constituencies");
     }
-  }
+  },
 );
 
 // create constituency page create-constituency
@@ -498,7 +508,7 @@ router.get(
       error: errorMessages,
       userRole: req.userRole,
     });
-  }
+  },
 );
 
 router.get(
@@ -516,7 +526,7 @@ router.get(
             path: "party",
             model: "Party",
           },
-        }
+        },
       );
       if (!constituency) {
         return res.status(404).send("Constituency not found");
@@ -532,7 +542,7 @@ router.get(
     } catch (error) {
       console.log(error);
     }
-  }
+  },
 );
 
 router.get("/candidates", isLoggedIn, isAdmin, async function (req, res, next) {
@@ -619,7 +629,7 @@ router.get(
       console.log(error);
       res.status(500).send("Error fetching data for creating candidate");
     }
-  }
+  },
 );
 
 router.get(
@@ -629,9 +639,8 @@ router.get(
   async function (req, res, next) {
     try {
       const candidateId = req.params.id;
-      const candidate = await Candidate.findById(candidateId).populate(
-        "party constituency"
-      );
+      const candidate =
+        await Candidate.findById(candidateId).populate("party constituency");
       if (!candidate) {
         return res.status(404).send("Candidate not found");
       }
@@ -647,7 +656,7 @@ router.get(
       console.log(error);
       res.status(500).send("Error fetching data for editing candidate");
     }
-  }
+  },
 );
 
 // create for assembly-election
@@ -668,7 +677,7 @@ router.get(
         .status(500)
         .send("Error fetching data for creating assembly election");
     }
-  }
+  },
 );
 
 // create for edit assembly-election
@@ -695,7 +704,7 @@ router.get(
       console.log(error);
       res.status(500).send("Error fetching data for editing assembly election");
     }
-  }
+  },
 );
 
 // get route for show the assembly-election
@@ -705,9 +714,8 @@ router.get(
   isAdmin,
   async function (req, res, next) {
     try {
-      const assemblyElections = await AssemblyElection.find().populate(
-        "constituencies"
-      ); // Fetch all elections
+      const assemblyElections =
+        await AssemblyElection.find().populate("constituencies"); // Fetch all elections
       res.render("assembly-election.ejs", {
         assemblyElections,
         userRole: req.userRole,
@@ -716,7 +724,7 @@ router.get(
       console.log(error);
       res.status(500).send("Error fetching assembly election");
     }
-  }
+  },
 );
 
 router.get(
@@ -765,7 +773,7 @@ router.get(
       console.log(error);
       res.status(500).send("Error fetching candidates.");
     }
-  }
+  },
 );
 
 module.exports = router;

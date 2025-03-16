@@ -17,6 +17,7 @@ const isUser = (req, res, next) => {
   const userTypes = ["user", "admin", "superadmin"];
   if (req.session.user && userTypes.includes(req.session.user.role)) {
     req.userRole = req.session.user.role;
+    req.allowedConst = req.session.user.allowedConstituencies;
     next();
   } else {
     res
