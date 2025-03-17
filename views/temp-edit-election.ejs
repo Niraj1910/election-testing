@@ -629,6 +629,38 @@
 
 		<script>
 
+			document.getElementById('updateMainInfoBtn').addEventListener('click', () => {
+				const state = document.querySelector("input[name='state']").value
+				const year = document.querySelector("input[name='year']").value
+				const halfWayMark = document.querySelector("input[name='halfWayMark']").value
+				const totalSeats = document.querySelector("input[name='totalSeats']").value
+				const status = document.querySelector("select[name='status']").value
+				const electionId = document.querySelector('input[name="_id"]').value;
+
+
+				const updateBody = {
+					state, year, halfWayMark, totalSeats, status
+				}
+
+				fetch(`/api/elections/temp-election/main-info-update/${electionId}`, {
+					method: 'PATCH',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(updateBody)
+				}).then((res) =>
+					res.json()
+				).then((data) => {
+					if (data.success) {
+						alert('Election Updated Successfully');
+						window.location.reload()
+					}
+				}).catch((error) => {
+					alert('Failed to update')
+					window.location.reload()
+				})
+			})
+
 			// Admin IDs list
 			const adminIds = ['671001c39c1da4fb1e16d48b', '673c2689d9ec4b86f6b11974', '673c2673d9ec4b86f6b11972', '673c25d0d9ec4b86f6b11962', '673c25b4d9ec4b86f6b11960', '673c3a56509816ac0d2b9e10', '673ef26add6de67520b364f3', "67a21755aede35a3487141a6"];
 			const currentUserId = document.getElementById('currentUserId').value;
