@@ -629,7 +629,7 @@
 
 		<script>
 
-			document.getElementById('updateMainInfoBtn').addEventListener('click', () => {
+			document.getElementById('updateMainInfoBtn')?.addEventListener('click', () => {
 				const state = document.querySelector("input[name='state']").value
 				const year = document.querySelector("input[name='year']").value
 				const halfWayMark = document.querySelector("input[name='halfWayMark']").value
@@ -1272,6 +1272,8 @@
 
 					// Extract from the candidateElectionDetails array
 					const candidateDetails = <%- JSON.stringify(candidateElectionDetails || []) %>;
+
+					console.log(candidateDetails)
 
 					candidateDetails.forEach(detail => {
 						if (detail.candidate.party && detail.candidate.party.party) {
