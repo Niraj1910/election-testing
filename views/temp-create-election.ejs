@@ -254,6 +254,7 @@
             							<input
             								type="checkbox"
             								name="electionInfo[candidates][]"
+                            data-constituency-id="${c.constituency[0]._id}"
             								value="${c._id}"
             								class="candidate-checkbox form-checkbox h-4 w-4 text-blue-600"
             								onchange="updateSelectedCandidates()"
@@ -285,6 +286,19 @@
             			document.getElementById('electionForm').addEventListener('submit', function (e) {
             				e.preventDefault();
             				const formData = new FormData(this);
+
+
+                    // Get all checked candidate checkboxes
+                    const candidateCheckboxes = document.querySelectorAll('#candidatesContainer .candidate-checkbox:checked');
+
+                    // Get array of candidate IDs
+                    const candidateIds = Array.from(candidateCheckboxes).map(cb => cb.value);
+
+                    // Get array of unique constituency IDs from selected candidates
+                    const constituencyIds = [...new Set(
+                        Array.from(candidateCheckboxes).map(cb => cb.getAttribute('data-constituency-id'))
+                    )];
+
             				const data = {
             					state: formData.get('state'),
             					electionSlug: formData.get('state').toLowerCase().replace(/\s+/g, '-'),
@@ -294,7 +308,8 @@
             					electionInfo: {
             						partyIds: formData.getAll('electionInfo[partyIds][]'),
             						candidates: formData.getAll('electionInfo[candidates][]')
-            					}
+            					},
+                      constituencies: constituencyIds
             				};
 
             				// Submit data
