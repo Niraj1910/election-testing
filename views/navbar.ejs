@@ -172,11 +172,11 @@
           <h2>Election</h2>
           <ul id="partyList" class="space-y-2">
             <% if (userRole==='admin' || userRole==='superadmin' ) { %>
-            <li>
-              <a href="/create-election"
-                ><i class="fas fa-plus"></i>Create Election</a
-              >
-            </li>
+            <!-- <li> -->
+            <!--   <a href="/create-election" -->
+            <!--     ><i class="fas fa-plus"></i>Create Election</a -->
+            <!--   > -->
+            <!-- </li> -->
             <% } %> <% if (userRole==='admin' || userRole==='superadmin' ) { %>
             <li>
               <a href="/parties"><i class="fas fa-users"></i>Parties</a>
@@ -198,7 +198,7 @@
             <% } %>
             <li>
               <a href="/temp-election-list"
-                ><i class="fas fa-list"></i>Temp Election List</a
+                ><i class="fas fa-list"></i>Election List</a
               >
             </li>
             <% if (userRole==='admin' || userRole==='superadmin' ) { %>
@@ -208,7 +208,7 @@
             <% } %> <% if (userRole==='admin' || userRole==='superadmin' ) { %>
             <li>
               <a href="/temp-create-election"
-                ><i class="fas fa-plus"></i>Temp Create Election</a
+                ><i class="fas fa-plus"></i>Create Election</a
               >
             </li>
             <% } %> <% if (userRole==='admin' || userRole==='superadmin' ) { %>

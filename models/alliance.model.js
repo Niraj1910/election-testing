@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 
 const allianceSchema = new mongoose.Schema({
@@ -5,7 +6,7 @@ const allianceSchema = new mongoose.Schema({
   logo: { type: String, required: true, unique: true },
   leaderParty: { type: mongoose.Schema.Types.ObjectId, ref: "Party" },
   parties: [{ type: mongoose.Schema.Types.ObjectId, ref: "Party" }],
-  election: { type: mongoose.Schema.Types.ObjectId, ref: "TempElection" },
+  election: { type: mongoose.Schema.Types.ObjectId, ref: "TempElection", required: true },
 });
 
 const AllianceModel = mongoose.model("Alliance", allianceSchema);

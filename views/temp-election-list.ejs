@@ -366,7 +366,13 @@
                               </svg>
                             </button>
 								<% } %>
+
                           </td>
+                                      <button
+                              class="bg-blue-500 text-white px-4 py-2 rounded"
+                                        onclick="viewAllianceData('${election._id}')">
+                                        View Alliances Data
+                                      </button>
                         </tr>
                         <!-- Collapsible Section for Party Details -->
                         <tr id="details-${election._id}" class="hidden">
@@ -405,6 +411,8 @@
                                         View Candidates
                                       </button>
                                     </td>
+                                    <td class="px-6 py-4 text-sm text-gray-900">
+                                    </td>
                                   </tr>
                                 `).join('')}
                               </tbody>
@@ -416,6 +424,10 @@
                   </table>
                 `;
               }
+
+	    function viewAllianceData(electionId){
+		    window.location.href = `/alliance-election/${electionId}`
+	    }
 
               // Function to toggle visibility of party details
               function toggleDetails(electionId) {
