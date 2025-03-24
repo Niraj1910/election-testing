@@ -76,11 +76,7 @@
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2" for="totalVotes">Total Votes</label>
-                    <input type="number" id="totalVotes" name="totalVotes" value="<%= candidate.totalVotes %>"
-                        class="w-full py-3 px-4 border rounded shadow focus:outline-none focus:ring focus:ring-blue-300" />
-                </div>
+               
 
                 <div>
                     <label class="block text-gray-700 font-bold mb-2" for="image">Candidate Image</label>
@@ -122,7 +118,7 @@
                 formData.append('name', document.getElementById('name').value);
                 formData.append('age', document.getElementById('age').value);
                 formData.append('gender', document.getElementById('gender').value);
-                formData.append('totalVotes', document.getElementById('totalVotes').value);
+              
                 
                 const party = document.getElementById('party').value;
                 if (party) {

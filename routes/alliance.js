@@ -20,7 +20,7 @@ const upload = multer({ storage });
 
 router.post("/", upload.single("logo"), async (req, res) => {
   try {
-    const { allianceName, leaderParty, parties } = req.body;
+    const { allianceName, leaderParty, parties, electionId } = req.body;
 
     if (!parties.includes(leaderParty)) {
       return res
@@ -33,6 +33,7 @@ router.post("/", upload.single("logo"), async (req, res) => {
       leaderParty: leaderParty,
       parties: parties,
       logo: getFullImagePath(req, "alliance_logos"),
+      election: electionId,
     });
     console.log(alliance);
 

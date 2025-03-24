@@ -17,10 +17,6 @@ const constituencySchema = Joi.object({
   state: Joi.string().required().messages({
     "string.empty": "State is required",
   }),
-  totalVotes: Joi.number().required().messages({
-    "number.base": "Total votes must be a number",
-  }),
-  won: Joi.string().optional(),
   candidates: Joi.array().optional(),
 });
 

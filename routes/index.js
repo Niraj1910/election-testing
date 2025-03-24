@@ -13,10 +13,23 @@ const isLoggedIn = require("../middleware/login");
 const CandidateElectioModel = require("../models/candidate-election-model");
 const UserModel = require("./../models/user.model");
 const ElectionConstituencyModel = require("./../models/constituency-election-model");
+const ElectionModel = require("../models/temp-election.model");
 const router = express.Router();
 const mongoose = require("mongoose");
 
 const redis = RedisManager.getInstance();
+
+router.get(
+  "/alliance-election/:electionId/:allianceId",
+  isLoggedIn,
+  async (req, res) => {
+    const { electionId, allianceId } = req.params;
+
+    const allianceList = await AllianceModel.aggregate([]);
+
+    res.render("alliance-election");
+  }
+);
 
 async function getCandidateElectionDetails(
   userType,
@@ -261,7 +274,12 @@ router.get("/edit-alliance/:id", async (req, res) => {
 
 router.get("/create-alliance", isLoggedIn, isAdmin, async (req, res) => {
   const parties = await Party.find({}, "_id party");
-  res.render("create-alliance.ejs", { parties, userRole: req.userRole });
+  const ongoingElections = await ElectionModel.find({ status: "ongoing" });
+  res.render("create-alliance.ejs", {
+    parties,
+    userRole: req.userRole,
+    ongoingElections,
+  });
 });
 
 router.get("/temp-create-election", isLoggedIn, isAdmin, async (req, res) => {
@@ -719,6 +737,7 @@ router.get("/candidates", isLoggedIn, isAdmin, async function (req, res, next) {
         candidates: cachedData.candidates,
         currentPage: page,
         totalPages: cachedData.totalPages,
+        userRole: req.userRole,
         limit,
         search,
       });
