@@ -136,7 +136,6 @@ router.put("/:id", isAdmin, upload.single("image"), async (req, res, next) => {
       gender: req.body.gender,
       hotCandidate:
         req.body.hotCandidate || existingCandidate.hotCandidate || false, // Assuming this is a boolean value
-      totalVotes: req.body.totalVotes,
       constituency: req.body.constituency || existingCandidate.constituency, // Assuming this comes as an array of constituency IDs
       image: req.file
         ? getFullImagePath(req, "candidates")
@@ -210,7 +209,6 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
     const candidateData = {
       name: req.body.name,
       party: req.body.party,
-      totalVotes: req.body.totalVotes,
       age: req.body.age,
       hotCandidate: hotCandidate, // Now it is a boolean
       gender: req.body.gender,
@@ -232,7 +230,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
     const candidate = new Candidate({
       name: candidateData.name,
       party: candidateData.party,
-      totalVotes: candidateData.totalVotes,
+
       age: candidateData.age,
       hotCandidate: candidateData.hotCandidate, // Boolean value
       gender: candidateData.gender,

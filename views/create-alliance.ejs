@@ -51,6 +51,24 @@
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 py-2 px-3"
           />
         </div>
+
+        <!-- select election -->
+        <div class="mb-5">
+          <label
+            for="leaderParty"
+            class="block text-sm font-medium text-gray-700"
+            >Select Election</label
+          >
+          <select
+            id="election"
+            name="election"
+            required
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 py-2 px-3"
+          >
+            <option value="" disabled selected>Select a election</option>
+          </select>
+        </div>
+
         <div class="mb-5">
           <label class="block text-sm font-medium text-gray-700"
             >Select Parties</label
@@ -104,6 +122,7 @@
             required
           />
         </div>
+
         <div class="mb-5">
           <label
             for="leaderParty"
@@ -137,7 +156,7 @@
             type="submit"
             class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50"
           >
-            Create Party
+            create alliance
           </button>
           <a
             href="/alliances"
@@ -148,77 +167,94 @@
       </form>
     </div>
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const toggleButton = document.getElementById("partiesToggle");
-        const dropdownMenu = document.getElementById("partiesMenu");
 
-        // Toggle dropdown when clicking the button
-        toggleButton.addEventListener("click", function () {
-          dropdownMenu.classList.toggle("show");
-        });
 
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function (event) {
-          if (
-            !toggleButton.contains(event.target) &&
-            !dropdownMenu.contains(event.target)
-          ) {
-            dropdownMenu.classList.remove("show");
-          }
-        });
+      const ongoingElections = <%- JSON.stringify(ongoingElections) %>
 
-        // Initialize the dropdown
-        updateSelectedParties();
-      });
+      console.log(ongoingElections)
 
-      function updateSelectedParties() {
-        const partyCheckboxes = document.querySelectorAll(
-          ".party-checkbox:checked"
-        );
-        const selectedPartiesText = document.getElementById(
-          "selectedPartiesText"
-        );
-        const leaderPartySelect = document.getElementById("leaderParty");
-        const validationField = document.getElementById("partiesValidation");
+            document.addEventListener("DOMContentLoaded", function () {
+              const toggleButton = document.getElementById("partiesToggle");
+              const dropdownMenu = document.getElementById("partiesMenu");
 
-        // Get selected parties
-        const selectedParties = Array.from(partyCheckboxes).map((checkbox) => ({
-          value: checkbox.value,
-          text: checkbox.nextElementSibling.textContent.trim(),
-        }));
+              // Toggle dropdown when clicking the button
+              toggleButton.addEventListener("click", function () {
+                dropdownMenu.classList.toggle("show");
+              });
 
-        // Update the dropdown text
-        if (selectedParties.length === 0) {
-          selectedPartiesText.textContent = "Select parties";
-          validationField.value = "";
-          validationField.setCustomValidity("Please select at least one party");
-        } else if (selectedParties.length === 1) {
-          selectedPartiesText.textContent = selectedParties[0].text;
-          validationField.value = "valid";
-          validationField.setCustomValidity("");
-        } else {
-          selectedPartiesText.textContent = `${selectedParties.length} parties selected`;
-          validationField.value = "valid";
-          validationField.setCustomValidity("");
-        }
+              // Close dropdown when clicking outside
+              document.addEventListener("click", function (event) {
+                if (
+                  !toggleButton.contains(event.target) &&
+                  !dropdownMenu.contains(event.target)
+                ) {
+                  dropdownMenu.classList.remove("show");
+                }
+              });
 
-        // Clear existing options in leader party dropdown
-        leaderPartySelect.innerHTML =
-          '<option value="" disabled selected>Select a leader</option>';
+              // Initialize the dropdown
+              updateSelectedParties();
+            });
 
-        // Populate leaderParty dropdown with selected parties
-        selectedParties.forEach((party) => {
-          const option = document.createElement("option");
-          option.value = party.value;
-          option.textContent = party.text;
-          leaderPartySelect.appendChild(option);
-        });
+            function updateSelectedParties() {
+              const partyCheckboxes = document.querySelectorAll(
+                ".party-checkbox:checked"
+              );
+              const selectedPartiesText = document.getElementById(
+                "selectedPartiesText"
+              );
+              const leaderPartySelect = document.getElementById("leaderParty");
+              const validationField = document.getElementById("partiesValidation");
+              const selectElection = document.getElementById('election')
 
-        // If only one party is selected, auto-select it as leader
-        if (selectedParties.length === 1) {
-          leaderPartySelect.value = selectedParties[0].value;
-        }
-      }
+              selectElection.innerHTML = '<option value="" disabled selected>Select a election</option>';
+
+              ongoingElections.forEach((elec)=>{
+                const option = document.createElement("option");
+                option.value = elec._id;
+                option.textContent = `${elec.state} ${elec.year}`;
+                selectElection.appendChild(option);
+              })
+
+              // Get selected parties
+              const selectedParties = Array.from(partyCheckboxes).map((checkbox) => ({
+                value: checkbox.value,
+                text: checkbox.nextElementSibling.textContent.trim(),
+              }));
+
+              // Update the dropdown text
+              if (selectedParties.length === 0) {
+                selectedPartiesText.textContent = "Select parties";
+                validationField.value = "";
+                validationField.setCustomValidity("Please select at least one party");
+              } else if (selectedParties.length === 1) {
+                selectedPartiesText.textContent = selectedParties[0].text;
+                validationField.value = "valid";
+                validationField.setCustomValidity("");
+              } else {
+                selectedPartiesText.textContent = `${selectedParties.length} parties selected`;
+                validationField.value = "valid";
+                validationField.setCustomValidity("");
+              }
+
+              // Clear existing options in leader party dropdown
+              leaderPartySelect.innerHTML =
+                '<option value="" disabled selected>Select a leader</option>';
+
+              // Populate leaderParty dropdown with selected parties
+              selectedParties.forEach((party) => {
+                console.log(party)
+                const option = document.createElement("option");
+                option.value = party.value;
+                option.textContent = party.text;
+                leaderPartySelect.appendChild(option);
+              });
+
+              // If only one party is selected, auto-select it as leader
+              if (selectedParties.length === 1) {
+                leaderPartySelect.value = selectedParties[0].value;
+              }
+            }
     </script>
   </body>
 </html>

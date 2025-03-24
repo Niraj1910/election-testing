@@ -32,17 +32,8 @@
                 <label for="state" class="block text-gray-700">State</label>
                 <input type="text" id="state" name="state" value="<%= constituency.state %>" required class="mt-1 block w-full border border-gray-300 p-2 rounded" placeholder="Enter state name">
             </div>
-            <div class="mb-4">
-                <label for="totalVotes" class="block text-gray-700">Total Votes</label>
-                <input type="number" id="totalVotes" name="totalVotes" value="<%= constituency.totalVotes %>" required class="mt-1 block w-full border border-gray-300 p-2 rounded" placeholder="Enter total votes">
-            </div>
-            <div class="mb-4">
-                <label for="won" class="block text-gray-700">Result</label>
-                <select id="won" name="won" required class="mt-1 block w-full border border-gray-300 p-2 rounded">
-                    <option value="awaiting" <%= (constituency.won && constituency.won.trim() === 'awaiting') ? 'selected' : '' %>>Awaiting</option>
-                    <option value="won" <%= (constituency.won && constituency.won.trim() === 'won') ? 'selected' : '' %>>Declared</option>
-                </select>                
-            </div>            
+         
+                     
             <div class="mb-4">
                 <label for="candidates" class="block text-gray-700">Select Candidates</label>
                 <select id="candidates" name="candidates" multiple class="choices-multiple-select mt-1 block w-full border border-gray-300 p-2 rounded">
@@ -76,8 +67,6 @@
             const data = {
                 name: formData.get('name'),
                 state: formData.get('state'),
-                totalVotes: formData.get('totalVotes'),
-                won: formData.get('won'),
                 candidates: selectedCandidates.length > 0 ? selectedCandidates : [] // Ensure candidates is an array
             };
 
