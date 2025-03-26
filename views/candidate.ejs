@@ -33,12 +33,30 @@
         </form>
 
         <!-- Add Candidate Button -->
-        <a
-          href="/create-candidate"
-          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center"
-        >
-          <span class="mr-2">+</span> Add Candidate
-        </a>
+        <div class="flex gap-4">
+          <div class="flex gap-4">
+            <input
+              style="width: 256px"
+              id="input-file"
+              type="file"
+              accept=".xls,.xlsx"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
+            />
+            <button
+              onclick="handleFileUpload()"
+              style="background-color: purple"
+              class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded flex items-center"
+            >
+              Submit File
+            </button>
+          </div>
+          <a
+            href="/create-candidate"
+            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center"
+          >
+            <span class="mr-2">+</span> Add Candidate
+          </a>
+        </div>
       </div>
       <div class="overflow-x-auto">
         <table
@@ -162,6 +180,24 @@
           });
         });
       });
+
+      function handleFileUpload() {
+        const file = document.getElementById("input-file").files[0];
+        console.log(file);
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        console.log(formData.has("file"));
+
+        fetch("/api/candidate/file-upload", {
+          body: formData,
+          method: "POST",
+        })
+          .then((res) => res.json())
+          .then((result) => console.log(result))
+          .catch((err) => alert("could not upload"));
+      }
     </script>
   </body>
 </html>
