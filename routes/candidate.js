@@ -7,18 +7,21 @@ const { getFullImagePath, cachedKeys } = require("../utils");
 const Constituency = require("../models/constituency");
 const RedisManager = require("../RedisManager");
 const { isAdmin } = require("../middleware/admin");
+const xlsx = require("xlsx");
 
 const redis = RedisManager.getInstance();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/uploads/candidates");
-  },
-  filename: (req, file, cb) => {
-    const ext = mime.extension(file.mimetype);
-    cb(null, Date.now() + "." + ext);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "public/uploads/candidates");
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = mime.extension(file.mimetype);
+//     cb(null, Date.now() + "." + ext);
+//   },
+// });
+
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
@@ -385,6 +388,21 @@ router.get("/", async (req, res, next) => {
     res.json(candidates);
   } catch (error) {
     next(error);
+  }
+});
+
+// add candidates from excel sheet
+router.post("/file-upload", upload.single("file"), (req, res) => {
+  try {
+    const workBook = xlsx.read(req.file.buffer, { type: "buffer" });
+    const sheet = workBook.SheetNames[0];
+    const jsonData = xlsx.utils.sheet_to_json(workBook.Sheets[sheet]);
+
+    console.log(jsonData);
+    res.status(200).json(jsonData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "internal server error", error });
   }
 });
 
