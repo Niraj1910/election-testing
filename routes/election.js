@@ -9,7 +9,8 @@ const { cachedKeys } = require("../utils");
 const CandidateElectionModel = require("../models/candidate-election-model");
 const ConstituencyElectionModel = require("../models/constituency-election-model");
 const CandidatesModel = require("../models/candidates");
-const mongoose = require('mongoose')
+const AllianceModel = require("../models/alliance.model");
+const mongoose = require("mongoose");
 
 const redis = RedisManager.getInstance();
 
@@ -561,6 +562,10 @@ router.delete("/temp-election-delete/:id", async (req, res) => {
 		});
 
 		await ConstituencyElectionModel.deleteMany({
+			election: id,
+		});
+
+		await AllianceModel.deleteMany({
 			election: id,
 		});
 
