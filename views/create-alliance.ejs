@@ -54,12 +54,11 @@
 
         <!-- select election -->
         <div class="mb-5">
-          <label
-            for="election"
-            class="block text-sm font-medium text-gray-700"
+          <label for="election" class="block text-sm font-medium text-gray-700"
             >Select Election</label
           >
           <select
+            onchange="handleElectionChange()"
             id="election"
             name="election"
             required
@@ -97,20 +96,7 @@
               class="dropdown-menu mt-1 w-full border border-gray-300 rounded-md shadow-md bg-white"
             >
               <div class="p-2">
-                <% parties.forEach(party=> { %>
-                <div class="py-1 px-2 hover:bg-gray-100 rounded">
-                  <label class="flex items-center w-full cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="parties[]"
-                      value="<%= party._id %>"
-                      class="party-checkbox form-checkbox h-4 w-4 text-blue-600"
-                      onchange="updateSelectedParties()"
-                    />
-                    <span class="ml-2 text-sm"> <%= party.party %> </span>
-                  </label>
-                </div>
-                <% }) %>
+                <!-- Parties will be dynamically populated here -->
               </div>
             </div>
           </div>
@@ -167,94 +153,131 @@
       </form>
     </div>
     <script>
-
-
       const ongoingElections = <%- JSON.stringify(ongoingElections) %>
 
-      console.log(ongoingElections)
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleButton = document.getElementById("partiesToggle");
+        const dropdownMenu = document.getElementById("partiesMenu");
+        const selectElection = document.getElementById('election')
 
-            document.addEventListener("DOMContentLoaded", function () {
-              const toggleButton = document.getElementById("partiesToggle");
-              const dropdownMenu = document.getElementById("partiesMenu");
+        // Populate elections dropdown
+        ongoingElections.forEach((elec)=>{
+          const option = document.createElement("option");
+          option.value = elec._id;
+          option.textContent = `${elec.state} ${elec.year}`;
+          selectElection.appendChild(option);
+        })
 
-              // Toggle dropdown when clicking the button
-              toggleButton.addEventListener("click", function () {
-                dropdownMenu.classList.toggle("show");
-              });
+        // Toggle dropdown when clicking the button
+        toggleButton.addEventListener("click", function () {
+          dropdownMenu.classList.toggle("show");
+        });
 
-              // Close dropdown when clicking outside
-              document.addEventListener("click", function (event) {
-                if (
-                  !toggleButton.contains(event.target) &&
-                  !dropdownMenu.contains(event.target)
-                ) {
-                  dropdownMenu.classList.remove("show");
-                }
-              });
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (event) {
+          if (
+            !toggleButton.contains(event.target) &&
+            !dropdownMenu.contains(event.target)
+          ) {
+            dropdownMenu.classList.remove("show");
+          }
+        });
 
-              // Initialize the dropdown
-              updateSelectedParties();
-            });
+        // Initialize the dropdown
+        updateSelectedParties();
+      });
 
-            function updateSelectedParties() {
-              const partyCheckboxes = document.querySelectorAll(
-                ".party-checkbox:checked"
-              );
-              const selectedPartiesText = document.getElementById(
-                "selectedPartiesText"
-              );
-              const leaderPartySelect = document.getElementById("leaderParty");
-              const validationField = document.getElementById("partiesValidation");
-              const selectElection = document.getElementById('election')
+      function handleElectionChange(){
+        const selectElectionValue = document.getElementById('election').value
+        const partiesContainer = document.querySelector('#partiesMenu > div')
 
-              selectElection.innerHTML = '<option value="" disabled selected>Select Election</option>';
+        // Clear existing parties
+        partiesContainer.innerHTML = ''
 
-              ongoingElections.forEach((elec)=>{
-                const option = document.createElement("option");
-                option.value = elec._id;
-                option.textContent = `${elec.state} ${elec.year}`;
-                selectElection.appendChild(option);
-              })
+        fetch(`/api/alliance/parties/${selectElectionValue}`)
+          .then((res) => res.json())
+          .then((parties) => {
+            // Dynamically render parties
+            parties.forEach(party => {
+              const partyDiv = document.createElement('div')
+              partyDiv.className = 'py-1 px-2 hover:bg-gray-100 rounded'
 
-              // Get selected parties
-              const selectedParties = Array.from(partyCheckboxes).map((checkbox) => ({
-                value: checkbox.value,
-                text: checkbox.nextElementSibling.textContent.trim(),
-              }));
+              partyDiv.innerHTML = `
+                <label class="flex items-center w-full cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="parties[]"
+                    value="${party._id}"
+                    class="party-checkbox form-checkbox h-4 w-4 text-blue-600"
+                    onchange="updateSelectedParties()"
+                  />
+                  <span class="ml-2 text-sm">${party.party}</span>
+                </label>
+              `
 
-              // Update the dropdown text
-              if (selectedParties.length === 0) {
-                selectedPartiesText.textContent = "Select parties";
-                validationField.value = "";
-                validationField.setCustomValidity("Please select at least one party");
-              } else if (selectedParties.length === 1) {
-                selectedPartiesText.textContent = selectedParties[0].text;
-                validationField.value = "valid";
-                validationField.setCustomValidity("");
-              } else {
-                selectedPartiesText.textContent = `${selectedParties.length} parties selected`;
-                validationField.value = "valid";
-                validationField.setCustomValidity("");
-              }
+              partiesContainer.appendChild(partyDiv)
+            })
 
-              // Clear existing options in leader party dropdown
-              leaderPartySelect.innerHTML =
-                '<option value="" disabled selected>Select a leader</option>';
+            // Reset party selection after fetching new parties
+            updateSelectedParties()
+          })
+          .catch(error => {
+            console.error('Error fetching parties:', error)
+            const errorDiv = document.createElement('div')
+            errorDiv.textContent = 'Error loading parties. Please try again.'
+            errorDiv.className = 'text-red-500 p-2'
+            partiesContainer.appendChild(errorDiv)
+          })
+      }
 
-              // Populate leaderParty dropdown with selected parties
-              selectedParties.forEach((party) => {
-                console.log(party)
-                const option = document.createElement("option");
-                option.value = party.value;
-                option.textContent = party.text;
-                leaderPartySelect.appendChild(option);
-              });
+      function updateSelectedParties() {
+        const partyCheckboxes = document.querySelectorAll(
+          ".party-checkbox:checked"
+        );
+        const selectedPartiesText = document.getElementById(
+          "selectedPartiesText"
+        );
+        const leaderPartySelect = document.getElementById("leaderParty");
+        const validationField = document.getElementById("partiesValidation");
 
-              // If only one party is selected, auto-select it as leader
-              if (selectedParties.length === 1) {
-                leaderPartySelect.value = selectedParties[0].value;
-              }
-            }
+        // Get selected parties
+        const selectedParties = Array.from(partyCheckboxes).map((checkbox) => ({
+          value: checkbox.value,
+          text: checkbox.nextElementSibling.textContent.trim(),
+        }));
+
+        // Update the dropdown text
+        if (selectedParties.length === 0) {
+          selectedPartiesText.textContent = "Select parties";
+          validationField.value = "";
+          validationField.setCustomValidity("Please select at least one party");
+        } else if (selectedParties.length === 1) {
+          selectedPartiesText.textContent = selectedParties[0].text;
+          validationField.value = "valid";
+          validationField.setCustomValidity("");
+        } else {
+          selectedPartiesText.textContent = `${selectedParties.length} parties selected`;
+          validationField.value = "valid";
+          validationField.setCustomValidity("");
+        }
+
+        // Clear existing options in leader party dropdown
+        leaderPartySelect.innerHTML =
+          '<option value="" disabled selected>Select a leader</option>';
+
+        // Populate leaderParty dropdown with selected parties
+        selectedParties.forEach((party) => {
+          const option = document.createElement("option");
+          option.value = party.value;
+          option.textContent = party.text;
+          leaderPartySelect.appendChild(option);
+        });
+
+        // If only one party is selected, auto-select it as leader
+        if (selectedParties.length === 1) {
+          leaderPartySelect.value = selectedParties[0].value;
+        }
+      }
     </script>
   </body>
 </html>
