@@ -3,6 +3,8 @@ const router = express.Router();
 const multer = require("multer");
 const { getFullImagePath } = require("../utils");
 const AllianceModel = require("../models/alliance.model"); // Adjust the path as necessary
+const TempElectionModel = require("../models/temp-election.model");
+const mongoose = require("mongoose");
 const mime = require("mime-types");
 
 const storage = multer.diskStorage({
@@ -17,6 +19,97 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+router.get("/parties/:electionId", async (req, res) => {
+  try {
+    const electionId = req.params.electionId;
+
+    const parties = await TempElectionModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(electionId),
+        },
+      },
+
+      // Step 2: Lookup all alliances for this election
+      {
+        $lookup: {
+          from: "alliances",
+          localField: "_id",
+          foreignField: "election",
+          as: "alliances",
+        },
+      },
+
+      // Step 3: Project to get all party IDs from alliances into a single array
+      {
+        $project: {
+          allAllianceParties: {
+            $reduce: {
+              input: "$alliances.parties",
+              initialValue: [],
+              in: { $concatArrays: ["$$value", "$$this"] },
+            },
+          },
+          electionParties: "$electionInfo.partyIds",
+        },
+      },
+
+      // Step 4: Unwind the election parties
+      {
+        $unwind: {
+          path: "$electionParties",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      // Step 5: Filter out parties that exist in alliances
+      {
+        $match: {
+          $expr: {
+            $not: {
+              $in: ["$electionParties", "$allAllianceParties"],
+            },
+          },
+        },
+      },
+
+      // Step 6: Lookup party details
+      {
+        $lookup: {
+          from: "parties",
+          localField: "electionParties",
+          foreignField: "_id",
+          as: "partyDetails",
+        },
+      },
+
+      // Step 7: Unwind party details
+      {
+        $unwind: "$partyDetails",
+      },
+
+      // Step 8: Project the final party details
+      {
+        $project: {
+          _id: "$partyDetails._id",
+          party: "$partyDetails.party",
+          color_code: "$partyDetails.color_code",
+          party_logo: "$partyDetails.party_logo",
+          total_seat: "$partyDetails.total_seat",
+          total_votes: "$partyDetails.total_votes",
+          electors: "$partyDetails.electors",
+          votes_percentage: "$partyDetails.votes_percentage",
+        },
+      },
+    ]);
+
+    res.status(200).json(parties);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ error: "Failed to update party data" });
+  }
+});
 
 router.post("/", upload.single("logo"), async (req, res) => {
   try {
@@ -33,7 +126,7 @@ router.post("/", upload.single("logo"), async (req, res) => {
       leaderParty: leaderParty,
       parties: parties,
       logo: getFullImagePath(req, "alliance_logos"),
-      election
+      election,
     });
     console.log(alliance);
 
